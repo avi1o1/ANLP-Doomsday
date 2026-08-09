@@ -1,0 +1,250 @@
+\documentclass[11pt]{article}
+\usepackage{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{mdframed}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+\newcommand{\idf}{\mathrm{IDF}}
+\setlist{nosep,leftmargin=*}
+
+\title{Concept-Space BM25: When Does BM25-Style Scoring Beat\\
+Inner-Product Scoring over Learned Concept Vocabularies?}
+
+\author{
+  Author One \and Author Two \and Author Three \and Author Four \\
+  \texttt{\{one, two, three, four\}@students.iiit.ac.in} \\
+  Advanced NLP, Monsoon 2026 --- Final Project Proposal
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+BM25 is a strong, fully interpretable ranking function, conventionally defined over discrete lexical terms. Whether its mechanisms transfer to a learned semantic vocabulary is no longer open: four independent 2026 works answer yes. What none of them answers is \emph{when}. Each fixes one concept basis and one scoring function, reports that the pair works, and leaves the gain unattributable. We propose a controlled \textbf{representation $\times$ scoring} factorial. Concept-activation representations are built from a frozen dense encoder using seven bases (identity, PCA, random projection, $k$-means, product and residual quantisation, sparse autoencoders), at pooled and token granularity, and scored with both inner product and a BM25-style function whose components are individually ablatable. Every configuration is instrumented with concept-distribution diagnostics --- Zipf slope, IDF variance, effective vocabulary size, Gini, live-feature fraction --- and the relation between those diagnostics and the BM25-minus-inner-product margin is the primary object of study rather than a sanity check. We formalise the framework, prove that a purely linear concept-space score collapses to a bilinear form on the original embedding space, and pre-register an analysis plan under which a null result is as informative as a win.
+\end{abstract}
+
+\section{Introduction}
+
+BM25 weights rare features more heavily, saturates repeated evidence, and discounts long documents. None of these three mechanisms is inherently lexical. Each needs only a set of non-negative features with meaningful collection frequencies, magnitudes, and lengths --- a structure that raw dense embeddings lack but that learned sparse representations supply.
+
+Between March and May 2026, four groups demonstrated this independently. \citet{clavie2026latent} train a sparse autoencoder (SAE) on the token activations of a frozen dense retriever and run textbook Okapi BM25 over the resulting feature indices, matching or beating the backbone's own cosine scoring on BEIR. \citet{han2026bm25v} do the same over SAE-derived visual words from ViT patches. \citet{formal2026splare} use an SAE latent space as the output vocabulary for SPLADE-style training, and \citet{zong2026tokens} replace SPLADE's MLM head with a corpus-trained SAE encoder at roughly half the query--document FLOPs.
+
+A proposal asking whether BM25 can score semantic concepts would be answering a settled question. The interesting hole is elsewhere. Every one of those works fixes one basis and one scorer. None varies the basis holding the scorer fixed, or the reverse. Nobody can predict, for a new representation, whether BM25-style scoring will help it or hurt it.
+
+That the question is live, not pedantic, is shown by a result buried in an appendix of \citet{clavie2026latent}, reproduced as Table~\ref{tab:crossover}.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lcc}
+\toprule
+Representation & Inner prod. & BM25 \\
+\midrule
+SPLADE-v3 (MLM vocab.) & \textbf{0.568} & 0.455 \\
+SAE feats.\ over Nomic & 0.381 & \textbf{0.582} \\
+\bottomrule
+\end{tabular}
+\caption{The scoring-function crossover \citep{clavie2026latent}, nDCG@10 averaged over selected BEIR datasets. Two sparse, non-negative, high-dimensional representations; the best scorer for one is the worst for the other, by 0.113 and 0.201 respectively.}
+\label{tab:crossover}
+\end{table}
+
+The scoring function is not a matter of convention. It interacts strongly with the representation, and the interaction reverses sign. \citet{clavie2026latent} offer an explanation --- SPLADE's FLOPs regularisation pushes its activation distribution away from the Zipfian shape BM25 assumes, while SAE features retain it --- but they test it on one pair of models. It is a hypothesis stated once, at $n=2$.
+
+\paragraph{Central question.} Under what statistical properties of a learned concept vocabulary does BM25-style scoring beat inner-product scoring on the \emph{same} representation, and which of BM25's components carries the difference?
+
+Three things follow. The concept basis becomes the primary independent variable. The distribution diagnostics become explanatory variables rather than preliminaries. And a negative result becomes publishable: ``BM25-style scoring does not help when concept frequencies are near-uniform, and here is the threshold'' is a finding, where ``our method did not beat cosine'' is not.
+
+\paragraph{Naming.} ``Semantic BM25'' is taken by \citet{lu2025pathway}, who use it for what a cross-encoder computes internally. That work is mechanistic interpretability rather than a retrieval method, so there is no priority conflict, but a reviewer would notice. We adopt \textbf{Concept-Space BM25} (S-BM25) and cite them as the emergent counterpart to our imposed construction.
+
+\section{Background}
+
+\paragraph{Okapi BM25.} For query $Q$ and document $D$,
+\begin{equation}
+\mathrm{BM25}(Q,D)\!=\!\!\sum_{t\in Q}\!\idf(t)\frac{f(t,D)(k_1{+}1)}{f(t,D)+k_1\!\left(1-b+b\frac{|D|}{\mathrm{avgdl}}\right)}
+\label{eq:bm25}
+\end{equation}
+with $\idf(t)=\log\frac{N-n(t)+0.5}{n(t)+0.5}$. Many mutually incompatible formulas circulate under this name \citep{kamphuis2020which}; we fix the Okapi TREC-3 form \citep{robertson1995okapi} throughout and report it explicitly. It has four separable mechanisms: (M1) rarity weighting via IDF; (M2) concave, bounded saturation in $f$; (M3) length normalisation via $b$; (M4) sparse support, which is what makes an inverted index natural.
+
+\paragraph{Why raw dense vectors break all four.} Components are signed, so $f$ is not a frequency. Every coordinate fires in every document, so $n(t)=N$ and IDF is a negative constant independent of $t$. There is no length. There is no sparse support. Every construction that works first manufactures a sparse, non-negative, count-like structure --- and \emph{how} it is manufactured is precisely what we study.
+
+\paragraph{Learned sparse retrieval and SAEs.} SPLADE \citep{formal2021splade,lassance2024splade3} projects token representations onto the model's MLM vocabulary and scores by inner product. COIL \citep{gao2021coil} keeps the inverted-index skeleton but replaces scalar term frequency with a dot product over contextualised token vectors; COILcr \citep{fan2023coilcr} clusters those vectors into canonical representations by spherical $k$-means --- an explicit precedent for inducing a retrieval vocabulary by clustering. Two pathologies matter here: learned term weights violate the distributional assumptions of classical index traversal \citep{mackenzie2021wacky}, and randomly projected sparse vocabularies are markedly worse than learned ones \citep{zamani2018snrm,zong2026tokens} --- which we exploit by including random projection as a designed control rather than a candidate. An SAE maps $h\in\mathbb{R}^d$ to an overcomplete non-negative code $z\in\mathbb{R}^m_{\geq 0}$, $m\gg d$, under a reconstruction objective with a sparsity constraint. Both \citet{zong2026tokens} and \citet{clavie2026latent} report no downstream retrieval advantage for structured SAE variants over plain Top-$K$ \citep{gao2025scaling}; we take these two independent nulls as licence to fix Top-$K$ and spend no budget on SAE architecture search.
+
+\begin{table*}[t]
+\centering\small
+\begin{tabular}{lll}
+\toprule
+Representation & Inner product / cosine & BM25-style \\
+\midrule
+Lexical bag-of-words & VSM, TF--IDF & BM25 \citep{robertson1995okapi} \\
+Quantised local descriptors (vision) & --- & Video Google \citep{sivic2003video}, \citep{zheng2018sift} \\
+Contextual token vectors in inverted lists & COIL \citep{gao2021coil}, COILcr \citep{fan2023coilcr} & --- \\
+Learned sparse over MLM vocabulary & SPLADE \citep{formal2021splade} & \citep{clavie2026latent} \textit{(degrades)} \\
+SAE features, pooled single vector & CL-SR \citep{park2025clsr} \textit{(degrades)} & --- \textbf{(this proposal)} \\
+SAE features, token level & SPLARE \citep{formal2026splare}, \citep{zong2026tokens} & Latent Terms \citep{clavie2026latent} \\
+SAE features, ViT patches & --- & BM25-V \citep{han2026bm25v} \\
+$k$-means / PQ / RQ over text embeddings & IVF-PQ \citep{jegou2011pq}, semantic IDs \citep{zhu2024hourglass} & --- \textbf{(this proposal)} \\
+PCA / random projection & SNRM \citep{zamani2018snrm} & --- \textbf{(this proposal)} \\
+\bottomrule
+\end{tabular}
+\caption{The representation $\times$ scoring grid. Cells marked --- are, to our knowledge, unstudied. Our design fills empty cells and, more usefully, populates each occupied cell with several bases so the two columns can be compared at fixed representation.}
+\label{tab:grid}
+\end{table*}
+
+\section{Related Work and the Gap}
+
+Table~\ref{tab:grid} organises the field along two axes: what the representation is, and how it is scored.
+
+\paragraph{An older vision precedent.} The most literal instance of BM25-on-vectors predates neural IR by two decades. Video Google \citep{sivic2003video} quantised SIFT descriptors into visual words and applied TF--IDF over an inverted file. That line then rediscovered saturation independently: \citet{jegou2009burstiness} identified burstiness --- repetitive image structure dominating similarity --- and proposed sublinear TF transforms, which is what $k_1$ does; an exponential IDF was later folded into BM25 proper \citep{zheng2018sift}. A separate community converging on BM25's components while handling quantised vectors is evidence that the mechanisms are representation-general rather than language-specific.
+
+\paragraph{The pooled-versus-token confound.} CL-SR \citep{park2025clsr} trains an SAE on the \emph{pooled} single-vector representation and scores SPLADE-style; its quality falls below its own backbone (MRR@10 36.8 vs.\ SimLM's 41.1 on MS MARCO dev, in the reproduction by \citet{zong2026tokens}). Latent Terms \citep{clavie2026latent} applies the SAE at \emph{token} level and sum-pools afterwards, beating its backbone (Contriever $0.415\!\to\!0.474$ BEIR nDCG@10). The nominal difference is granularity --- but the two also differ in scoring function, SAE training corpus, and backbone. ``Token-level works, pooled does not'' is the natural reading and is not identified.
+
+\paragraph{Codebook utilisation, unconnected.} Generative retrieval has built a detailed account of exactly what our diagnostics measure, without naming it. Residual-quantised semantic IDs show an ``hourglass'' effect in which intermediate-layer codes concentrate, driven by long-tailed data \citep{zhu2024hourglass}; later work formalises effective codebook capacity and codeword overlap as tokeniser-failure diagnostics \citep{wang2026decoupled}. Code-usage imbalance is, from BM25's side, the quantity that decides whether IDF can discriminate at all. One literature treats imbalance as a defect to minimise; BM25 treats Zipfian imbalance as its precondition. The two are measuring one statistic with opposite sign conventions.
+
+\paragraph{Gaps addressed.}
+\textbf{G1} No factorial: every published result is a single (representation, scorer) point.
+\textbf{G2} The Zipf hypothesis has never been varied as a controlled variable.
+\textbf{G3} Pooled vs.\ token is confounded with three other factors.
+\textbf{G4} $k$-means, PQ, RQ, and PCA have indexed dense text embeddings but never served as BM25 vocabularies.
+\textbf{G5} No component-level ablation: which mechanism carries the gain is unknown.
+
+\section{Method}
+
+\paragraph{Concept bases.} A \emph{concept basis} is a map $\Phi:\mathbb{R}^d\!\to\!\mathbb{R}^K_{\geq0}$. We require only non-negativity and a defined $K$; not linearity, sparsity, or learning. Non-negativity is load-bearing: it is what makes $x_{dj}$ readable as a frequency and keeps document length meaningful. Bases that natively emit signed output (PCA, random projection, identity) are rectified by splitting,
+$\Phi^{\pm}(h)=[\mathrm{ReLU}(Wh);\mathrm{ReLU}(-Wh)]\in\mathbb{R}^{2K'}_{\geq0}$,
+which preserves all information, unlike a bare ReLU, at the price of doubling nominal vocabulary size.
+
+\paragraph{Granularity.} Under \textbf{P} (pooled), $x_d=\phi(\Phi(e_d))$ from the encoder's pooled embedding. Under \textbf{T} (token), $x_d=\phi(\sum_i \Phi(h_i))$. The distinction is the crux of G3: under P, length $L_d$ carries no information about token count, so we expect (and will test) that length normalisation is inert there and active under T.
+
+\paragraph{Activation transform.} Summed SAE activations are magnitudes, not counts, and differ from lexical term frequency by orders of magnitude. Following \citet{clavie2026latent} we apply $\phi(u)=u^{\alpha}$, $\alpha\in(0,1]$, default $\tfrac12$. This has a second function: it reshapes the frequency distribution, making $\alpha$ a within-basis lever on the very statistic our diagnostics measure.
+
+\paragraph{Soft document frequency.} A collection frequency $n_j=\sum_d x_{dj}$ is not a document frequency and breaks Eq.~\ref{eq:bm25}: the numerator $N-n_j+0.5$ goes negative once $n_j>N+0.5$, which is routine for a common concept, leaving IDF non-monotone and eventually undefined. We define it through a bounded occurrence gate,
+\begin{equation}
+n_j=\sum_{d=1}^{N} g(x_{dj}),\qquad g:\mathbb{R}_{\geq0}\!\to\![0,1],
+\end{equation}
+guaranteeing $n_j\in[0,N]$ and a well-posed monotone $\idf_j$. We compare $g_{\text{hard}}(u)=\mathbb{1}[u>\tau]$, $g_{\text{clip}}(u)=\min(1,u/\tau)$, and $g_{\text{sig}}(u)=\sigma(\beta(u-\tau))$; $g_{\text{clip}}$ is the default, removing the discontinuity without adding $\beta$.
+
+\paragraph{The S-BM25 score.}
+\begin{equation}
+S(q,d)=\sum_{j\in C_q} w_{qj}\,\idf_j\,\frac{x_{dj}(k_1{+}1)}{x_{dj}+k_1\!\left(1-b+b\frac{L_d}{\bar L}\right)}
+\label{eq:sbm25}
+\end{equation}
+with $L_d=\sum_j x_{dj}$, $\bar L$ the corpus mean, and $C_q=\mathrm{supp}(\text{Top-}\kappa_q(x_q))$.
+
+The query side is load-bearing and usually left implicit. Lexical BM25 either ignores query term frequency or handles it with a separate $k_3$; we make the choice explicit and ablatable, $w_{qj}\in\{1,\ x_{qj},\ x_{qj}(k_3{+}1)/(x_{qj}+k_3)\}$. Query support must be sparsified independently of the document side: a dense $x_q$ touches every posting list and dilutes IDF across thousands of weak activations. Queries are short and documents are not, so $\kappa_q$ and $\kappa_d$ are swept separately rather than tied.
+
+Top-$k$ sparsification is part of the model, not an efficiency afterthought. It is one of the nonlinearities that prevent the collapse below, and \citet{zong2026tokens} find a token-level top-$k$ constraint improves both efficiency and out-of-domain effectiveness even for standard SPLADE, outperforming FLOPs regularisation at matched budget.
+
+\paragraph{When does S-BM25 collapse to dense retrieval?}
+\begin{proposition}[Linear collapse]
+Let $\Phi(h)=Ch$ and let $S_{\mathrm{lin}}(q,d)=\sum_j \idf_j x_{qj}x_{dj}$. Then $S_{\mathrm{lin}}(q,d)=e_q^{\top}C^{\top}\mathrm{diag}(\idf)\,C\,e_d$, a fixed bilinear form on the original embedding space; if $C^{\top}\mathrm{diag}(\idf)C=\gamma I$ it is exactly cosine ranking.
+\end{proposition}
+The proof is immediate, and the consequence is sharp: $\mathrm{diag}(\idf)$ is absorbed into the matrix, so IDF alone cannot escape the bilinear family. Any real gain must originate in a nonlinearity --- saturation ($x_{dj}$ in the denominator), input-dependent top-$k$ support, per-document $L_d$, or a nonlinear $\Phi$ or $\phi$ upstream. This yields a free internal validity check: the IDF-only, dense-support, no-saturation, no-length configuration on a linear basis is a \emph{predicted null}. If it beats cosine by more than noise, the tuning protocol is leaking or $\Phi$ is not as linear as assumed.
+
+\paragraph{Efficiency.} Following \citet{zong2026tokens} we report query--document FLOPs, $\mathbb{E}_{Q,D}[\sum_j \mathbb{1}(w^Q_j\!>\!0)\mathbb{1}(w^D_j\!>\!0)]$, plus mean document representation length and measured latency under a sparse ANN engine \citep{bruch2024seismic}.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{@{}p{0.9cm}p{5.8cm}@{}}
+\toprule
+Basis & Construction and role \\
+\midrule
+B0 Ident. & Split-rectified raw dims, $K{=}2d$. Isolates scorer from basis: if S-BM25 here matches B6, concept extraction contributes nothing. \\
+B1 Rand. & Gaussian projection, split-rectified, top-$k$. Designed \emph{low}-Zipfianness point; near-uniform frequencies, near-zero IDF variance. \\
+B2 PCA & Top-$K'$ principal directions. Orthogonal basis with a known steep spectrum; tests whether variance ordering alone yields usable collection statistics. \\
+B3 $k$-means & $K$ centroids, soft assignment to nearest $\kappa$. Expected \emph{mid} case: centroids track density, which equalises occupancy. \\
+B4 PQ & $M$ subspaces $\times\,2^b$ codes. Every document activates exactly $M$ concepts, so $L_d$ is constant --- a clean natural experiment on length normalisation. \\
+B5 RQ & $L$ residual levels. The hourglass effect \citep{zhu2024hourglass} predicts high imbalance at intermediate levels: high-imbalance-but-not-Zipfian. \\
+B6 SAE & Top-$K$ SAE, $m{=}32{,}768$, $k_{\text{SAE}}{=}16$, FineWeb-Edu. Published state of the art \citep{clavie2026latent}; reproduction target and expected \emph{high}-Zipfianness point. \\
+\bottomrule
+\end{tabular}
+\caption{Seven bases, chosen to span a wide range of concept-frequency distributions --- which is what makes the H1 regression possible.}
+\label{tab:bases}
+\end{table}
+
+\section{Concept Bases and Diagnostics}
+
+Table~\ref{tab:bases} lists the seven bases. Each is additionally run at $K\in\{2^{12},\dots,2^{17}\}$ where meaningful, which turns a 7-point correlation study into one with roughly 30--40 points and sweeps the frequency distribution continuously \emph{within} each family rather than only across families.
+
+\paragraph{Diagnostics.} BM25's discriminative power flows through $\idf_j$, which can only discriminate if it varies. Natural language supplies that variance free, being approximately Zipfian \citep{zipf1932}; a learned vocabulary carries no such guarantee. For every (basis, $K$, granularity) we compute, before and independently of any retrieval run: \textbf{D1} live-feature fraction $\rho=\frac{1}{K}|\{j:n_j\geq 5\}|$; \textbf{D2} $\mathrm{Var}_j[\idf_j]$; \textbf{D3} Zipf slope $\hat s$ (OLS of $\log n(r)$ on $\log r$, with $R^2$); \textbf{D4} effective vocabulary $K_{\text{eff}}/K$ from Shannon entropy; \textbf{D5} Gini of $\{n_j\}$; \textbf{D6} head mass $\mu_{1\%}$; \textbf{D7} query--document support overlap for relevant vs.\ random pairs.
+
+\paragraph{The dead-feature trap.} IDF variance is trivially inflatable: an SAE with many dead latents, or $k$-means with empty clusters, shows enormous $\mathrm{Var}[\idf]$ and useless retrieval, because the variance comes from features that never participate in scoring. D1 is computed first and gates the rest, and $K_{\text{eff}}/K$ (insensitive to padding with dead features) is reported alongside raw variance. A configuration is always characterised by the pair $(\rho,\mathrm{Var}[\idf])$.
+
+\paragraph{No gating.} An earlier design used the diagnostics as a GO/NO-GO filter, running retrieval only on bases that looked promising. We reject this. The study's most defensible finding --- that BM25-style scoring does not help when concept frequencies are near-uniform --- can only be established by running retrieval on bases whose frequencies are near-uniform. Gating deletes exactly the observations that would support the claim, converting a study capable of producing a quantitative law into one capable only of producing a table of wins.
+
+\section{Experimental Design}
+
+\paragraph{The factorial.} We cross seven bases $\times$ \{P, T\} $\times$ \{inner product, S-BM25\} $\times$ 4--6 levels of $K$, holding encoder, corpus, and protocol fixed. The identifying comparison is never S-BM25 against lexical BM25; it is always \emph{same representation, different scoring function}, which is what licenses attributing a difference to the scorer.
+
+Because B6-P with inner product is approximately CL-SR and B6-T with BM25 is approximately Latent Terms, the $2\times2$ sub-block at B6 deconfounds the two published results with training corpus, backbone, and evaluation held fixed. That single block is the highest-value cell in the study and runs first after reproduction.
+
+\paragraph{Encoders.} Contriever (msmarco), the weaker single-vector model on which Latent Terms gains most; nomic-embed-text-v1.5, a strong modern single-vector; and GTE-ModernColBERT, multi-vector, to test whether late interaction changes the picture. The full factorial runs on Contriever; the others take the reduced configuration set.
+
+\paragraph{Data.} MS MARCO dev for development (large, standard, cheap per configuration). LIMIT \citep{weller2026limit} as the diagnostic set: purpose-built to expose single-vector expressivity limits, where cosine collapses to $\approx$0.03 R@20 while lexical BM25 exceeds 0.95, giving maximal diagnostic power per unit compute --- any recovery there is strong evidence the gain is structural. BEIR (15 datasets) and TREC-DL 19/20 for generalisation, on the 2--3 best configurations per basis family only. The full grid over all of BEIR would be $7\times2\times2\times5\times15$ evaluations, which is not a one-semester project; restricting the grid to MS MARCO and LIMIT cuts cost by an order of magnitude while preserving every identifying comparison.
+
+\paragraph{Tuning.} All hyperparameters are tuned on MS MARCO train/dev; BEIR and TREC-DL are strictly zero-shot. \citet{clavie2026latent} report that per-dataset BM25 tuning buys only $\approx$0.009 nDCG@10 on average --- too little to justify the validity cost. Grid: $k_1\in\{0.9,1.2,2,4,8,16\}$ (default 8, far outside the lexical range, hence the widened sweep), $b\in\{0,0.3,0.5,0.7,0.9,1.0\}$, $\alpha\in\{0.25,0.5,0.75,1.0\}$, gate $\in\{$hard, clip, sigmoid$\}$, $\kappa_d\in\{16,\dots,256,\infty\}$, $\kappa_q\in\{8,\dots,64,\infty\}$, $w_q\in\{$binary, raw, $k_3$-sat$\}$.
+
+\paragraph{Reproduction gate.} Before any novel configuration is analysed, B6-T with BM25 must reproduce \citet{clavie2026latent} within $\pm$0.015 nDCG: BEIR averages of 0.474 (Contriever + SAE) and 0.526 (Nomic + SAE), and LIMIT R@20 of 0.510. Failure here is blocking --- if the pipeline is wrong, no other number in the study is trustworthy. Likely causes, in order: BM25 variant mismatch \citep{kamphuis2020which}, missing $\phi$ transform, $k_1$ left at lexical defaults.
+
+\paragraph{Metrics.} nDCG@10, R@100, MRR@10, R@1000; QD-FLOPs, index size, latency; diagnostics D1--D7.
+
+\section{Hypotheses and Analysis Plan}
+
+Let $\Delta_c$ be the nDCG@10 margin of S-BM25 over inner product for configuration $c$. We pre-register:
+
+\textbf{H1 (primary).} $\Delta_c$ rises with $\mathrm{Var}_j[\idf_j]$ and with $|\hat s|$ approaching 1, controlling for $\rho$. We regress
+$\Delta_c=\beta_0+\beta_1\mathrm{Var}[\idf]_c+\beta_2|\hat s_c|+\beta_3 (K_{\text{eff}}/K)_c+\beta_4\rho_c+\beta_5\mathbb{1}[T]_c+\varepsilon_c$
+across all $\approx$30--40 configurations, with basis-family random effects. The headline result is a leave-one-basis-family-out cross-validated $R^2$: can the diagnostics of a held-out family predict its margin? Because $\alpha$ reshapes the frequency distribution, sweeping $\alpha$ within a fixed basis supplies a within-basis manipulation --- a far stronger causal claim than cross-basis correlation.
+
+\textbf{H2.} Component contribution is conditional on representation: IDF's contribution scales with $\mathrm{Var}[\idf]$; length normalisation acts only under T and is inert under P and under PQ, where $L_d$ is constant by construction; saturation acts wherever magnitudes are heavy-tailed, regardless of granularity. Tested by a full $2^4$ ablation over \{IDF, saturation, length, sparsification\} at three best and two worst bases. The PQ prediction is falsifiable to the point of being a bug detector: if $b$ matters under PQ, something is wrong.
+
+\textbf{H3.} Granularity, not scoring function, explains the CL-SR/Latent Terms gap. Three outcomes are distinguishable and all informative: granularity dominates; scoring dominates (the field has misattributed CL-SR); or they interact, meaning BM25 partially rescues pooled representations --- the most interesting outcome.
+
+\textbf{H4 (null).} For linear bases, the IDF-only, dense-support configuration does not beat tuned cosine. A ``positive'' here indicates methodological error, not discovery.
+
+\textbf{H5.} $\Delta_c>0$ on configurations matching a pre-specified diagnostic profile and $\Delta_c\lesssim0$ elsewhere, with the boundary predictable from diagnostics alone. Uniform wins are not expected and their absence is not failure. The deliverable is a predictive rule, not a leaderboard entry.
+
+\paragraph{Statistics.} Paired two-tailed $t$-tests at $p<0.05$ with Holm--Bonferroni correction within each hypothesis family; bootstrap CIs (10{,}000 resamples over queries) on every margin; five seeds for all SAE, clustering, and quantisation runs, reported as mean $\pm$ s.d.; effect sizes alongside $p$-values.
+
+\section{Timeline, Risks, Contributions}
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{@{}clp{3.1cm}@{}}
+\toprule
+Wk & Phase & Exit criterion \\
+\midrule
+1--3 & Framework, index infra. & Lexical BM25 matches Pyserini to 3 d.p. \\
+4--6 & Reproduction (B6-T) & Targets met $\pm$0.015. \emph{Gate.} \\
+7--8 & Diagnostics D1--D7 & Full table, rank--frequency plots. \\
+9--10 & The B6 $2\times2$ & H3 tested; pooled kept or dropped. \emph{Gate.} \\
+11--15 & Full factorial & $\Delta_c$ table; H1 fitted. \\
+16--18 & $2^4$ ablation & H2 tested. \\
+19--21 & BEIR, TREC-DL, encoders 2--3 & Out-of-family predictive check. \\
+22--23 & Efficiency & Effectiveness--efficiency frontier. \\
+24--26 & Testing, analysis, writing & Submission draft. \\
+\bottomrule
+\end{tabular}
+\caption{Phased plan. Weeks 4--6 and 9--10 are gates; failure at either reshapes the remaining work.}
+\label{tab:timeline}
+\end{table}
+
+Most failure modes stay informative, which is the point of designing around a correlation rather than a win. If $k$-means performs poorly (likely), that is a designed mid-Zipfianness datapoint supporting H1, not a loss --- and precisely why gating was removed. If pooled granularity fails outright, that resolves G3 and explains CL-SR. If $\Delta$ varies but the diagnostics fail to predict it, Zipfianness is not the operative variable and the field's stated explanation is wrong, which is the most interesting negative available. Two risks are not self-justifying: reproduction failure is blocking, and scooping is real --- four relevant papers in four months. Against scooping, the factorial and the predictive rule are the contribution rather than the method, and both survive further single-point results; we re-run the literature sweep at each phase boundary.
+
+We expect to deliver: the first representation $\times$ scoring factorial for concept-space retrieval (G1); a quantitative test of the Zipfianness hypothesis, upgraded from $n{=}2$ to a regression with out-of-family validation (G2); deconfounding of the pooled/token result (G3); the first evaluation of quantisation and clustering bases as BM25 vocabularies for text, connecting codebook-utilisation diagnostics to IDF discriminativeness (G4); component-level attribution including the provable PQ null (G5); a formal collapse result with an accompanying internal-validity check; a predictive rule usable by practitioners choosing a scorer for a new sparse representation; and open artefacts --- diagnostic code, all bases, per-configuration statistics, per-query results, every number carrying its configuration hash.
+
+\paragraph{Threats to validity.} Zipfianness is operationalised by five correlated statistics; if they disagree, H1 is ambiguous, so we pre-register $\mathrm{Var}[\idf]$ as primary and report the correlation matrix among diagnostics. Tuning on MS MARCO with zero-shot evaluation elsewhere prevents the usual leak, and H4 independently audits the tuning pipeline. All work is English and text-only; BM25-V \citep{han2026bm25v} suggests modality-generality but we do not test vision. With 30--40 configurations the H1 regression has modest power, so the $K$- and $\alpha$-sweeps are the main means of raising $n$, and family random effects keep within-family points from being treated as independent.
+
+
+\bibliography{refs}
+
+\end{document}

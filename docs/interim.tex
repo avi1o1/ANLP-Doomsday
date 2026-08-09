@@ -1,0 +1,55 @@
+\documentclass[11pt]{article}
+\usepackage{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\newcommand{\idf}{\mathrm{IDF}}
+
+\title{Concept-Space BM25: When Does BM25-Style Scoring Beat\\
+Inner-Product Scoring over Learned Concept Vocabularies?}
+\author{
+  Author One \quad Author Two \quad Author Three \quad Author Four \\
+  \texttt{\{one, two, three, four\}@students.iiit.ac.in} \\
+  Advanced NLP, Monsoon 2026 --- Interim Project Proposal
+}
+
+\begin{document}
+\maketitle
+
+\paragraph{The setting.} BM25 weights rare terms heavily, saturates repeated evidence, and discounts long documents. None of those mechanisms is inherently lexical: each needs only non-negative features with meaningful collection frequencies, magnitudes and lengths. Raw dense embeddings have none of that --- coordinates are signed, every dimension fires in every document, and there is no length --- but learned sparse representations do. Whether BM25 therefore transfers to a semantic vocabulary was an open question until early 2026, when four groups answered it affirmatively within four months: over sparse-autoencoder (SAE) features from a frozen dense retriever \citep{clavie2026latent}, over SAE visual words from ViT patches \citep{han2026bm25v}, and as the output vocabulary for SPLADE-style training \citep{formal2026splare,zong2026tokens}.
+
+\paragraph{The gap we will fill.} Every one of those works fixes one concept basis and one scoring function, then reports that the pair works. None varies the basis while holding the scorer fixed, or the reverse. The gains are therefore unattributable, and no one can predict for a new representation whether BM25-style scoring will help it or harm it. That this matters is shown by a result buried in an appendix of \citet{clavie2026latent}:
+
+\begin{center}\small
+\begin{tabular}{lcc}
+\toprule
+Representation & Inner prod. & BM25 \\
+\midrule
+SPLADE-v3 (MLM vocabulary) & \textbf{0.568} & 0.455 \\
+SAE features over Nomic & 0.381 & \textbf{0.582} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Two sparse, non-negative, high-dimensional representations, evaluated on BEIR. The best scorer for one is the worst for the other, and the margins are large in both directions. The authors' explanation --- that SPLADE's FLOPs regularisation pushes its activation distribution away from the Zipfian shape BM25 was built for, while SAE features retain it --- is stated once, on one pair of models, at $n=2$.
+
+\paragraph{Central question.} \emph{Under what statistical properties of a learned concept vocabulary does BM25-style scoring beat inner-product scoring on the same representation, and which of BM25's components is responsible?}
+
+\paragraph{What we will build.} A concept basis is any map $\Phi:\mathbb{R}^d\to\mathbb{R}^K_{\geq0}$ turning encoder activations into non-negative concept counts. We construct seven from a single frozen encoder --- split-rectified identity, random projection, PCA, $k$-means, product quantisation, residual quantisation, and a Top-$K$ SAE --- at both pooled and token-level granularity, and score each with inner product and with a BM25-style function
+\[
+S(q,d)=\!\!\sum_{j\in C_q}\!\! w_{qj}\,\idf_j\,\frac{x_{dj}(k_1{+}1)}{x_{dj}+k_1\!\left(1-b+b\,L_d/\bar L\right)}
+\]
+whose four mechanisms (soft IDF, saturation, length normalisation, top-$k$ sparsification) are individually switchable. Document frequency is defined through a bounded occurrence gate, $n_j=\sum_d g(x_{dj})$ with $g\!:\!\mathbb{R}_{\geq0}\!\to\![0,1]$, so that $n_j\in[0,N]$ and the Robertson--Sparck-Jones IDF stays well-posed --- a naive $\sum_d x_{dj}$ makes it non-monotone and eventually undefined.
+
+The bases are chosen to span concept-frequency distributions, from the near-uniform (random projection) through the moderately concentrated ($k$-means) to the strongly Zipfian (SAE). Each is instrumented with distribution diagnostics before any retrieval is run: live-feature fraction, IDF variance, Zipf slope, effective vocabulary size, Gini, head mass. The regression of the BM25-minus-inner-product margin on those diagnostics is the study's primary result, validated by holding out whole basis families and asking whether their diagnostics predict their margins.
+
+\paragraph{Data and evaluation.} The full grid runs on MS MARCO dev and on LIMIT \citep{weller2026limit}, where cosine scoring collapses to $\approx$0.03 R@20 while lexical BM25 exceeds 0.95 --- maximal diagnostic power per unit compute. Selected configurations transfer zero-shot to BEIR and TREC-DL 19/20, with all tuning done on MS MARCO. Effectiveness is nDCG@10, MRR@10, Recall@100/1000; efficiency is query--document FLOPs, index size and latency. A reproduction of \citet{clavie2026latent} within $\pm$0.015 nDCG gates everything else: if the pipeline is wrong, no later number means anything.
+
+\paragraph{Why it holds up either way.} Because the deliverable is a predictive rule rather than a leaderboard entry, the informative outcomes are not confined to wins. A quantitative threshold below which BM25-style scoring stops helping is a finding. A demonstration that the diagnostics fail to predict the margin would show the field's stated explanation is wrong, which is a larger finding. We also prove a small formal result --- a purely linear concept basis with IDF-weighted linear scoring collapses exactly to a bilinear form on the original embedding space --- which identifies which nonlinearities are load-bearing and supplies an internal validity check whose ``success'' would signal a bug.
+
+\bibliography{refs}
+\end{document}
