@@ -1,8 +1,10 @@
 % =====================================================================
-% FINAL PROJECT PROPOSAL -- Advanced NLP (CS7.501), Monsoon 2026
-% Deadline 2.2: 20 August 2026.  Spec: 3-4 pages excluding references,
+% FINAL PROJECT PROPOSAL -- Advanced NLP, Monsoon 2026.
+% Deadline 2.2: 28 August 2026.  Spec: 3-4 pages excluding references,
 % covering project idea, motivation, background, related work, proposed
 % methodology, dataset and evaluation plan, with an optional timeline.
+% Sections stating the motivation and the contributions are required and
+% count toward the page limit.
 % Submit as <TeamNameWithNoSpaces>-Proposal.pdf
 % =====================================================================
 \documentclass[11pt]{article}
@@ -13,8 +15,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage{microtype}
 \usepackage{amsmath,amssymb}
-\usepackage{booktabs}
+\usepackage{enumitem}
 
+\setlist{nosep,leftmargin=*}
 \newcommand{\idf}{\mathrm{idf}}
 \newcommand{\sfreq}{\mathrm{sf}}
 
@@ -34,27 +37,27 @@ From Retrieval to Attention and Expert Routing}
 \begin{abstract}
 On sparse-autoencoder features, BM25 scores $0.582$ nDCG@10 where a plain inner
 product over the same vectors scores $0.381$. On SPLADE the ordering reverses,
-$0.455$ against $0.568$. What BM25 adds is collection frequency, the rate at
-which a feature fires across a corpus, and the published account of the reversal
-is that this helps only while a vocabulary stays Zipfian. That account has been
-observed one vocabulary at a time and never made predictive, so for a new sparse
-representation the only way to pick a scorer is to run both. We make the choice
-predictable. Eight concept vocabularies built from one frozen encoder are scored
-with a BM25-style function whose four components toggle independently, and we
-regress the BM25-minus-inner-product margin on six distributional measurements
-that cost one forward pass. Block-sparse attention and mixture-of-experts routing
-pose the same choice, since both score a query against learned non-negative
-features by inner product and neither consults selection frequency, so we apply
-the fitted predictor to them without refitting. Whether it holds there is an open
-question. Attention sinks fire for almost every query yet cannot be removed, and
-the rarest experts are the most critical, so frequency may signal importance
-differently inside a model than across a corpus. Evaluation runs on MS~MARCO, LIMIT and BEIR,
-and on Hindi, Bengali, Telugu and Hindi-English code-mixed queries, where the
+$0.455$ against $0.568$. What BM25 adds is collection frequency, the rate at which
+a feature fires across a corpus, and the published account of the reversal is that
+this helps only while a vocabulary stays Zipfian. That account has been observed
+one vocabulary at a time and never made predictive, so for a new sparse
+representation the only way to pick a scorer is to run both. We make that choice
+predictable. Eight vocabularies built from one frozen encoder are scored with a
+BM25-style function whose four components toggle independently, and we regress the
+gap between its corrected and uncorrected forms on six distributional measurements
+that cost one forward pass, with one row per vocabulary and collection, since a
+vocabulary has no single frequency curve. Block-sparse attention and mixture-of-experts routing pose
+the same choice and consult no such statistic either, so the fitted predictor goes
+to them without refitting, in units that carry across the three settings. Whether
+it holds there is an open question. Attention sinks fire for almost every query yet
+cannot be removed, and the rarest experts are the most critical, so frequency may
+signal importance differently inside a model than across a corpus. Evaluation
+covers fourteen collections, four of them Indic or code-mixed, where the
 distributions the correction depends on are known to shift.
 \end{abstract}
 
-\section{Project Idea and Motivation}
-\label{sec:idea}
+\section{Motivation and Research Gap}
+\label{sec:motivation}
 
 A learned sparse retriever scores a query-document pair as
 $\langle u_q, u_d \rangle$ over a concept vocabulary. A block-sparse attention
@@ -62,32 +65,49 @@ kernel estimates how critical KV page $i$ is for query $q_t$ as
 $r_{t,i} = \langle q_t, c_i \rangle$ over page summaries, then attends to the
 top-$k$ pages only \citep{tang2024quest}. A mixture-of-experts router gates on
 $g_e = \langle h_t, w_e \rangle$ and sends the token to its top-$k$ experts
-\citep{shazeer2017moe,fedus2022switch}. These belong to three different
-literatures and perform one computation, an inner product against a learned
-non-negative basis followed by a hard top-$k$.
+\citep{shazeer2017moe,fedus2022switch}. These belong to three different literatures
+and perform one computation, an inner product against a learned non-negative basis
+followed by a hard top-$k$.
 
 What all three leave out is any account of how often a given feature wins.
-Classical retrieval settled that question decades ago. The correction has three
+Classical retrieval settled that question decades ago, and the correction has three
 parts, namely inverse document frequency, which discounts features that fire
-everywhere, term-frequency saturation, so repeated evidence stops accumulating
-linearly, and length normalisation, so that large documents are not rewarded
-merely for being large \citep{robertson2009bm25}. Parts of this correction have
-been reinvented inside the transformer under other names. Loss-free load
-balancing adds a per-expert bias driven by recent load
-\citep{wang2024lossfree}, which is an additive, unnormalised frequency discount
-applied during training with no saturation or length term. The auxiliary losses
-it replaces push toward uniform expert use, which is a cruder version of the
-same idea \citep{zoph2022stmoe}. Streaming inference hand-codes an exception for
-the highest-frequency keys in the cache \citep{xiao2024streamingllm}. Each of
-these is a local fix. No shared account exists of when a collection-level
-correction should help, and there is no way to tell before running the
-experiment.
+everywhere, term-frequency saturation, so that repeated evidence stops accumulating
+linearly, and length normalisation \citep{robertson2009bm25}. Parts of it have been
+reinvented inside the transformer under other names. Loss-free load balancing adds
+a per-expert bias driven by recent load \citep{wang2024lossfree}, an additive
+frequency discount applied during training with no saturation or length term, and
+the auxiliary losses it replaces push toward uniform expert use
+\citep{zoph2022stmoe}. Streaming inference hand-codes an exception for the
+highest-frequency keys in the cache \citep{xiao2024streamingllm}. Each of these is
+a local fix.
 
-Our project turns that into something measurable. We hold representation
-learning fixed, vary how a sparse basis is built and how it is scored, and ask
-whether cheap measurements of a basis predict how much the correction helps.
-The prediction is then tested in two places the measurements were never fitted
-on, both inside the transformer.
+The shortcoming in the published work is narrower than those local fixes suggest.
+Two papers have run the comparison, both in retrieval, and both explain their result
+the same way, that BM25 helps while a vocabulary keeps its Zipfian structure
+\citep{clavie2026latent,han2026bm25v}. Neither varies the vocabulary
+systematically, so the explanation rests on one vocabulary at a time. It has never
+been turned into a quantity computable before the experiment, and never checked
+where the same computation runs inside a model.
+
+\section{Contributions}
+\label{sec:contributions}
+
+\begin{enumerate}
+\item A controlled family of sixteen representations from one frozen encoder, so
+basis construction and granularity vary while representation learning stays fixed.
+The published comparisons vary one vocabulary at a time.
+\item One scoring function with four independent switches, so the plain inner
+product and BM25 are two configurations of the same function and any gain names a
+single mechanism.
+\item A predictor in place of an explanation. Six diagnostics are regressed on the
+gap between those two configurations over $224$ rows and validated on held-out basis
+families and held-out collections, which turns the Zipfian account into something
+usable in advance.
+\item A test outside retrieval, which no single-setting study can run. The fitted
+predictor is applied without refitting to KV-page selection and expert routing, in
+units that carry across the three settings.
+\end{enumerate}
 
 \section{Background}
 \label{sec:background}
@@ -96,268 +116,218 @@ BM25 scores a document $d$ against query $Q$ as
 \begin{equation}
 \sum_{i \in Q} \idf_i \cdot
 \frac{f_i(d)\,(k_1+1)}{f_i(d) + k_1\!\left(1 - b + b\frac{|d|}{\overline{dl}}\right)},
+\label{eq:bm25}
 \end{equation}
 with $\idf_i = \ln\!\left(1 + \frac{N - df_i + 0.5}{df_i + 0.5}\right)$. None of
 these ingredients requires words. Each needs only a representation with
 non-negative coordinates, a meaningful per-dimension collection frequency $df_i$,
-and a magnitude that admits a notion of length. Ordinary dense embeddings satisfy none of this. Coordinates are signed, every
-dimension is active in every document, and there is no length analogue, which is
-why dense retrieval is scored with a plain inner product instead.
+and a magnitude that admits a notion of length. Dense embeddings have none of
+these, since their coordinates are signed and every dimension is active in every
+document, which is why dense retrieval is scored with a plain inner product.
 
 Learned sparse features change the picture. Sparse-autoencoder activations,
-$k$-means codes and quantised codebooks are non-negative, sparse and count-like,
-The objects the transformer selects over are not themselves non-negative, since
-KV page summaries are built from signed keys, but the quantity IDF actually needs
-is a selection count, and that is non-negative by construction for both pages and
-experts. A page or an expert has a well-defined selection rate over a calibration
-set, and both admit a magnitude. All three settings are therefore eligible for
-the same correction, and whether it helps is an empirical question.
+$k$-means codes and quantised codebooks are non-negative, sparse and count-like.
+KV page summaries are built from signed keys and so are not non-negative
+themselves, but the quantity IDF needs is a selection count, which is non-negative
+for pages and experts alike and has a well-defined rate over a calibration set. All
+three mechanisms are eligible for the same correction, so whether it helps is an
+empirical question.
 
 \section{Related Work}
 \label{sec:related}
 
 \paragraph{Learned sparse retrieval and its vocabularies.} SPLADE and its
-successors learn term weights over the backbone subword vocabulary and retain
-the inverted index \citep{formal2021splade,lassance2024spladev3}, with COIL
-taking a contextualised view of exact match \citep{gao2021coil} and a unified
-framework since organising the design space \citep{nguyen2023unified}. A known
-pathology of this family is that some terms become badly over-activated, which
-degrades efficiency \citep{mackenzie2021wacky}. Recent work replaces the subword
-vocabulary with a learned concept vocabulary. CL-SR indexes SAE-decomposed dense
-embeddings as concept units \citep{park2025clsr}, SPLARE trains an SAE-based
-sparse retriever directly \citep{formal2026splare}, and SAE-SPLADE swaps
-SPLADE's MLM head for an SAE encoder \citep{zong2026tokens}. All three score
-with an inner product.
+successors learn term weights over the backbone subword vocabulary and retain the
+inverted index \citep{formal2021splade,lassance2024spladev3}. Recent work replaces
+that vocabulary with a learned one. CL-SR indexes SAE-decomposed dense embeddings
+as concept units \citep{park2025clsr}, SPLARE trains an SAE-based sparse retriever
+directly \citep{formal2026splare}, and SAE-SPLADE swaps SPLADE's MLM head for an
+SAE encoder \citep{zong2026tokens}. All three score with an inner product.
 
 \paragraph{Scoring learned sparse features with BM25.}
-\citet{clavie2026latent} show that SAE features taken from a frozen dense
-retriever have roughly Zipfian collection statistics and are directly
-BM25-scorable. Their Appendix~C holds the sharpest evidence for our question.
-On the same suite, BM25 beats the inner product on SAE latent terms ($0.582$
-against $0.381$ nDCG@10) and loses to it on SPLADE-v3 ($0.455$ against
-$0.568$), so the two scorers reverse order when the vocabulary changes beneath
-them. \citet{han2026bm25v} run the comparison on image features and find
-(their \S4.4) that the two differ by at most about two points of R@1,
-attributing the parity to top-$k$ filtering already suppressing what IDF would
-down-weight. The same section reports that raising the per-patch activation
-budget from $k{=}16$ to $k{=}128$ makes document frequencies converge and drops
-R@1 from $0.508$ to $0.038$. Both papers that ran the comparison propose the
-same explanation, that BM25 helps while the vocabulary keeps its Zipfian
-discriminative structure. That hypothesis is therefore already in print and we
-are not supplying a missing explanation. It has only ever been observed on
-individual vocabularies, never tested across a controlled family of them, never
-quantified into anything usable before the fact, and never checked outside
-retrieval.
+\citet{clavie2026latent} show that SAE features taken from a frozen dense retriever
+have roughly Zipfian collection statistics and are directly BM25-scorable. Their
+Appendix~C holds the sharpest evidence for our question. On one suite BM25 reaches
+$0.582$ nDCG@10 against $0.381$ for the inner product on SAE latent terms, and
+$0.455$ against $0.568$ on SPLADE-v3, so the two scorers swap places once the
+vocabulary changes beneath them. \citet{han2026bm25v} run the comparison on image
+features and find (their \S4.4) that the two differ by at most about two points of
+R@1, attributing the parity to top-$k$ filtering already suppressing what IDF would
+down-weight. The same section reports that raising the per-patch activation budget
+from $k{=}16$ to $k{=}128$ makes document frequencies converge and drops R@1 from
+$0.508$ to $0.038$, so the effect is distributional. Both converge on the Zipfian
+explanation of Section~\ref{sec:motivation}, which is in print already and not ours
+to supply.
 
 \paragraph{Selection inside the transformer.} Quest scores KV pages by an inner
 product against page min-max key summaries and loads only the top-$k$
 \citep{tang2024quest}. H2O keeps a mix of recent and heavy-hitter tokens
 \citep{zhang2023h2o}, and StreamingLLM preserves the earliest keys as attention
-sinks \citep{xiao2024streamingllm}, which are entangled with the
-massive-activation mechanism \citep{sun2024massive}. Expected Attention ranks a
-cached pair by how strongly future queries are predicted to attend to it and
-prunes the low scorers \citep{devoto2025expectedattention}. None of these uses
-the rate at which a page is selected across queries. On the routing side,
-\citet{su2026superexperts} show that a handful of rare experts are
-disproportionately critical. To our knowledge no work treats retrieval scoring,
-KV selection and routing as instances of one scoring problem, and none tries to
-predict the effect of a correction before applying it.
+sinks \citep{xiao2024streamingllm}. Expected Attention ranks a cached pair by how
+strongly future queries are predicted to attend to it and prunes the low scorers
+\citep{devoto2025expectedattention}. None of these uses the rate at which a page is
+selected across queries. On the routing side, \citet{su2026superexperts} show that
+a handful of rare experts are disproportionately critical. To our knowledge no work
+treats retrieval scoring, KV selection and routing as one scoring problem.
 
 \section{Proposed Methodology}
 \label{sec:method}
 
-\paragraph{A modular scorer.} For every setting we implement a single scoring
-function in which soft IDF weighting, term-frequency saturation, length
-normalisation and top-$k$ sparsification are separate switches. The uncorrected
-inner product is the all-off configuration and BM25 is the all-on
-configuration, so we can ask which mechanism is responsible for any gain rather
-than only whether the bundle helps. The quantity we predict throughout is the
-margin, meaning the change in task quality between two configurations at matched
-budget.
+\paragraph{A modular scorer.} For every setting we implement one scoring function
+in which soft IDF weighting, term-frequency saturation, length normalisation and
+top-$k$ sparsification are separate switches. The uncorrected inner product is the
+all-off configuration and BM25 is the all-on configuration. The quantity we predict
+throughout is the margin,
+\begin{equation}
+m = \frac{Q_{\mathrm{on}} - Q_{\mathrm{off}}}{s(S,c)},
+\end{equation}
+the change in quality between two configurations at matched budget, divided by the
+standard deviation $s(S,c)$ of that quality across the fixed set of switch
+configurations in setting $S$ on collection $c$. The margin is then dimensionless
+and means the same thing in every setting, which is what lets a model fitted in one
+be scored in another. The primary metric is nDCG@10 in Setting~A, RULER accuracy in
+Setting~B and MMLU accuracy in Setting~C, with perplexity entering as its negative
+so that every metric points the same way.
 
-\paragraph{Setting A: retrieval, used for calibration.} We build eight concept
-bases from a single frozen encoder, spanning near-dense to strongly lexical, namely a
+\paragraph{Setting A: retrieval, used for calibration.} We build eight concept bases
+from a single frozen encoder, spanning near-dense to strongly lexical, namely a
 split-rectified identity map, random projection, PCA, $k$-means codes, product
 quantisation \citep{jegou2011pq}, residual quantisation, a Top-$K$ sparse
 autoencoder \citep{gao2025topksae}, and SPLADE
-\citep{formal2021splade,lassance2024spladev3}. We include SPLADE on purpose,
-since the reversal we want to explain is SPLADE against SAE and omitting it
-would leave us unable to reproduce the phenomenon we study. Each basis is instantiated
-at pooled and token-level granularity, giving sixteen representations, so
-granularity becomes a variable rather than an unexamined confound.
+\citep{formal2021splade,lassance2024spladev3}. SPLADE is in the set on purpose,
+since the reversal we explain is SPLADE against SAE. Each basis is instantiated at
+pooled and token-level granularity, giving sixteen representations, with granularity
+as an explicit variable.
 
-\paragraph{Setting B: KV-page selection.} We start from Quest-style page
-criticality \citep{tang2024quest} and add an online statistic $\sfreq_i$, the
-fraction of prefill queries for which page $i$ enters the top-$k$. The corrected
-score is
-\begin{equation}
-\tilde r_{t,i} = \phi(r_{t,i}) \cdot \idf(\sfreq_i) \cdot \ell(\|c_i\|),
-\end{equation}
-where $\phi$ is the saturation term and $\ell$ the length analogue. The method
-is training-free and drops into an existing kernel. Whether attention sinks are
-exempted from the correction is an ablation rather than an assumption. If IDF
+\paragraph{Setting B: KV-page selection.} We start from Quest-style page criticality
+\citep{tang2024quest} and add an online statistic $\sfreq_i$, the fraction of
+prefill queries for which page $i$ enters the top-$k$. The corrected score
+multiplies the saturated criticality by $\idf(\sfreq_i)$ and by a length term in
+$\|c_i\|$, which is the scorer of Eq.~\eqref{eq:bm25} with pages for documents. The
+method needs no training and drops into an existing kernel. Whether attention sinks
+are exempted from the correction is an ablation rather than an assumption. If IDF
 suppresses them and accuracy falls, that outcome is the mechanism result.
 
-\paragraph{Setting C: expert routing.} The same correction is applied to router
-logits at inference time on OLMoE-1B-7B \citep{muennighoff2025olmoe}, which
-activates 8 of 64 experts per layer and is open down to its training logs, with
-expert selection frequency measured on held-out calibration data. Loss-free balancing
+\paragraph{Setting C: expert routing.} The same correction applies to router logits
+at inference time on OLMoE-1B-7B \citep{muennighoff2025olmoe}, which activates 8 of
+64 experts per layer, with expert selection frequency measured over calibration
+data as in Setting~B. Loss-free balancing
 \citep{wang2024lossfree} is the additive, training-time special case we compare
-against. We check directly whether the correction protects or destroys the
-Super Experts identified by \citet{su2026superexperts}.
+against, and we check whether the correction protects or destroys the Super Experts
+of \citet{su2026superexperts}.
 
-\paragraph{Diagnostics and the predictor.} Before any selection experiment, and
-from a single forward pass over calibration data, we compute six measurements
-per basis, namely active fraction per item, the Zipf exponent of the
-selection-frequency curve, the Gini coefficient of activation mass, head mass,
-the variance of IDF values, and sink share, meaning the fraction of total score
-mass held by the top $1\%$ most-frequently-selected features. Prior work already
-reports several of these descriptively, with \citet{han2026bm25v} fitting
-power-law exponents in $[1.20, 2.32]$ and head fractions under $2\%$, but none
-of it is used to predict anything. We regress the margin on these measurements
-using the many cheap points Setting~A provides, validate by holding out whole
-basis families, and then apply the fitted model without refitting to Settings~B
-and~C. A predictor fitted on retrieval and tested inside a transformer is a
-stronger claim than one cross-validated within a single grid, and it is the part
-of the project a single-setting paper cannot produce.
+\paragraph{Diagnostics and the predictor.} From a single forward pass over
+calibration data we compute six measurements, namely active fraction per item, the
+Zipf exponent of the selection-frequency curve, the Gini coefficient of activation
+mass, head mass, the variance of IDF values, and sink share, meaning the fraction
+of score mass held by the top $1\%$ most-frequently-selected features.
+\citet{han2026bm25v} report several descriptively, with power-law
+exponents in $[1.20, 2.32]$, but predict nothing
+with them. One row of the regression pairs a representation with a collection,
+because collection frequency belongs to a corpus and a basis therefore has no single
+frequency curve. Measuring it again on
+each collection is free, since indexing already performs that pass. Sixteen
+representations across the fourteen collections of Section~\ref{sec:data} give
+$224$ rows for six regressors.
 
-\paragraph{Theory.} We aim to characterise the conditions under which an
-IDF-weighted linear scorer over a learned basis provably reduces to a bilinear
-inner product on the underlying dense embeddings. We call this the collapse
-condition. Where it holds the two scorers must agree, which converts part of the
-grid into something explained rather than tabulated.
+\paragraph{Theory.} We aim to characterise when an IDF-weighted linear scorer over a
+learned basis provably reduces to a bilinear inner product on the underlying dense
+embeddings, which we call the collapse condition. Where it holds the two scorers
+must agree, which explains part of the grid instead of tabulating it.
 
 \section{Datasets}
 \label{sec:data}
 
-Setting~A fits its bases and tunes hyperparameters on MS~MARCO passage
-\citep{bajaj2016msmarco}, which supplies $8.8$M passages, and also uses LIMIT
-\citep{weller2025limit},
-which separates lexical from semantic signal by construction and so should make
-any BM25 advantage easy to see. Configurations that look interesting transfer
-zero-shot to a subset of BEIR \citep{thakur2021beir} and to TREC-DL 19/20, with
-hyperparameters tuned only on MS~MARCO so that transfer tests generalisation
-rather than additional fitting.
+Setting~A runs over fourteen collections. Bases are fitted and hyperparameters
+tuned on MS~MARCO passage \citep{bajaj2016msmarco}, which supplies $8.8$M passages,
+and tuning happens nowhere else, so every other collection tests generalisation.
+LIMIT \citep{weller2025limit} separates lexical from
+semantic signal by construction and should make any BM25 advantage easy to see.
+TREC-DL 19 and 20 and six BEIR datasets \citep{thakur2021beir}, namely NFCorpus,
+SciFact, FiQA-2018, TREC-COVID, ArguAna and SCIDOCS, cover the domains over which
+the published reversal was reported.
 
-Because collection frequency is a property of a language and a corpus rather
-than of a model, we extend Setting~A to the Hindi, Bengali and Telugu portions
-of MIRACL \citep{zhang2023miracl} and to Hindi-English code-mixed queries, where
-transliteration and mixing distort the document-frequency curve. Neither prior
-SAE-based sparse retriever touches an Indic language, and the multilingual
-evaluation in \citet{zong2026tokens} covers six MIRACL languages of which none
-is Indian. Corpus-level measures of mixing already predict downstream behaviour
-on such data \citep{kodali2022symcom}, and our diagnostics are measures of the
-same kind, so this is a direct test of whether the fitted model captures a
-property of the distribution or an artefact of English.
+Because collection frequency is a property of a language and a corpus rather than
+of a model, the remaining four collections are the Hindi, Bengali and Telugu
+portions of MIRACL \citep{zhang2023miracl} and a set of Hindi-English code-mixed
+queries, where transliteration and mixing distort the document-frequency curve.
+Neither prior SAE-based sparse retriever touches an Indic language, and the
+multilingual evaluation in \citet{zong2026tokens} covers six MIRACL languages of
+which none is Indian. Corpus-level measures of mixing already predict downstream
+behaviour there \citep{kodali2022symcom}. Because every collection contributes its
+own rows, these four enter the fit itself, and they add under $2$M documents.
 
-Setting~B uses RULER \citep{hsieh2024ruler}, needle-in-a-haystack and LongBench
-on Llama-3.2-1B/3B-Instruct and Qwen2.5-7B-Instruct. Setting~C uses OLMoE-1B-7B
-with WikiText for perplexity and MMLU and GSM8K for downstream accuracy.
+Setting~B uses RULER \citep{hsieh2024ruler}, needle-in-a-haystack and LongBench on
+Llama-3.2-1B/3B-Instruct and Qwen2.5-7B-Instruct. Setting~C uses OLMoE-1B-7B with
+WikiText for perplexity and MMLU and GSM8K for downstream accuracy.
 
 \section{Evaluation Plan}
 \label{sec:eval}
 
-For Setting~A we report nDCG@10, MRR@10 and Recall@100/1000 alongside index
-size, query-document FLOPs and latency, since a scoring function that improves
-quality while destroying the efficiency benefit of sparsity would be a much less
-useful finding. As a pipeline check we reproduce the Appendix~C reversal of
-\citet{clavie2026latent} within a stated tolerance before trusting our own
-numbers. Setting~B reports accuracy at matched token budget against Quest
-\citep{tang2024quest} and H2O \citep{zhang2023h2o}, plus the KV budget needed
-for a fixed accuracy; Setting~C reports perplexity, MMLU, GSM8K and routing
-entropy.
+For Setting~A we report nDCG@10, MRR@10 and Recall@100/1000 alongside index size,
+FLOPs and latency, since a gain that destroys the efficiency of sparsity is worth
+less. As a pipeline check we reproduce that Appendix~C reversal within a stated
+tolerance before trusting our own numbers.
+Setting~B reports accuracy at matched token budget against Quest and H2O
+\citep{tang2024quest,zhang2023h2o}, and Setting~C reports MMLU, GSM8K, perplexity
+and routing entropy.
 
-The headline result is the diagnostics-to-margin regression, reported as
-held-out $R^2$ under leave-one-basis-family-out validation, followed by the
-cross-setting transfer error when the model fitted on Setting~A is applied to
-Settings~B and~C. Component ablations switch each BM25 mechanism on and off to
-identify which are necessary for which basis.
+The headline result is the diagnostics-to-margin regression. The fitted model emits
+three quantities we can score, the sign of the margin, measured by accuracy and
+AUC, its magnitude in units of $s$, measured by held-out $R^2$ within retrieval and
+by mean absolute error when the retrieval-fitted model is carried to Settings~B
+and~C without refitting, and the ordering of configurations within a setting,
+measured by Kendall's $\tau$. Rows are nested by representation and by collection,
+so we cluster standard errors on both axes and validate by holding out whole groups
+on each, four basis families and fourteen collections, reported separately, since
+generalising to an unseen construction method and generalising to an unseen corpus
+are different claims. Much of the raw variance sits between collections, so the
+number we report is the gain in held-out $R^2$ over a baseline carrying collection
+indicators alone, so no model can score well by learning which corpus is easy.
 
-The grid produces several hundred pairwise comparisons, so we fix the analysis
-in advance. The primary comparison is all-on against all-off per
-representation; component ablations are secondary. Significance uses a paired
-bootstrap over queries with Holm--Bonferroni correction within each family of
-comparisons, and we report effect sizes alongside $p$-values rather than
-$p$-values alone.
+The analysis is fixed in advance, since the grid produces several hundred pairwise
+comparisons. The primary comparison is all-on against all-off per representation
+and component ablations are secondary. Significance uses a paired bootstrap over
+queries with Holm--Bonferroni correction within each family of comparisons, effect
+sizes are reported alongside $p$-values, and rows are weighted by the inverse
+variance of the margin estimate, since a small code-mixed query set gives a noisier
+margin than MS~MARCO dev. The transfer holds if the predicted sign is correct on at
+least $70\%$ of held-out rows in Settings~B and~C and the mean absolute error there
+is no worse than $1.5$ times the residual spread inside retrieval.
 
-Confirming that BM25 helps on Zipfian vocabularies would only repeat what the
-cited papers already predict, so we state in advance which outcomes would be
-informative. The diagnostics might predict a large gain for KV-page selection
-where the measured effect is negative, which would show contribution to the
-output and discrimination between queries coming apart inside the transformer. A
-basis family might have diagnostics saying BM25 should help where it measurably
-does not, falsifying the Zipfian account as stated. A frequency-corrected router
-might recover part of the auxiliary-loss benefit with no retraining.
+\section{Feasibility}
+\label{sec:feasibility}
 
-\section{Timeline and Division of Labour}
-\label{sec:timeline}
-
-\begin{table}[t]
-\centering\small
-\begin{tabular}{@{}ll@{}}
-\toprule
-\textbf{Week} & \textbf{Milestone} \\
-\midrule
-1 & Frozen encoder; MS~MARCO index built \\
-2--3 & Pooled grid; reproduce Appendix~C \\
-4--5 & Token-level grid; MIRACL and code-mixed \\
-6 & Setting~B built and run \\
-7 & Setting~C routing \textbf{(Mid, 30 Sep)} \\
-8 & Fit predictor; held-out-family validation \\
-9 & Cross-setting transfer; collapse condition \\
-10 & Ablations, significance \textbf{(Final, 31 Oct)} \\
-\bottomrule
-\end{tabular}
-\caption{Ten-week plan, 20 August to 31 October 2026.}
-\label{tab:schedule}
-\end{table}
-
-Gupta builds the retrieval infrastructure, the indexing pipeline and the eight
-bases. Singh builds the modular scorer and the diagnostics, and fits the
-predictor. Sankar takes Setting~B. Tripathy takes Setting~C and the collapse
-condition, with Singh. Table~\ref{tab:schedule} gives the schedule against the
-two remaining course deadlines.
+Nine weeks separate this proposal from the final submission. The retrieval grid over
+all fourteen collections runs first and Setting~B follows it, so a transformer
+result exists by the mid submission, leaving the predictor, the cross-setting
+transfer and the ablations for the weeks after that. The four of us split the work
+by setting, with the scorer and the diagnostics shared.
 
 The hardware available to us provides nodes of four GPUs with $11$\,GB of device
-memory each, $128$\,GB of host RAM and several terabytes of local scratch. That
-memory ceiling shapes the design. MS~MARCO is
-encoded once
-with a frozen DistilBERT-scale encoder, a job that shards cleanly across nodes
-because passages are independent, and all eight pooled bases are then linear or
-quantisation maps over the cached embeddings, so no re-encoding is needed.
-Token-level granularity is capped at a $1$M-passage subsample, roughly $55$M
-vectors stored fp16 as a memmap on node-local scratch, which fits the per-node
-budget with room to spare. The MIRACL slices are far smaller than MS~MARCO.
-
-Settings~B and~C are inference-only and every model is sized to fit inside a
-single node. Llama-3.2-1B runs in fp16 on one card, while Llama-3.2-3B and
-Qwen2.5-7B run $4$-bit across two, leaving headroom for a $32$K KV cache. We
-chose OLMoE-1B-7B for Setting~C over a larger checkpoint such as Qwen3-30B-A3B
-because its $6.9$B total parameters fit a node at $4$-bit where the $30$B model
-would not, and the routing question we ask does not need the larger model, since
-OLMoE already exposes 64 experts per layer. If time runs short we cut in this
-order, token-level granularity for the quantisation bases first, then TREC-DL,
-then the longest RULER context lengths.
+memory each, which shapes the design. MS~MARCO is encoded once with a frozen
+DistilBERT-scale encoder and every pooled basis is a linear or quantisation map
+over the cached embeddings, with token-level granularity capped at a $1$M-passage
+subsample. Settings~B and~C are inference-only, and we chose OLMoE-1B-7B over a
+checkpoint such as Qwen3-30B-A3B because its $6.9$B parameters fit a node at
+$4$-bit where the $30$B model would not, while still exposing 64 experts per layer.
 
 \section{Risks and Limitations}
 \label{sec:risks}
 
-If the predictor is weak on held-out families, the project becomes a negative
-result together with a resource. The diagnostics failing to predict the margin
-is informative precisely because two published papers assert the mechanism, and
-we would report the grid as a benchmark with the collapse condition as the
-theoretical contribution. If Setting~C proves infeasible on the hardware we can
-obtain we fall back to Settings~A and~B, which still support the transfer claim.
-Our core citations are months old, so being scooped is a real risk; the
-cross-setting transfer measurement is least exposed to it.
+Confirming that BM25 helps on Zipfian vocabularies would only repeat what the cited
+papers predict, so the informative outcomes are the awkward ones. A predicted gain where
+the measured effect is negative would show contribution to the output and
+discrimination between queries coming apart inside the transformer. Diagnostics promising a gain that never appears would falsify the
+Zipfian account as stated. If the predictor is weak on both held-out axes we report
+the grid as a benchmark and the collapse condition as the theoretical contribution,
+a negative result with a resource attached. If Setting~C proves infeasible
+we fall back to Settings~A and~B, which still support the transfer claim.
 
-Four limitations are worth stating now. Setting~A uses a single frozen encoder,
-so basis effects and encoder effects are not fully separable. Setting~C is
-inference-time only, so we can make no claim about training dynamics. The
-diagnostics are correlational, and the cross-setting transfer test is the only
-part of the design with any causal flavour. Finally, the code-mixed evaluation
-depends on query sets that are smaller and noisier than MS~MARCO, so those
-results will carry wider confidence intervals than the English ones.
+Three limitations stand out. Setting~A uses a single frozen encoder, so basis and
+encoder effects are not fully separable. Setting~C is inference-time only, so we
+claim nothing about training dynamics. The diagnostics are correlational, and only
+the transfer test is causal.
 
 \bibliography{refs}
 

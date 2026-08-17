@@ -73,13 +73,24 @@ for stem in $stems; do
         failed=1
     fi
 
-    # Body length is the page on which References first appears, minus one. With
-    # no bibliography yet, every page counts as body.
+    # Body length counts every page holding body text. References starting at the
+    # top of its page means the body ended on the page before; References starting
+    # part way down means the body spilled onto that page and it counts too. Reading
+    # only where References appears would pass a body that overflows by half a page.
     total=$(pdftotext "$stem.pdf" - 2>/dev/null | awk -v RS='\f' 'END{print NR}')
     refpage=$(pdftotext "$stem.pdf" - 2>/dev/null \
         | awk -v RS='\f' '/References/{print NR; exit}')
+    spill=0
     if [ -n "$refpage" ]; then
-        body=$((refpage - 1))
+        first=$(pdftotext "$stem.pdf" - 2>/dev/null \
+            | awk -v RS='\f' -v p="$refpage" 'NR==p' | awk 'NF{print; exit}')
+        if [ "$first" = "References" ]; then
+            body=$((refpage - 1))
+        else
+            body="$refpage"
+            spill=$(pdftotext "$stem.pdf" - 2>/dev/null | awk -v RS='\f' -v p="$refpage" 'NR==p' \
+                | awk '/^References$/{exit} NF{n++} END{print n+0}')
+        fi
     else
         body="$total"
     fi
@@ -89,7 +100,7 @@ for stem in $stems; do
         fail "body is $body $(pages "$body"); the interim body must be exactly 2"
         failed=1
     elif [ "$limit" -gt 0 ] && [ "$body" -gt "$limit" ]; then
-        fail "body is $body $(pages "$body"), over the limit of $limit"
+        fail "body reaches page $body, over the limit of $limit, spilling $spill lines"
         failed=1
     else
         pass "body $body $(pages "$body"), limit $limit, $total in total"
