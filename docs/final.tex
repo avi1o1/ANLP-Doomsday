@@ -1,0 +1,89 @@
+% =====================================================================
+% FINAL SUBMISSION -- 31 October 2026.
+% At most 8 pages excluding references, plus at most two appendix pages.
+% Structured as a research paper. Every claim backed by prior results or by
+% our own numbers.
+% The challenges, limitations and future work section sits immediately before
+% the references and is exempt from the page count, provided it contains only
+% that and no results.
+% Graded on the write-up, the code as a ZIP, and a viva with a presentation.
+% Submit as ANLPDoomsday-Final.zip (this PDF + the code + the slides).
+% =====================================================================
+\documentclass[11pt]{article}
+\usepackage{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\newcommand{\idf}{\mathrm{idf}}
+\newcommand{\sfreq}{\mathrm{sf}}
+
+\title{Predicting When Collection Statistics Help Top-$k$ Selection:\\
+From Retrieval to Attention and Expert Routing}
+
+\author{
+  \textbf{Team ANLP Doomsday} \\[2pt]
+  Aviral Gupta \quad Mohit Kumar Singh \quad Anirudh Sankar \quad Arihant Tripathy \\
+  \texttt{\{aviral.gupta, mohit.singh, anirudh.sankar, arihant.tripathy\}@research.iiit.ac.in} \\
+  IIIT Hyderabad, India
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+% Written last. Check it against the body on the direction of every reported
+% effect, which is a mistake that has been made before.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+\section{Background}
+\label{sec:background}
+
+\section{Related Work}
+\label{sec:related}
+
+\section{Method}
+\label{sec:method}
+% The modular scorer and the four switches, the eight bases at two
+% granularities, the six diagnostics, and the predictor.
+
+\section{Experimental Setup}
+\label{sec:setup}
+% Datasets, budgets, hyperparameters, and the pre-registered analysis: primary
+% comparison all-on against all-off per representation, component ablations
+% secondary, paired bootstrap over queries with Holm-Bonferroni within each
+% family, effect sizes alongside p-values.
+
+\section{Results}
+\label{sec:results}
+% Setting A grid, the diagnostics-to-margin regression under
+% leave-one-basis-family-out validation, then the transfer to Settings B and C
+% with no refitting.
+
+\section{Analysis}
+\label{sec:analysis}
+% Which component of the scorer carries the effect, where the transfer holds and
+% where it inverts, and what that says about frequency against importance inside
+% a model. The collapse condition goes here.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+% Exempt from the page count. Nothing but challenges, limitations and future
+% work; a result placed here would be read as a limitation.
+\section*{Challenges, Limitations and Future Work}
+\label{sec:limitations}
+
+%\bibliography{refs}
+
+\appendix
+% Two pages at most.
+
+\end{document}

@@ -1,0 +1,78 @@
+% =====================================================================
+% MID SUBMISSION -- 30 September 2026.
+% 7-8 pages excluding references, plus one optional appendix page.
+% Must cover: a refined statement of the problem, the progress made, a
+% concrete timeline for the rest of the project, and a literature review
+% that establishes viability and motivation.
+% Graded on the write-up, the code and a viva. Slides optional.
+% Submit as ANLPDoomsday-Mid.zip (this PDF + the code).
+% =====================================================================
+\documentclass[11pt]{article}
+\usepackage{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\newcommand{\idf}{\mathrm{idf}}
+\newcommand{\sfreq}{\mathrm{sf}}
+
+\title{Predicting When Collection Statistics Help Top-$k$ Selection:\\
+From Retrieval to Attention and Expert Routing}
+
+\author{
+  \textbf{Team ANLP Doomsday} \\[2pt]
+  Aviral Gupta \quad Mohit Kumar Singh \quad Anirudh Sankar \quad Arihant Tripathy \\
+  \texttt{\{aviral.gupta, mohit.singh, anirudh.sankar, arihant.tripathy\}@research.iiit.ac.in} \\
+  IIIT Hyderabad, India
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+% Written last, from the results that exist by 30 September.
+\end{abstract}
+
+\section{Problem Statement}
+\label{sec:problem}
+% The refined, formal version of what the proposal stated informally: the three
+% selection mechanisms, the statistic none of them uses, and the quantity being
+% predicted (the margin at matched budget).
+
+\section{Background}
+\label{sec:background}
+% BM25 and what each of its components requires of a representation.
+
+\section{Related Work}
+\label{sec:related}
+% Wider than the proposal's three paragraphs. This is where viability is argued:
+% what has been measured already, what has not, and why the gap is real.
+
+\section{Method}
+\label{sec:method}
+% The modular scorer, the eight bases at two granularities, the six diagnostics,
+% and the two transformer settings, as built rather than as planned.
+
+\section{Progress}
+\label{sec:progress}
+% What runs, what it produced, and what disagrees with expectation. Reproduction
+% of the published Appendix~C reversal goes here as the pipeline check.
+
+\section{Remaining Plan}
+\label{sec:plan}
+% Concrete, dated, week by week to 31 October, with the cut order if time runs
+% short.
+
+\section{Limitations}
+\label{sec:limitations}
+
+%\bibliography{refs}
+
+\appendix
+% One page at most, and optional.
+
+\end{document}

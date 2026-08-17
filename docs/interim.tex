@@ -1,3 +1,9 @@
+% =====================================================================
+% INTERIM PROJECT PROPOSAL -- Advanced NLP (CS7.501), Monsoon 2026
+% Deadline 2.1: 14 August 2026.  Spec: "about a page or two", a pitch.
+% Submit as <TeamNameWithNoSpaces>-Interim.pdf
+% Main content is two pages; references follow.
+% =====================================================================
 \documentclass[11pt]{article}
 \usepackage{acl}
 \usepackage{times}
@@ -6,12 +12,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage{microtype}
 \usepackage{amsmath,amssymb}
-\usepackage{booktabs}
-\newcommand{\idf}{\mathrm{IDF}}
 
-\title{Concept-Space BM25: When Does BM25-Style Scoring Beat\\
-Inner-Product Scoring over Learned Concept Vocabularies?}
+\newcommand{\idf}{\mathrm{idf}}
+\newcommand{\sfreq}{\mathrm{sf}}
+
+\title{Predicting When Collection Statistics Help Top-$k$ Selection:\\
+From Retrieval to Attention and Expert Routing}
+
 \author{
+  \textbf{Team ANLP Doomsday} \\[2pt]
   Aviral Gupta \quad Mohit Kumar Singh \quad Anirudh Sankar \quad Arihant Tripathy \\
   \texttt{\{aviral.gupta, mohit.singh, anirudh.sankar, arihant.tripathy\}@research.iiit.ac.in} \\
   IIIT Hyderabad, India
@@ -19,29 +28,144 @@ Inner-Product Scoring over Learned Concept Vocabularies?}
 
 \begin{document}
 \maketitle
+
 \begin{abstract}
-BM25-style scoring continues to outperform inner-product scoring on modern learned sparse representations, and several independent papers have each confirmed this on their own choice of vocabulary and scoring function. None of them, however, explains \emph{why}. Each fixes one sparse vocabulary and one scorer at a time, so the observed gain cannot be attributed to any specific statistical property of the representation, only to the particular pairing each paper happened to test. We address this by decoupling the two variables that prior work leaves confounded. We construct seven concept vocabularies from a single frozen encoder, spanning a range from near-dense to strongly lexical, and score every one of them with both a plain inner product and a modular BM25-style function whose components (soft IDF weighting, saturation, length normalisation, and top-$k$ sparsification) can be switched on or off independently. We then examine whether cheap, pre-retrieval diagnostics of each vocabulary's distribution can predict the resulting performance gap. The intended outcome is a practical, checkable rule for when BM25-style scoring is worth using over a learned sparse representation, along with a clearer picture of which of its mechanisms actually drive the gain.
+Learned sparse retrieval, block-sparse attention and mixture-of-experts routing
+all do the same thing. Each scores a query against a set of learned non-negative
+features by inner product and keeps the top-$k$, and none of them uses how often
+a feature fires across the collection, which is the statistic BM25 is built on.
+Whether that omission costs anything is unsettled even in retrieval, where
+replacing BM25 with a plain inner product over the same vocabulary drops nDCG@10
+from $0.582$ to $0.381$ on sparse-autoencoder features and raises it from $0.455$
+to $0.568$ on SPLADE. The published account is that BM25 helps while a vocabulary
+stays Zipfian, but that has only been observed one vocabulary at a time and never
+turned into a prediction. We build eight concept vocabularies from one frozen
+encoder, score each with a BM25-style function whose components toggle
+independently, and regress the resulting margin on six
+cheap distributional measurements. The fitted predictor then goes, without refitting, to KV-page
+selection and expert routing. Whether it holds there is open. Attention sinks
+fire constantly yet cannot be removed, and the rarest experts in a
+mixture-of-experts are the most critical, so frequency may signal importance
+differently inside a model than across a corpus.
 \end{abstract}
 
-\section{Background and the Gap in Prior Work}
-BM25 has survived decades of neural retrieval because its ingredients (rare terms are weighted more heavily, repeated evidence saturates instead of accumulating linearly, and long documents are discounted) are not actually tied to words. They only require a representation whose coordinates are non-negative, whose per-dimension collection frequency is meaningful, and whose overall magnitude has a sensible notion of ``document length.'' Ordinary dense embeddings satisfy none of this: coordinates are signed, every dimension is active in every document, and there is no natural length analogue. That is why dense retrieval has conventionally been scored with a plain inner product or cosine similarity instead.
+\section{The Same Computation in Three Places}
 
-Learned sparse representations, such as $k$-means codes, sparse autoencoder (SAE) activations, and quantised codebooks, change this picture, because they produce non-negative, sparse, count-like features of the kind BM25 was designed for. Four independent papers have already reported that BM25-style scoring outperforms inner-product scoring on one particular learned vocabulary \citep{clavie2026latent,han2026bm25v,formal2026splare,zong2026tokens}, and in at least one case the same pair of scorers reverses ranking depending on which vocabulary is used. None of these papers establishes \emph{why}: each fixes one construction method and one scorer and moves on, so it is impossible to tell whether the advantage comes from something fundamental about sparse, non-negative codes, or from an accident of the particular vocabulary each paper happened to build. This is the gap our project closes.
+A learned sparse retriever scores a query-document pair as
+$\langle u_q, u_d \rangle$ over a concept vocabulary. A block-sparse attention
+kernel estimates how critical KV page $i$ is for query $q_t$ as
+$r_{t,i} = \langle q_t, c_i \rangle$ over page summaries and attends to the
+top-$k$ pages only \citep{tang2024quest}. A mixture-of-experts router gates on
+$g_e = \langle h_t, w_e \rangle$ and sends each token to its top-$k$ experts.
+These come from three literatures and perform one computation, an inner product
+against a learned non-negative basis, then a hard top-$k$.
 
-\section{Our Proposal}
-We turn this gap into an experiment we can run directly. Rather than proposing yet another sparse encoder, we hold the representation-learning question fixed and instead vary, independently and systematically, (i) how the concept vocabulary is built and (ii) how it is scored. This lets any BM25-versus-inner-product gap be attributed to a property of the vocabulary rather than to an idiosyncrasy of a single method. Concretely, we build seven concept bases from a single frozen text encoder, spanning a range from ``dense-like'' to ``lexical-like'': a split-rectified identity mapping, random projections, PCA, $k$-means codes, product and residual vector quantisation, and a Top-$K$ sparse autoencoder. Each basis is instantiated at both a pooled (single vector per document) and a token-level (per-position) granularity, so granularity itself becomes a variable we test rather than a confound left unexamined, as it has been in prior work.
+None of them asks how often a feature wins. BM25 has corrected exactly that for
+decades, discounting features that fire everywhere through inverse document
+frequency, saturating repeated evidence, and normalising for length
+\citep{robertson2009bm25}. None of those ingredients needs words. Each needs
+only a representation with non-negative coordinates, a meaningful per-dimension
+collection frequency, and a sensible notion of magnitude, and learned sparse
+features supply all three.
+Fragments of the correction keep reappearing unrecognised. The per-expert load
+bias of loss-free balancing is an additive frequency discount with no saturation
+or length term \citep{wang2024lossfree}, and streaming inference hard-codes an
+exception for the highest-frequency keys \citep{xiao2024streamingllm}. The need
+is felt case by case, but no general account says when the correction helps.
 
-Every one of these fourteen representations is then scored two ways: a plain inner product, and a modular BM25-style scorer in which soft IDF weighting, term-frequency saturation, document-length normalisation, and top-$k$ sparsification can each be switched on or off independently. This modularity is the central methodological move: instead of asking only ``does BM25 beat the dot product,'' we can ask which specific ingredient drives the gain, and for which kind of vocabulary.
+\section{What Is Already Known}
 
-The second part of our proposal is predictive rather than purely comparative. Before running any retrieval, we compute cheap distributional diagnostics for each concept basis: how many dimensions are ``alive'' per document, how skewed the term-frequency distribution is (Zipf slope, Gini coefficient, head mass), and how much IDF values vary across the vocabulary. If informative, we can regress the observed BM25-minus-inner-product margin on them to get a usable rule of thumb, e.g. ``if a vocabulary looks like X, expect BM25 to help by roughly this much,'' without exhaustively benchmarking every new representation.
+\citet{clavie2026latent} show that sparse-autoencoder features taken from a
+frozen dense retriever have roughly Zipfian collection statistics and are
+directly BM25-scorable. Their Appendix~C carries the sharpest evidence. On one
+suite BM25 reaches $0.582$ nDCG@10 against $0.381$ for the inner product on SAE
+latent terms, and $0.455$ against $0.568$ on SPLADE-v3, so the two scorers swap
+places when only the vocabulary changes. \citet{han2026bm25v} run the same
+comparison on image features and find the two within about two points of R@1
+once top-$k$ filtering is applied, which they attribute to top-$k$ already
+suppressing what IDF would down-weight. Two further papers build
+SAE-based sparse retrievers and score them by inner product without ever running
+the comparison \citep{formal2026splare,zong2026tokens}.
 
-\section{What We Will Do}
-The experimental grid is run primarily on MS MARCO passage retrieval and on LIMIT \citep{weller2026limit}, chosen deliberately because it creates a high-contrast setting between lexical and semantic retrieval signals and should make any BM25 advantage (or lack of one) easy to see. Once we have identified which configurations look interesting, we transfer them zero-shot to a subset of BEIR and to TREC-DL 19/20, tuning hyperparameters only on MS MARCO so that the transfer results are a genuine test of generalisation rather than of additional fitting. We report standard retrieval quality metrics (nDCG@10, MRR@10, Recall@100/1000) alongside efficiency numbers, namely index size, query-document FLOPs, and latency, since a scoring function that helps quality but destroys the efficiency benefits of sparsity would be a much less useful finding.
+Both papers that did compare propose the same mechanism, that BM25 helps while a
+vocabulary keeps its Zipfian structure. That explanation is already in print and
+we are not claiming it. It has only been seen one vocabulary at a time, never
+turned into a prediction, and never tested outside retrieval. CL-SR
+\citep{park2025clsr}, the nearest published system, indexes SAE-decomposed
+embeddings as concept units, whereas we leave representation learning alone and
+study the scorer.
 
-On the analysis side, the central result we are chasing is the diagnostics-to-margin regression described above, validated by holding out entire basis \emph{families} (for example, training the predictor on everything except quantisation-based methods and checking it still predicts the quantisation results reasonably). Alongside this we run ablations that switch individual BM25 components on and off to see which ones are actually necessary for which representations. As a smaller theoretical thread, we also aim to characterise the conditions under which an IDF-weighted BM25-style linear scorer provably collapses to an ordinary bilinear inner product on the underlying dense embeddings, which would explain, rather than just observe, when the two scoring functions should agree. As a sanity check on our own pipeline, we will attempt to reproduce a prior published result \citep{clavie2026latent} within a small tolerance before trusting our own new numbers.
+\section{Why the Transfer Might Fail}
 
-\section{Why It Matters}
-If this works, the payoff is not another retrieval model but a piece of understanding that is currently missing from the literature: a quantitative, checkable rule for predicting when BM25-style scoring is worth using over a learned sparse vocabulary, an account of which BM25 mechanisms matter under which distributional conditions, and a reusable benchmark and diagnostic toolkit that anyone building a new sparse concept vocabulary could run before committing to a scorer, rather than, as is currently the case, discovering the answer by trial and error after the fact.
+Inside the transformer, how often a feature fires and how much it matters come
+apart in both directions. Attention sinks are the most frequently attended keys
+in a cache, which by IDF logic makes them the least informative, yet deleting
+them collapses generation \citep{xiao2024streamingllm}. \citet{su2026superexperts}
+report the mirror case, where removing three experts out of $6{,}144$ badly
+degrades Qwen3-30B-A3B, so the rarest experts are the most critical. IDF predicts
+that second case, but would also promote thousands of merely rare experts. A
+recent KV-cache method ranks entries by expected future attention and prunes the
+low scorers \citep{devoto2025expectedattention}, the opposite ordering to IDF,
+and it works. Either the map from frequency to importance inverts between a
+corpus and a model, or two quantities have been conflated, how much a feature
+contributes to the output and how much it separates one query from another.
+Distinguishing them is what the transfer experiment is for.
+
+\section{Plan}
+
+We hold representation learning fixed and vary the basis and the scorer
+independently. Each setting gets one scoring function in which soft IDF,
+saturation, length normalisation and top-$k$ sparsification are independent
+switches, so the plain inner product is the all-off case and BM25 the all-on
+case, and any gain is attributable to a mechanism rather than a bundle.
+
+\paragraph{Bases and data.} Eight bases come from one frozen encoder and span
+near-dense to strongly lexical, namely split-rectified identity, random
+projection, PCA, $k$-means, product and residual quantisation, a Top-$K$ SAE,
+and SPLADE \citep{formal2021splade}. SPLADE matters because the reversal we are
+explaining is SPLADE against SAE. Running every basis at pooled and token-level granularity
+gives sixteen representations, making granularity a variable rather than a
+confound. We tune only on MS~MARCO, add LIMIT \citep{weller2025limit}
+because it separates lexical from semantic signal by construction, and transfer
+zero-shot to a BEIR subset and TREC-DL 19/20, reproducing the Appendix~C reversal
+first. Encoding MS~MARCO once dominates the cost, since every basis is then a
+linear map over cached embeddings.
+
+\paragraph{Languages.} Collection frequency belongs to a corpus and a language
+rather than to a model, so a predictor built on it should be tested where the
+distribution moves. No prior SAE retriever covers an Indic language, and the
+multilingual evaluation of \citet{zong2026tokens} spans six MIRACL languages,
+none Indian. We repeat the grid on the Hindi, Bengali and Telugu
+portions of MIRACL \citep{zhang2023miracl} and on Hindi-English code-mixed
+queries, where transliteration and mixing flatten the document-frequency curve.
+Corpus-level measures of mixing already predict downstream behaviour there
+\citep{kodali2022symcom}, and our diagnostics are instruments of the same kind.
+
+\paragraph{Predictor.} One forward pass per basis gives active fraction, the
+Zipf exponent of the selection-frequency curve, Gini of activation mass, head
+mass, IDF variance, and the score mass held by the top $1\%$ of features.
+\citet{han2026bm25v} report several descriptively but never predict with them. We
+regress the BM25-minus-inner-product margin on the six and validate by holding
+out whole basis families, so the predictor is never scored on a construction
+method it has seen.
+
+\paragraph{Transfer.} The fitted predictor then goes unchanged to the two
+transformer settings. For KV selection we take Quest page criticality
+\citep{tang2024quest} and weight it by $\idf(\sfreq_i)$, where $\sfreq_i$ is the
+fraction of prefill queries for which page $i$ enters the top-$k$; the saturation
+and length switches carry over to the page score and its norm. The correction
+needs no training, and whether sinks are exempted from it is an ablation rather
+than an assumption. For routing we apply the same weighting to router logits at
+inference on OLMoE-1B-7B \citep{muennighoff2025olmoe}, against loss-free
+balancing as the training-time special case.
+
+\paragraph{What would count as a result.} Confirming that BM25 helps on Zipfian
+vocabularies restates what both comparison papers predict, so the useful outcomes
+are the awkward ones. A predicted gain for KV selection where the measured effect
+is negative would separate contribution to the output from discrimination between
+queries. Diagnostics promising a gain where none appears would falsify the
+Zipfian account.
 
 \bibliography{refs}
+
 \end{document}
