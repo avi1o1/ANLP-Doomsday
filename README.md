@@ -1,4 +1,4 @@
-# Predicting When Collection Statistics Help Top-$k$ Selection
+# Predicting When Collection Statistics Help Top-k Selection
 
 Advanced NLP, Monsoon 2026. Team ANLP Doomsday: Aviral Gupta, Mohit Kumar Singh,
 Anirudh Sankar, Arihant Tripathy.
