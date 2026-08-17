@@ -552,3 +552,10 @@ results/raw/
 *.npz
 
 # Submission zips land in dist/, already ignored by the packaging rules above.
+
+# LaTeX builds at the docs/ root. The submission copies under docs/pdf/ are tracked,
+# so *.pdf stays unignored and these four are named instead.
+/docs/interim.pdf
+/docs/proposal.pdf
+/docs/mid.pdf
+/docs/final.pdf

@@ -129,7 +129,7 @@ Learned sparse features change the picture. Sparse-autoencoder activations,
 $k$-means codes and quantised codebooks are non-negative, sparse and count-like.
 KV page summaries are built from signed keys and so are not non-negative
 themselves, but the quantity IDF needs is a selection count, which is non-negative
-for pages and experts alike and has a well-defined rate over a calibration set. All
+for pages and experts alike and well defined over a calibration set. All
 three mechanisms are eligible for the same correction, so whether it helps is an
 empirical question.
 
@@ -155,7 +155,7 @@ features and find (their \S4.4) that the two differ by at most about two points 
 R@1, attributing the parity to top-$k$ filtering already suppressing what IDF would
 down-weight. The same section reports that raising the per-patch activation budget
 from $k{=}16$ to $k{=}128$ makes document frequencies converge and drops R@1 from
-$0.508$ to $0.038$, so the effect is distributional. Both converge on the Zipfian
+$0.508$ to $0.038$, so the effect is distributional. Both papers converge on the Zipfian
 explanation of Section~\ref{sec:motivation}, which is in print already and not ours
 to supply.
 
@@ -266,8 +266,8 @@ WikiText for perplexity and MMLU and GSM8K for downstream accuracy.
 
 For Setting~A we report nDCG@10, MRR@10 and Recall@100/1000 alongside index size,
 FLOPs and latency, since a gain that destroys the efficiency of sparsity is worth
-less. As a pipeline check we reproduce that Appendix~C reversal within a stated
-tolerance before trusting our own numbers.
+less. As a pipeline check we reproduce the Appendix~C reversal of
+\citet{clavie2026latent} within a stated tolerance before trusting our own numbers.
 Setting~B reports accuracy at matched token budget against Quest and H2O
 \citep{tang2024quest,zhang2023h2o}, and Setting~C reports MMLU, GSM8K, perplexity
 and routing entropy.
@@ -283,7 +283,7 @@ on each, four basis families and fourteen collections, reported separately, sinc
 generalising to an unseen construction method and generalising to an unseen corpus
 are different claims. Much of the raw variance sits between collections, so the
 number we report is the gain in held-out $R^2$ over a baseline carrying collection
-indicators alone, so no model can score well by learning which corpus is easy.
+indicators alone. No model wins that comparison by learning which corpus is easy.
 
 The analysis is fixed in advance, since the grid produces several hundred pairwise
 comparisons. The primary comparison is all-on against all-off per representation
