@@ -48,13 +48,12 @@ scorer is to run both. We predict the choice in advance. From one frozen encoder
 build sixteen representations, eight bases at two granularities, and score each with a
 single BM25-style function whose four components switch independently, so the inner
 product and BM25 are two of its configurations. Across fourteen collections, four of
-them Indic or code-mixed, we regress six diagnostics that cost one forward pass on the
-gap between the two configurations, $224$ rows in all, and validate on held-out basis
-families and corpora. Attention and routing pose the same choice and reinvent only
-fragments of the correction, so the fitted predictor applies there without refitting,
-on one effect-size scale. Whether it holds there is open. An
-attention sink fires constantly yet cannot be removed, and the strongest
-experts need not fire often.
+them Indic or code-mixed, we regress the gap between the two configurations on six
+diagnostics that cost one forward pass, $224$ rows in all, and validate on held-out
+basis families and corpora. Attention and routing pose the same choice and reinvent only
+fragments of the correction, so we carry the fitted predictor to them unchanged and
+score it on one effect-size scale. Whether it holds there is open, since frequency
+and importance need not align inside a model.
 \end{abstract}
 
 \section{Motivation and Research Gap}
@@ -83,8 +82,8 @@ Streaming inference hand-codes an exception for the
 most-attended keys in the cache \citep{xiao2024streamingllm}. Each is a local fix.
 
 The shortcoming in the published work is narrower than those local fixes suggest.
-Three papers have run the comparison, all in retrieval, and it favours the correction
-twice \citep{clavie2026latent,park2025clsr} and comes out level once
+Three papers have scored the same features both ways, all in retrieval, and the
+correction wins twice \citep{clavie2026latent,park2025clsr} and comes out level once
 \citep{han2026bm25v}. Clavi\'e et al. and Han et al. explain it the same way, that
 BM25 helps while a vocabulary keeps its Zipfian structure. None of the three varies
 the vocabulary systematically, so the account rests on a handful of vocabularies. No
@@ -101,10 +100,10 @@ No published comparison varies them systematically.
 \item One scoring function with four independent switches, so the plain inner
 product and BM25 are two configurations of one function, and any gain can be traced
 to a single mechanism.
-\item A predictor for the sign and size of the gain. Six diagnostics are regressed on
-the gap between those two configurations over $224$ rows and validated on held-out
-basis families and held-out corpora, which turns the Zipfian account into something
-usable in advance.
+\item A predictor for the sign and size of the gain. The gap between those two
+configurations is regressed on six diagnostics over $224$ rows and validated on
+held-out basis families and held-out corpora, which turns the Zipfian account into
+something usable in advance.
 \item A test outside retrieval, which no single-setting study can run. The fitted
 predictor is applied without refitting to KV-page selection and expert routing, on
 one effect-size scale across the three settings.
@@ -169,7 +168,7 @@ product against page min-max key summaries and loads only the top-$k$
 \citep{zhang2023h2o}, and StreamingLLM preserves the earliest keys as attention
 sinks \citep{xiao2024streamingllm}. Expected Attention ranks a cached pair by how
 strongly future queries are predicted to attend to it and prunes the low scorers
-\citep{devoto2025expectedattention}. None of these uses the rate at which a page is
+\citep{devoto2025expectedattention}. None of these uses the rate at which an entry is
 selected across queries. On the routing side, \citet{su2026superexperts} identify a
 handful of experts by activation magnitude, a quantity that selection rate does not
 track, and pruning three of $6{,}144$ degrades the model badly. To our knowledge no work treats retrieval
@@ -290,8 +289,8 @@ generalising to an unseen construction method and generalising to an unseen corp
 are different claims. Grouping is by corpus rather than by collection, because query
 sets over one document set share their diagnostics exactly. Since much of the raw
 variance sits between corpora, the number we report is the gain in held-out $R^2$
-over a baseline carrying corpus indicators alone, which no model wins by learning
-which corpus is easy.
+over a baseline carrying corpus indicators alone, and no model wins that comparison
+by learning which corpus is easy.
 
 The analysis is fixed in advance, since the grid produces several hundred pairwise
 comparisons. The primary comparison is all-on against all-off per representation
