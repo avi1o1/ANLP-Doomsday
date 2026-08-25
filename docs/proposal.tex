@@ -35,22 +35,26 @@ From Retrieval to Attention and Expert Routing}
 \maketitle
 
 \begin{abstract}
-On sparse-autoencoder features, BM25 scores $0.582$ nDCG@10 where a plain inner
-product over the same vectors scores $0.381$. On SPLADE the ordering reverses,
-$0.455$ against $0.568$. What BM25 adds is collection frequency, the rate at which a
-feature fires across a corpus, and the published account is that this helps only
-while a vocabulary stays Zipfian. That account has never been made predictive, so for
-a new representation the only way to pick a scorer is to run both. We make that
-choice predictable. Eight vocabularies built from one frozen encoder are scored with
-a BM25-style function whose four components toggle independently, and we regress the
-gap between its corrected and uncorrected forms on six distributional measurements
-that cost one forward pass, one row per representation and collection. Block-sparse
-attention and mixture-of-experts routing pose the same choice and consult no such
-statistic, so the fitted predictor goes to them without refitting, in units that
-carry across the three settings. Whether it holds there is open. Attention sinks fire
-for almost every query yet cannot be removed, and the experts that matter most are
-picked out by activation magnitude, not by how often they fire. Evaluation covers
-fourteen collections, four of them Indic or code-mixed.
+Retrieval, long-context attention and sparse mixture-of-experts all pick a few items
+out of many, which documents to return, which cached tokens to attend to, which
+experts to route through, by an inner product against learned features and a hard
+top-$k$. Retrieval learned long ago to down-weight
+an item that fires across the whole corpus, the collection-frequency term in BM25. On
+sparse-autoencoder features BM25 reaches $0.582$ nDCG@10 where the inner product
+reaches $0.381$, and on SPLADE the order reverses, $0.455$ against $0.568$. The
+published account is that the correction helps while a vocabulary stays Zipfian, but it
+has never been made predictive, so for a new representation the only way to choose a
+scorer is to run both. We predict the choice in advance. From one frozen encoder we
+build sixteen representations, eight bases at two granularities, and score each with a
+single BM25-style function whose four components switch independently, so the inner
+product and BM25 are two of its configurations. Across fourteen collections, four of
+them Indic or code-mixed, we regress six diagnostics that cost one forward pass on the
+gap between the two configurations, $224$ rows in all, and validate on held-out basis
+families and corpora. Attention and routing pose the same choice and reinvent only
+fragments of the correction, so the fitted predictor applies there without refitting,
+on one effect-size scale. Whether it holds there is open. An
+attention sink fires constantly yet cannot be removed, and the strongest
+experts need not fire often.
 \end{abstract}
 
 \section{Motivation and Research Gap}
@@ -66,27 +70,26 @@ $g_e = \langle h_t, w_e \rangle$ and sends the token to its top-$k$ experts
 and perform one computation, an inner product against a learned non-negative basis
 followed by a hard top-$k$.
 
-What all three leave out is any account of how often a given feature wins.
-Classical retrieval settled that question decades ago, and the correction has three
+None of the three accounts for how often a given feature is selected.
+Classical retrieval does, with a correction in three
 parts, namely inverse document frequency, which discounts features that fire
 everywhere, term-frequency saturation, so that repeated evidence stops accumulating
 linearly, and length normalisation \citep{robertson2009bm25}. Parts of it have been
 reinvented inside the transformer under other names. Loss-free load balancing adds
 a per-expert bias driven by recent load \citep{wang2024lossfree}, an additive
-frequency discount applied during training with no saturation or length term, in
-place of an auxiliary loss pushing toward uniform expert use \citep{zoph2022stmoe}.
+frequency discount applied during training with no saturation or length term, which
+replaces an auxiliary loss that pushes toward uniform expert use \citep{zoph2022stmoe}.
 Streaming inference hand-codes an exception for the
-most-attended keys in the cache \citep{xiao2024streamingllm}. Each of these is
-a local fix.
+most-attended keys in the cache \citep{xiao2024streamingllm}. Each is a local fix.
 
 The shortcoming in the published work is narrower than those local fixes suggest.
 Three papers have run the comparison, all in retrieval, and it favours the correction
 twice \citep{clavie2026latent,park2025clsr} and comes out level once
 \citep{han2026bm25v}. Clavi\'e et al. and Han et al. explain it the same way, that
 BM25 helps while a vocabulary keeps its Zipfian structure. None of the three varies
-the vocabulary systematically, so the account rests on a handful of vocabularies. It
-has never been turned into a quantity computable before the experiment, and never
-checked where the same computation runs inside a model.
+the vocabulary systematically, so the account rests on a handful of vocabularies. No
+one has turned it into a quantity that can be computed before the experiment, or
+checked it where the same computation runs inside a model.
 
 \section{Contributions}
 \label{sec:contributions}
@@ -96,15 +99,15 @@ checked where the same computation runs inside a model.
 basis construction and granularity vary while representation learning stays fixed.
 No published comparison varies them systematically.
 \item One scoring function with four independent switches, so the plain inner
-product and BM25 are two configurations of the same function and any gain names a
-single mechanism.
-\item A predictor in place of an explanation. Six diagnostics are regressed on the
-gap between those two configurations over $224$ rows and validated on held-out basis
-families and held-out corpora, turning the Zipfian account into something usable in
-advance.
+product and BM25 are two configurations of one function, and any gain can be traced
+to a single mechanism.
+\item A predictor for the sign and size of the gain. Six diagnostics are regressed on
+the gap between those two configurations over $224$ rows and validated on held-out
+basis families and held-out corpora, which turns the Zipfian account into something
+usable in advance.
 \item A test outside retrieval, which no single-setting study can run. The fitted
-predictor is applied without refitting to KV-page selection and expert routing, in
-units that carry across the three settings.
+predictor is applied without refitting to KV-page selection and expert routing, on
+one effect-size scale across the three settings.
 \end{enumerate}
 
 \section{Background}
@@ -150,15 +153,15 @@ study.
 have roughly Zipfian collection statistics and are directly BM25-scorable. Their
 Appendix~C holds the sharpest evidence for our question. On one suite BM25 reaches
 $0.582$ nDCG@10 against $0.381$ for the inner product on SAE latent terms, and
-$0.455$ against $0.568$ on SPLADE-v3, so the two scorers swap places once the
-vocabulary changes beneath them. \citet{han2026bm25v} run the comparison on image
+$0.455$ against $0.568$ on SPLADE-v3, so the two scorers swap places when the
+vocabulary changes. \citet{han2026bm25v} run the comparison on image
 features and find (their \S4.4) that the two differ by about two points of R@1 on
 most of their benchmarks, attributing the parity to top-$k$ filtering already
 suppressing what IDF would down-weight. The same section reports that raising the per-patch activation budget
 from $k{=}16$ to $k{=}128$ makes document frequencies converge and drops R@1 from
-$0.508$ to $0.038$, so the effect is distributional. Both papers converge on the Zipfian
-explanation of Section~\ref{sec:motivation}, which is in print already and not ours
-to supply.
+$0.508$ to $0.038$, so the effect is distributional. Both papers give the Zipfian
+explanation of Section~\ref{sec:motivation}, which is already published. We take it
+as given and turn it into a predictor.
 
 \paragraph{Selection inside the transformer.} Quest scores KV pages by an inner
 product against page min-max key summaries and loads only the top-$k$
@@ -167,9 +170,9 @@ product against page min-max key summaries and loads only the top-$k$
 sinks \citep{xiao2024streamingllm}. Expected Attention ranks a cached pair by how
 strongly future queries are predicted to attend to it and prunes the low scorers
 \citep{devoto2025expectedattention}. None of these uses the rate at which a page is
-selected across queries. On the routing side, \citet{su2026superexperts} single out a
-handful of experts by activation magnitude rather than by selection rate, and pruning
-three of $6{,}144$ degrades the model badly. To our knowledge no work treats retrieval
+selected across queries. On the routing side, \citet{su2026superexperts} identify a
+handful of experts by activation magnitude, a quantity that selection rate does not
+track, and pruning three of $6{,}144$ degrades the model badly. To our knowledge no work treats retrieval
 scoring, KV selection and routing as one scoring problem.
 
 \section{Proposed Methodology}
@@ -178,7 +181,7 @@ scoring, KV selection and routing as one scoring problem.
 \paragraph{A modular scorer.} For every setting we implement one scoring function
 in which soft IDF weighting, term-frequency saturation, length normalisation and
 top-$k$ sparsification are separate switches. Top-$k$ off leaves the basis at its own
-sparsity; on, it truncates each vector to its $k$ largest coordinates. The uncorrected
+sparsity, and on it truncates each vector to its $k$ largest coordinates. The uncorrected
 inner product is the all-off configuration and BM25 is the all-on configuration. The quantity we predict
 throughout is the margin,
 \begin{equation}
@@ -187,7 +190,7 @@ m = \frac{Q_{\mathrm{on}} - Q_{\mathrm{off}}}{s(S,c)},
 the change in quality between two configurations at matched budget, divided by the
 standard deviation $s(S,c)$ of that quality across the fixed set of switch
 configurations in setting $S$ on collection $c$. The margin is then dimensionless
-and means the same thing in every setting, which is what lets a model fitted in one
+and means the same thing in every setting, which lets a model fitted in one
 be scored in another. The primary metric is nDCG@10 in Setting~A, RULER accuracy in
 Setting~B and MMLU accuracy in Setting~C, and any perplexity enters as its negative,
 so every metric points the same way.
@@ -209,7 +212,7 @@ prefill queries for which page $i$ enters the top-$k$. The corrected score
 multiplies the saturated criticality by $\idf(\sfreq_i)$ and by a length term in
 $\|c_i\|$, which is the scorer of Eq.~\eqref{eq:bm25} with pages for documents. The
 method needs no training and drops into an existing kernel. Whether attention sinks
-are exempted is an ablation rather than an assumption, and if IDF suppresses them and
+are exempted is itself an ablation, and if IDF suppresses them and
 accuracy falls, that is the mechanism result.
 
 \paragraph{Setting C: expert routing.} The same correction applies to router logits
@@ -246,7 +249,7 @@ and hyperparameters tuned on MS~MARCO passage \citep{bajaj2016msmarco}, $8.8$M
 passages, and nowhere else, so every other collection tests generalisation. LIMIT \citep{weller2025limit} is built from a capacity
 argument, that the top-$k$ sets a query can return are bounded by embedding
 dimension, and lexical scoring does well on it because its dimension is high, which
-puts our bases on the axis it separates. TREC-DL 19 and 20 and six BEIR datasets
+is the axis our bases are built to span. TREC-DL 19 and 20 and six BEIR datasets
 \citep{thakur2021beir} cover the domains over which the published reversal was
 reported. The two TREC-DL query sets run over the MS~MARCO documents, so those three
 collections share one set of diagnostics.
@@ -311,8 +314,8 @@ four of us split the work by setting, with the scorer and the diagnostics shared
 \section{Risks and Limitations}
 \label{sec:risks}
 
-The informative outcomes are the awkward ones, since confirming that BM25 helps on
-Zipfian vocabularies repeats what the cited papers predict. A predicted gain where the
+The failures are the informative outcomes. Confirming that BM25 helps on
+Zipfian vocabularies only repeats what the cited papers predict. A predicted gain where the
 measured effect is negative would show contribution to the output and discrimination
 between queries coming apart inside the transformer. Diagnostics promising a gain that never appears would falsify the
 Zipfian account as stated. If the predictor is weak on both held-out axes we report
