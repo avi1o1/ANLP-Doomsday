@@ -96,30 +96,36 @@ Completed artifact checksums are verified before reuse.
 
 ### Cluster execution
 
-Submit [train.sbatch](train.sbatch) from the project checkout on the cluster. It uses
+Submit [train.sbatch](train.sbatch) from the checkout on the cluster. It uses
 `gnode083`, four GPUs, 36 CPUs, 2 GB per CPU and a four-day job limit, and activates
-`.venv`. Prepare the environment and freeze model versions first:
+`.venv` (or `VENV_DIR`). The two download-cache defaults are set directly in the script:
 
 ```sh
-.venv/bin/csx --config configs/research.yaml freeze-models --destination configs/frozen.yaml
+export IR_DATASETS_HOME="${IR_DATASETS_HOME:-/ssd_scratch/$USER/ir-datasets}"
+export HF_HOME="${HF_HOME:-/ssd_scratch/$USER/huggingface}"
+```
+
+Use those same exports for interactive tests. See [the cluster guide](context/CLUSTER.md)
+for the interactive GPU fixture and environment setup. After freezing model versions:
+
+```sh
 export CONFIG=configs/frozen.yaml
-sbatch --time=00:30:00 train.sbatch smoke
-# After checking the smoke results:
 sbatch train.sbatch
 ```
 
-The default job executes the primary retrieval workflow: data preparation, reference
-baselines, sample encoding, basis fitting, corpus encoding, indexing, evaluation,
-predictor fitting and result reporting. Independent GPU tasks use up to four GPUs;
-CPU stages run serially within the same allocation. The frozen E5 encoder is used for
-encoding; SAE bases and the retrieval predictor are trained.
+The default job executes data preparation, reference baselines, sample encoding,
+basis fitting, corpus encoding, indexing, evaluation, predictor fitting and reporting.
+Independent GPU tasks use up to four GPUs; CPU stages run serially. E5 stays frozen;
+SAE bases and the retrieval predictor are trained.
 
-Set `PROJECT_DIR` if submitting from elsewhere. Set `IR_DATASETS_HOME`, `HF_HOME`,
-`IR_DATASETS_TMP` and `OUTPUT_ROOT` for your durable/scratch storage. Resubmit the same
-command to reuse completed artifacts and resume checkpoints. Use `WORKERS=2` to reduce
-concurrency if smoke measurements show RAM pressure. The job does not build LaTeX
-or package submissions. See [the implementation guide](context/IMPLEMENTATION.md) for
-storage defaults, logs, other experiment families and individual stage commands.
+Outputs default to `/ssd_scratch/$USER/output`. The script creates `/ssd_scratch/$USER`
+and the cache/output directories before training. After the runner exits, it uses
+`rsync` to copy this directory to `ada:/share1/$USER/`, resulting in
+`/share1/$USER/output` on `ada`. Local files remain available. This requires
+noninteractive SSH access from the compute node and `rsync` on both machines.
+Set `OUTPUT_ROOT` for another output directory; it is copied under its own name.
+Set `PROJECT_DIR` if submitting from elsewhere, or `WORKERS=2` to reduce concurrency.
+Training does not build LaTeX or package submissions.
 
 ### Layout
 
@@ -131,6 +137,8 @@ storage defaults, logs, other experiment families and individual stage commands.
 | `src/*.py` | Shared CLI, launchers, scoring, diagnostics, predictor, artifacts and reporting |
 | `configs/research.yaml` | Scientific defaults and dataset/model manifest |
 | `configs/fixture.yaml` | Offline engineering fixture |
+| `configs/gpu-smoke.yaml` | Engineering fixture with real E5 encoding and CUDA SAE fitting |
+| `context/CLUSTER.md` | Interactive commands, environment variables and storage layout |
 | `train.sbatch` | Direct four-GPU Slurm launcher |
 | `tests/` | Numerical, recovery, pipeline and tiny-model parity checks |
 | `context/IMPLEMENTATION.md` | Commands, artifact formats, validation and limitations |

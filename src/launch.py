@@ -51,6 +51,9 @@ def run_stage(stage, config_path, directory, devices, workers, cpus, stop):
                     if slot in active or cursor == len(jobs):
                         continue
                     environment = os.environ.copy()
+                    # The saved task config already includes the parent's resolved paths.
+                    # Do not let inherited defaults undo explicit CLI overrides.
+                    environment.pop("OUTPUT_ROOT", None)
                     selected = devices[slot * gpu:(slot + 1) * gpu] if gpu else []
                     environment["CUDA_VISIBLE_DEVICES"] = ",".join(selected)
                     for name in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMEXPR_NUM_THREADS"):

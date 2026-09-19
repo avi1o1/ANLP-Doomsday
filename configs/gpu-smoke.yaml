@@ -1,0 +1,31 @@
+schema_version: 1
+fixture: true
+output_root: results/raw/gpu-smoke
+# Engineering documents and small bases, with the real frozen encoder and CUDA SAE fitting.
+# Run with an output root separate from research; no scientific conclusions from this fixture.
+encoder:
+  kind: e5
+  model: intfloat/multilingual-e5-base
+  revision: main
+  device: cuda
+  precision: float16
+  max_length: 128
+  batch_size: 4
+fitting: {documents: 24, max_tokens: 160, validation_fraction: 0.25, scale_documents: 12, seed: 0}
+bases:
+  - {name: identity, kind: identity}
+  - {name: gaussian, kind: random, components: 8}
+  - {name: pca, kind: pca, components: 4}
+  - {name: kmeans, kind: kmeans, clusters: 4, assignments: 2, backend: sklearn}
+  - {name: pq, kind: pq, subspaces: 2, codes: 4, backend: sklearn}
+  - {name: rq, kind: rq, stages: 2, codes: 4, backend: sklearn}
+  - {name: sae, kind: sae, features: 16, active: 4, epochs: 2, batch_size: 8, micro_batch_size: 4, checkpoint_steps: 1}
+granularities: [pooled, token]
+seeds: [0]
+budgets: [{name: small, query: 4, document: 8, primary: true}]
+shard_size: 7
+evaluation_batch_size: 2
+analysis: {bootstrap_samples: 40, seed: 0}
+datasets:
+  train: {source: local, path: tests/fixtures/ir, corpus_id: fixture-fit, language: en, split: train, role: fit}
+  english: {source: local, path: tests/fixtures/ir, corpus_id: fixture-eval, language: en, split: test, role: evaluate}

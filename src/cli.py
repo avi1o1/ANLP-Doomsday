@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -18,8 +19,8 @@ from src.config import load_config, public_config
 def parser():
     command = argparse.ArgumentParser(prog="csx", description="Collection-statistics research workflow")
     command.add_argument("--version", action="version", version=__version__)
-    command.add_argument("--config", default="configs/research.yaml")
-    command.add_argument("--output-root")
+    command.add_argument("--config", default=os.environ.get("CONFIG", "configs/research.yaml"))
+    command.add_argument("--output-root", default=os.environ.get("OUTPUT_ROOT"))
     command.add_argument("--device", choices=["cpu", "cuda"])
     sub = command.add_subparsers(dest="stage", required=True)
     for stage in ("prepare", "encode-sample", "fit-bases", "encode-corpus", "index", "evaluate", "baseline"):

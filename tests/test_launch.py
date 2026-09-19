@@ -1,8 +1,10 @@
 import json
 import os
+import signal
 import subprocess
 import sys
 import threading
+import time
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -107,25 +109,99 @@ def test_cuda_visibility_validation(monkeypatch):
         allocated_devices(4)
 
 
-def test_sbatch_entrypoint_paths_and_arguments(tmp_path):
+def batch_fixture(tmp_path, training_exit=0, sync_exit=0, checkpoint=False):
     script = Path("train.sbatch").resolve()
-    subprocess.run(["bash", "-n", str(script)], check=True)
     project = tmp_path / "project with spaces"
     binary = project / ".venv/bin"
     binary.mkdir(parents=True)
     (binary / "activate").write_text('export PATH="$PWD/.venv/bin:$PATH"\n')
-    fake_python = binary / "python"
-    fake_python.write_text(f"#!{sys.executable}\nimport json, os, sys\nprint(json.dumps(dict(argv=sys.argv[1:], cwd=os.getcwd(), cache=os.environ['IR_DATASETS_HOME'])))\n")
-    fake_python.chmod(0o755)
+    programs = {
+        "python": """import json, os, signal, sys
+from pathlib import Path
+Path('invocation.json').write_text(json.dumps(dict(argv=sys.argv[1:], cwd=os.getcwd(),
+    ir=os.environ['IR_DATASETS_HOME'], hf=os.environ['HF_HOME'])))
+if os.environ['TEST_CHECKPOINT'] == '1':
+    def stop(*_):
+        Path('checkpoint-complete').touch()
+        sys.exit(99)
+    signal.signal(signal.SIGUSR1, stop)
+    Path('ready').touch()
+    signal.pause()
+sys.exit(int(os.environ['TEST_TRAIN_EXIT']))
+""",
+        "rsync": """import json, os, sys
+from pathlib import Path
+if os.environ['TEST_CHECKPOINT'] == '1' and not Path('checkpoint-complete').exists():
+    sys.exit(88)
+Path('rsync.json').write_text(json.dumps(sys.argv[1:]))
+sys.exit(int(os.environ['TEST_SYNC_EXIT']))
+""",
+        # Record mkdir without touching the actual /scratch or /ssd_scratch mountpoints.
+        "mkdir": """import json, sys
+from pathlib import Path
+Path('mkdir.json').write_text(json.dumps(sys.argv[1:]))
+""",
+    }
+    for name, body in programs.items():
+        executable = binary / name
+        executable.write_text(f"#!{sys.executable}\n" + body)
+        executable.chmod(0o755)
     environment = {**os.environ, "SLURM_JOB_ID": "123", "SLURM_SUBMIT_DIR": str(project),
-                   "CONFIG": "configs/frozen config.yaml", "OUTPUT_ROOT": str(project / "run data"),
-                   "SLURM_TMPDIR": str(tmp_path), "NGPU": "4", "WORKERS": "2", "SLURM_CPUS_PER_TASK": "36"}
-    for name in ("PROJECT_DIR", "VENV_DIR", "IR_DATASETS_HOME", "IR_DATASETS_TMP", "HF_HOME"):
+                   "CONFIG": "configs/frozen config.yaml", "NGPU": "4", "WORKERS": "2",
+                   "SLURM_CPUS_PER_TASK": "36", "TEST_TRAIN_EXIT": str(training_exit),
+                   "TEST_SYNC_EXIT": str(sync_exit), "TEST_CHECKPOINT": str(int(checkpoint))}
+    for name in ("PROJECT_DIR", "VENV_DIR", "IR_DATASETS_HOME", "HF_HOME", "OUTPUT_ROOT"):
         environment.pop(name, None)
-    result = subprocess.run(["bash", str(script), "routing"], env=environment, capture_output=True, text=True, check=True)
-    actual = json.loads(result.stdout.splitlines()[-1])
+    return script, project, environment
+
+
+def test_sbatch_default_storage_and_archive_destination(tmp_path):
+    script, project, environment = batch_fixture(tmp_path)
+    subprocess.run(["bash", "-n", str(script)], check=True)
+    subprocess.run(["bash", str(script), "routing"], env=environment, capture_output=True, text=True, check=True)
+    actual = read_json(project / "invocation.json")
+    user = environment["USER"]
+    assert read_json(project / "mkdir.json") == ["-p", f"/ssd_scratch/{user}",
+        f"/ssd_scratch/{user}/ir-datasets", f"/ssd_scratch/{user}/huggingface", f"/ssd_scratch/{user}/output"]
     assert actual["cwd"] == str(project)
-    assert actual["cache"] == str(project / "data/ir-datasets")
+    assert actual["ir"] == f"/ssd_scratch/{user}/ir-datasets"
+    assert actual["hf"] == f"/ssd_scratch/{user}/huggingface"
     assert actual["argv"] == ["-m", "src", "--config", "configs/frozen config.yaml",
-                              "--output-root", str(project / "run data"), "launch", "--family", "routing",
+                              "--output-root", f"/ssd_scratch/{user}/output", "launch", "--family", "routing",
                               "--gpus", "4", "--workers", "2", "--cpus", "36"]
+    sync = read_json(project / "rsync.json")
+    assert sync == ["-a", "--partial", "-e", "ssh -o BatchMode=yes", "--", f"/ssd_scratch/{user}/output", f"ada:/share1/{user}/"]
+
+
+@pytest.mark.parametrize("training_exit,sync_exit,expected", [(0, 0, 0), (7, 0, 7), (0, 23, 23), (7, 23, 7)])
+def test_sbatch_overrides_and_exit_status(tmp_path, training_exit, sync_exit, expected):
+    script, project, environment = batch_fixture(tmp_path, training_exit, sync_exit)
+    environment.update(IR_DATASETS_HOME=str(tmp_path / "custom ir"), HF_HOME=str(tmp_path / "custom hf"),
+                       OUTPUT_ROOT=str(tmp_path / "custom output"))
+    result = subprocess.run(["bash", str(script)], env=environment, capture_output=True, text=True)
+    assert result.returncode == expected, result.stderr
+    actual = read_json(project / "invocation.json")
+    assert actual["ir"] == environment["IR_DATASETS_HOME"] and actual["hf"] == environment["HF_HOME"]
+    sync = read_json(project / "rsync.json")
+    assert sync[-2] == environment["OUTPUT_ROOT"]
+    if sync_exit:
+        assert "Output sync failed" in result.stderr
+
+
+def test_sbatch_checkpoint_signal_finishes_before_sync(tmp_path):
+    script, project, environment = batch_fixture(tmp_path, checkpoint=True)
+    process = subprocess.Popen(["bash", str(script)], env=environment, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, text=True)
+    try:
+        deadline = time.monotonic() + 5
+        while not (project / "ready").exists() and time.monotonic() < deadline:
+            time.sleep(0.02)
+        assert (project / "ready").exists()
+        process.send_signal(signal.SIGUSR1)
+        _, stderr = process.communicate(timeout=5)
+        assert process.returncode == 99, stderr
+        assert (project / "checkpoint-complete").exists() and (project / "rsync.json").exists()
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.communicate()

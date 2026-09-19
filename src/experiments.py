@@ -150,4 +150,6 @@ def run_task(manifest_path, index, config_path):
     if not 0 <= index < len(tasks):
         raise ValueError("Task index outside manifest")
     # exec replaces the launcher, so Slurm signals reach checkpoint-aware Python directly.
-    os.execv(sys.executable, [sys.executable, "-m", "src", "--config", config_path] + tasks[index]["argv"])
+    environment = os.environ.copy()
+    environment.pop("OUTPUT_ROOT", None)
+    os.execve(sys.executable, [sys.executable, "-m", "src", "--config", config_path] + tasks[index]["argv"], environment)
