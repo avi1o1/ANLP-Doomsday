@@ -1,0 +1,137 @@
+schema_version: 1
+output_root: results/raw/research-v1
+fixture: false
+encoder:
+  kind: e5
+  model: intfloat/multilingual-e5-base
+  revision: main  # freeze-models resolves this to a commit before cluster runs
+  device: cuda
+  precision: float16
+  max_length: 512
+  batch_size: 8
+fitting:
+  documents: 200000
+  max_tokens: 2000000
+  validation_fraction: 0.1
+  scale_documents: 1024
+  seed: 0
+bases:
+  - {name: identity, kind: identity}
+  - {name: gaussian, kind: random, components: 768}
+  - {name: pca, kind: pca, components: 384}
+  - {name: kmeans, kind: kmeans, clusters: 4096, assignments: 4, backend: faiss}
+  - {name: pq, kind: pq, subspaces: 8, codes: 256, backend: faiss}
+  - {name: rq, kind: rq, stages: 8, codes: 256, backend: faiss}
+  - name: sae
+    kind: sae
+    features: 8192
+    active: 32
+    learning_rate: 0.001
+    batch_size: 4096
+    micro_batch_size: 128
+    epochs: 3
+    warmup_fraction: 0.05
+    checkpoint_steps: 50
+  - name: sae_shared
+    kind: sae
+    features: 8192
+    active: 32
+    dictionary_basis: sae
+    dictionary_granularity: token
+    secondary: true
+granularities: [pooled, token]
+seeds: [0]
+budgets:
+  - {name: q32_d128, query: 32, document: 128, primary: true}
+  - {name: q16_d64, query: 16, document: 64}
+  - {name: q64_d256, query: 64, document: 256}
+  - {name: native, query: null, document: null, collections: [scifact, nfcorpus, arguana]}
+shard_size: 4096
+evaluation_batch_size: 32
+analysis: {bootstrap_samples: 2000, seed: 0}
+experiments:
+  robustness_seeds: [1, 2]
+  robustness_collections: [scifact, fiqa, miracl_hi, miracl_bn, miracl_te]
+  stochastic_bases: [gaussian, kmeans, pq, rq, sae]
+  parameter_collections: [scifact, fiqa, miracl_hi, miracl_bn, miracl_te]
+  k1: [0.6, 1.2, 2.4]
+  b: [0.0, 0.5, 0.75]
+  controls: [shuffled_idf, constant_length, uniform_frequency]
+  control_collections: [scifact, nfcorpus, arguana]
+datasets:
+  msmarco_train:
+    {source: ir_datasets, id: msmarco-passage/train, corpus_id: msmarco-passage, language: en, split: train, role: fit}
+  scifact:
+    {source: ir_datasets, id: beir/scifact/test, corpus_id: beir/scifact, language: en, split: test, role: evaluate}
+  nfcorpus:
+    {source: ir_datasets, id: beir/nfcorpus/test, corpus_id: beir/nfcorpus, language: en, split: test, role: evaluate}
+  fiqa:
+    {source: ir_datasets, id: beir/fiqa/test, corpus_id: beir/fiqa, language: en, split: test, role: evaluate}
+  trec_covid:
+    {source: ir_datasets, id: beir/trec-covid, corpus_id: beir/trec-covid, language: en, split: test, role: evaluate}
+  arguana:
+    {source: ir_datasets, id: beir/arguana, corpus_id: beir/arguana, language: en, split: test, role: evaluate}
+  scidocs:
+    {source: ir_datasets, id: beir/scidocs, corpus_id: beir/scidocs, language: en, split: test, role: evaluate}
+  miracl_hi:
+    {source: ir_datasets, id: miracl/hi/dev, corpus_id: miracl/hi, language: hi, split: dev, role: evaluate,
+     expected_queries: 350, expected_documents: 506264}
+  miracl_bn:
+    {source: ir_datasets, id: miracl/bn/dev, corpus_id: miracl/bn, language: bn, split: dev, role: evaluate,
+     expected_queries: 411, expected_documents: 297265}
+  miracl_te:
+    {source: ir_datasets, id: miracl/te/dev, corpus_id: miracl/te, language: te, split: dev, role: evaluate,
+     expected_queries: 828, expected_documents: 518079}
+  msmarco_dev:
+    {source: ir_datasets, id: msmarco-passage/dev/small, corpus_id: msmarco-passage, language: en, split: dev, role: evaluate}
+  trec_dl_2019:
+    {source: ir_datasets, id: msmarco-passage/trec-dl-2019/judged, corpus_id: msmarco-passage, language: en, split: test, role: evaluate}
+  trec_dl_2020:
+    {source: ir_datasets, id: msmarco-passage/trec-dl-2020/judged, corpus_id: msmarco-passage, language: en, split: test, role: evaluate}
+  limit:
+    source: hf_json
+    id: orionweller/LIMIT
+    revision: main
+    corpus_id: limit
+    language: en
+    split: test
+    role: evaluate
+    expected_documents: 50000
+    expected_queries: 1000
+external:
+  splade: {model: naver/splade-v3, revision: main, device: cuda, precision: float16, max_length: 512}
+  latent_terms:
+    enabled: false
+    status: matching_artifacts_required
+    checkpoint: null
+    preprocessing: null
+    reproduction_claim: conceptual_until_checkpoint_and_preprocessing_verified
+attention:
+  model: meta-llama/Llama-3.2-1B-Instruct
+  fallback_model: Qwen/Qwen2.5-1.5B-Instruct
+  revision: main
+  precision: float16
+  page_size: 16
+  contexts: [4096, 8192]
+  budgets: [512, 1024]
+  calibration_samples: 64
+  examples_per_task: 500
+  seed: 0
+  ruler_checkout: external/RULER
+  ruler_data: data/ruler
+  tasks: [niah_single_1, niah_single_2, niah_single_3, niah_multikey_1, niah_multikey_2,
+          niah_multikey_3, niah_multivalue, niah_multiquery, vt, cwe, fwe, qa_1, qa_2]
+  sink_ablation: false
+routing:
+  model: allenai/OLMoE-1B-7B-0924
+  revision: main
+  precision: float16
+  device_map: balanced
+  max_memory_gib: 10
+  expected_top_k: 8
+  quantization: null
+  sequence_length: 2048
+  calibration_documents: 256
+  bias_strength: 0.1
+  preserve_experts: 0
+  data: data/routing

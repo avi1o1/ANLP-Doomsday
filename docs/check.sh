@@ -44,7 +44,7 @@ if [ -z "$stems" ]; then
     done
 fi
 if [ -z "$stems" ]; then
-    printf "${RED}no built PDFs; run make first${RESET}\n" >&2
+    printf "${RED}no built PDFs; run make -C docs all from the repository root first${RESET}\n" >&2
     exit 1
 fi
 

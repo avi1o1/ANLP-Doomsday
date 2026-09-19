@@ -199,6 +199,8 @@ poetry.toml
 
 # ruff
 .ruff_cache/
+external/
+results/manifests/
 
 # LSP config files
 pyrightconfig.json
@@ -559,3 +561,7 @@ results/raw/
 /docs/proposal.pdf
 /docs/mid.pdf
 /docs/final.pdf
+
+# Slurm stdout/stderr from the direct training launcher.
+/collectionstats_*.out
+/collectionstats_*.err

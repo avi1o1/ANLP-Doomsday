@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "anlp-collectionstats"
+version = "0.1.0"
+description = "Reproducible collection-aware scoring experiments for retrieval, attention, and MoE routing"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "numpy==1.26.4",
+  "scipy==1.13.1",
+  "scikit-learn==1.5.2",
+  "PyYAML==6.0.3",
+  "ir_datasets==0.5.11",
+  "ir-measures==0.3.7",
+  "huggingface-hub==0.36.2",
+]
+
+[project.optional-dependencies]
+ml = ["torch==2.6.0", "transformers==4.51.3", "accelerate==1.6.0", "faiss-cpu==1.10.0"]
+test = ["pytest==8.3.5", "ruff==0.11.13"]
+benchmarks = ["datasets==3.5.0", "matplotlib==3.10.1"]
+quantization = ["bitsandbytes==0.45.5"]
+
+[project.scripts]
+csx = "src.cli:entrypoint"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
