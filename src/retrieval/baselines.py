@@ -43,7 +43,7 @@ class _TokenCorpus:
 
 def _bm25_config(config):
     return {"implementation": "bm25s", "method": "lucene", "k1": 1.2, "b": 0.75,
-            "backend": "numpy" if config.get("fixture", False) else "numba",
+            "backend": "numpy",
             "csc_backend": "numpy", "mmap": not config.get("fixture", False),
             "threads": int(config.get("bm25", {}).get("threads", 0)),
             "candidate_buffer": int(config.get("bm25", {}).get("candidate_buffer", 4096)),
