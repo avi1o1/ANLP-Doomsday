@@ -99,7 +99,8 @@ Completed artifact checksums are verified before reuse.
 Setting A uses separate [CPU](train-cpu.sbatch) and [GPU](train-gpu.sbatch) jobs.
 [submit-setting-a.sh](submit-setting-a.sh) submits their dependency graph, overlapping
 the independent BM25S CPU job with dense-baseline and sample-encoding GPU work. Both
-job types activate `.venv` (or `VENV_DIR`) and set the same storage defaults:
+job types currently target `gnode069` to preserve node-local SSD data, activate `.venv`
+(or `VENV_DIR`), and set the same storage defaults:
 
 ```sh
 export IR_DATASETS_HOME="${IR_DATASETS_HOME:-/ssd_scratch/$USER/ir-datasets}"

@@ -4,7 +4,7 @@
 #SBATCH --error=%x_%j.err
 #SBATCH --mail-type=END
 #SBATCH --nodes=1
-#SBATCH --nodelist=gnode083
+#SBATCH --nodelist=gnode069
 #SBATCH --cpus-per-task=36
 #SBATCH --gres=gpu:4
 #SBATCH --mem-per-cpu=2G
