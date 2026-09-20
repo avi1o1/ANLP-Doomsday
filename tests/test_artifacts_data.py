@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from src.artifacts import Artifact, StopFlag, StopRequested, atomic_json, read_json
+from src.artifacts import Artifact, StopFlag, StopRequested, atomic_json, jsonl, read_json
 from src.retrieval.data import Document, deterministic_sample, prepare_dataset, split_documents
 
 
@@ -59,3 +59,26 @@ def test_dataset_joins_shared_corpus(tmp_path):
         (raw / "qrels.tsv").write_text("q missing 1\n")
         with pytest.raises(ValueError, match="unknown document"):
             prepare_dataset({**spec, "name": "bad"}, tmp_path / "out", stop)
+
+
+def test_documented_missing_judgments_are_preserved_and_audited(tmp_path):
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    (raw / "corpus.jsonl").write_text('{"_id":"d", "title":"", "text":"document"}\n')
+    (raw / "queries.jsonl").write_text('{"_id":"q", "text":"question"}\n')
+    (raw / "qrels.tsv").write_text("q missing 2\nq d 1\n")
+    spec = dict(source="local", path=str(raw), corpus_id="shared", name="known", language="en",
+                role="evaluate", known_missing_qrel_documents={"missing": "Published source-data error"})
+    with StopFlag() as stop:
+        collection, corpus = prepare_dataset(spec, tmp_path / "out", stop)
+        assert list(jsonl(collection / "qrels.jsonl")) == [
+            {"query_id": "q", "doc_id": "missing", "relevance": 2},
+            {"query_id": "q", "doc_id": "d", "relevance": 1},
+        ]
+        assert len(list(jsonl(corpus / "documents.jsonl"))) == 1
+        issues = read_json(collection / "data_issues.json")["missing_document_judgments"]
+        assert len(issues) == 1 and issues[0]["doc_id"] == "missing"
+        assert read_json(collection / "manifest.json")["metadata"]["known_missing_document_judgments"] == 1
+        (raw / "qrels.tsv").write_text("q unexpected 1\n")
+        with pytest.raises(ValueError, match="unknown document unexpected"):
+            prepare_dataset({**spec, "name": "unexpected"}, tmp_path / "out", stop)

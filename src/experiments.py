@@ -13,7 +13,21 @@ from src.config import digest, public_config
 from src.retrieval.pipeline import fit_dataset
 
 
+SETTING_FAMILIES = {
+    "setting-a": "primary",
+    "setting-b": "attention",
+    "setting-c": "routing",
+    "retrieval": "primary",
+}
+
+
+def canonical_family(family: str) -> str:
+    """Resolve user-facing setting names to the existing experiment families."""
+    return SETTING_FAMILIES.get(family, family)
+
+
 def experiment_rows(config, family="primary"):
+    family = canonical_family(family)
     if family == "all":
         combined = {}
         for value in ("primary", "sparsity", "robustness", "parameters", "controls", "shared_sae"):
@@ -100,6 +114,8 @@ def build_tasks(config, rows, include_baselines=True):
 def write_manifest(config, directory, family="primary"):
     directory = Path(directory).resolve()
     directory.mkdir(parents=True, exist_ok=True)
+    requested_family = family
+    family = canonical_family(family)
     special = family in {"smoke", "attention", "routing", "external"}
     rows = [] if special else experiment_rows(config, family)
     if family == "smoke":
@@ -133,7 +149,8 @@ def write_manifest(config, directory, family="primary"):
             gpu = 2
         stage_records.append({"name": name, "tasks": str(path), "count": len(tasks), "gpus": gpu,
                               "dependency": "afterany" if name == "report" else "afterok"})
-    manifest = {"schema_version": 1, "family": family, "config_hash": digest(resolved),
+    manifest = {"schema_version": 1, "family": family, "requested_family": requested_family,
+                "config_hash": digest(resolved),
                 "config": str(directory / "config.yaml"), "rows": len(rows) if not special else None,
                 "scoring_configurations": 8 * len(rows) if not special else None,
                 "planned_attention_rows": len(stages["attention"]) if family == "attention" else None,

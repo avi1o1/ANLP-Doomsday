@@ -70,7 +70,20 @@ datasets:
   trec_covid:
     {source: ir_datasets, id: beir/trec-covid, corpus_id: beir/trec-covid, language: en, split: test, role: evaluate}
   arguana:
-    {source: ir_datasets, id: beir/arguana, corpus_id: beir/arguana, language: en, split: test, role: evaluate}
+    source: ir_datasets
+    id: beir/arguana
+    corpus_id: beir/arguana
+    language: en
+    split: test
+    role: evaluate
+    # Preserve the official qrels, including unretrievable judgments; never fabricate documents.
+    # The full-corpus audit found these five cases. Unexpected missing IDs still fail validation.
+    known_missing_qrel_documents:
+      test-free-speech-debate-yfsdfkhbwu-con03b: https://github.com/beir-cellar/beir/issues/172
+      test-education-ufsdfkhbwu-con03b: Full ir_datasets 0.5.11 ArguAna corpus/qrels join audit
+      test-politics-dhwem-pro06b: Full ir_datasets 0.5.11 ArguAna corpus/qrels join audit
+      test-science-sghwbdgmo-con03b: Full ir_datasets 0.5.11 ArguAna corpus/qrels join audit
+      test-society-asfhwapg-con04b: Full ir_datasets 0.5.11 ArguAna corpus/qrels join audit
   scidocs:
     {source: ir_datasets, id: beir/scidocs, corpus_id: beir/scidocs, language: en, split: test, role: evaluate}
   miracl_hi:

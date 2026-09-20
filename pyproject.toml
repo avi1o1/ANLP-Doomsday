@@ -16,6 +16,7 @@ dependencies = [
   "ir_datasets==0.5.11",
   "ir-measures==0.3.7",
   "huggingface-hub==0.36.2",
+  "python-dotenv==1.1.1",
 ]
 
 [project.optional-dependencies]

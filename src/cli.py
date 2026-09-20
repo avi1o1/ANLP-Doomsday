@@ -7,13 +7,20 @@ import json
 import os
 import sys
 import time
+from copy import deepcopy
 from pathlib import Path
 
 import yaml
+from dotenv import load_dotenv
 
 from src import __version__
 from src.artifacts import StopFlag, StopRequested, atomic_json, provenance
 from src.config import load_config, public_config
+
+
+EXPERIMENT_FAMILIES = ["primary", "retrieval", "setting-a", "sparsity", "parameters", "robustness",
+                       "controls", "shared_sae", "external", "attention", "setting-b", "routing",
+                       "setting-c", "smoke", "all"]
 
 
 def parser():
@@ -46,10 +53,10 @@ def parser():
     p = sub.add_parser("report")
     p.add_argument("--report-dir")
     p = sub.add_parser("manifest")
-    p.add_argument("--family", choices=["primary", "sparsity", "parameters", "robustness", "controls", "shared_sae", "external", "attention", "routing", "smoke", "all"], default="primary")
+    p.add_argument("--family", choices=EXPERIMENT_FAMILIES, default="primary")
     p.add_argument("--directory", default="results/manifests/primary")
     p = sub.add_parser("launch", help="Run an experiment family within the current GPU allocation")
-    p.add_argument("--family", choices=["primary", "sparsity", "parameters", "robustness", "controls", "shared_sae", "external", "attention", "routing", "smoke", "all"], default="primary")
+    p.add_argument("--family", choices=EXPERIMENT_FAMILIES, default="primary")
     p.add_argument("--gpus", type=int, default=4)
     p.add_argument("--workers", type=int, default=4)
     p.add_argument("--cpus", type=int, default=36)
@@ -140,15 +147,25 @@ def freeze_models(config, destination):
     from huggingface_hub import HfApi, hf_hub_download
 
     api = HfApi()
-    frozen = public_config(config)
-    for spec in [frozen["encoder"], frozen.get("external", {}).get("splade", {}),
-                 frozen.get("attention", {}), frozen.get("routing", {})]:
+    frozen = deepcopy(public_config(config))
+    for role, spec in [("encoder", frozen["encoder"]),
+                       ("external_splade", frozen.get("external", {}).get("splade", {})),
+                       ("attention", frozen.get("attention", {})), ("routing", frozen.get("routing", {}))]:
         if spec.get("model"):
             try:
                 spec["revision"] = api.model_info(spec["model"], revision=spec.get("revision", "main")).sha
                 hf_hub_download(spec["model"], "config.json", revision=spec["revision"])
             except Exception as error:
-                if not spec.get("fallback_model") or getattr(getattr(error, "response", None), "status_code", None) not in {401, 403}:
+                status = getattr(getattr(error, "response", None), "status_code", None)
+                if role == "external_splade" and status in {401, 403}:
+                    # An optional comparator must not block the controlled E5 run.
+                    # Retain its resolved revision and explicitly record missing access.
+                    frozen["external"]["splade_access"] = {
+                        "status": "requires_checkpoint_access",
+                        "reason": f"Hugging Face checkpoint access denied (HTTP {status})",
+                    }
+                    continue
+                if not spec.get("fallback_model") or status not in {401, 403}:
                     raise
                 spec["requested_model"] = spec["model"]
                 spec["model"] = spec["fallback_model"]
@@ -167,6 +184,7 @@ def freeze_models(config, destination):
 
 
 def main(argv=None):
+    load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
     args = parser().parse_args(argv)
     if args.stage == "task":
         from src.experiments import run_task

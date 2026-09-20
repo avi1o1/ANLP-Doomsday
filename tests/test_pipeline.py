@@ -59,6 +59,10 @@ def test_manifest_counts_groups_and_resources(tmp_path):
     assert stages["fit-cpu"]["gpus"] == stages["index"]["gpus"] == 0
     manifest = write_manifest(config, tmp_path / "routing", "routing")
     assert next(stage for stage in manifest["stages"] if stage["name"] == "routing")["gpus"] == 2
+    retrieval = write_manifest(config, tmp_path / "setting-a", "setting-a")
+    assert retrieval["family"] == "primary" and retrieval["requested_family"] == "setting-a"
+    attention = write_manifest(config, tmp_path / "setting-b", "setting-b")
+    assert attention["family"] == "attention"
 
 
 def test_shared_sae_dictionary_reuses_exact_weights(tmp_path):

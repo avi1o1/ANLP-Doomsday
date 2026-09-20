@@ -9,7 +9,7 @@ import sqlite3
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from src.artifacts import Artifact, StopFlag, file_hash, jsonl, write_jsonl
+from src.artifacts import Artifact, StopFlag, atomic_json, file_hash, jsonl, write_jsonl
 
 
 @dataclass(frozen=True)
@@ -184,6 +184,7 @@ def prepare_dataset(spec, output_root, stop: StopFlag):
             if expected is not None and len(queries) != expected:
                 raise ValueError(f"Expected {expected} queries, found {len(queries)}")
             count = 0
+            missing_references = []
             with sqlite3.connect(f"file:{corpus / 'ids.sqlite'}?mode=ro", uri=True) as db:
                 def checked_qrels():
                     nonlocal count
@@ -191,7 +192,10 @@ def prepare_dataset(spec, output_root, stop: StopFlag):
                         if r.query_id not in query_ids:
                             raise ValueError(f"Qrel references unknown query {r.query_id}")
                         if db.execute("SELECT 1 FROM documents WHERE id=?", (r.doc_id,)).fetchone() is None:
-                            raise ValueError(f"Qrel references unknown document {r.doc_id}")
+                            reason = spec.get("known_missing_qrel_documents", {}).get(r.doc_id)
+                            if not isinstance(reason, str) or not reason.strip():
+                                raise ValueError(f"Qrel references unknown document {r.doc_id}")
+                            missing_references.append({**asdict(r), "reason": reason})
                         count += 1
                         if count % 10000 == 0:
                             stop.check()
@@ -200,9 +204,14 @@ def prepare_dataset(spec, output_root, stop: StopFlag):
             if not count or not queries:
                 raise ValueError("Evaluation/development collection requires queries and qrels")
             write_jsonl(collection / "queries.jsonl", queries)
-            work.complete(["queries.jsonl", "qrels.jsonl"], query_count=len(queries),
+            atomic_json(collection / "data_issues.json", {
+                "missing_document_judgments": missing_references,
+                "policy": "Preserve official judgments; only explicitly documented missing documents are accepted.",
+            })
+            work.complete(["queries.jsonl", "qrels.jsonl", "data_issues.json"], query_count=len(queries),
                           qrel_count=count, corpus_path=str(corpus.resolve()),
-                          corpus_id=spec["corpus_id"], language=spec["language"])
+                          corpus_id=spec["corpus_id"], language=spec["language"],
+                          known_missing_document_judgments=len(missing_references))
     return collection, corpus
 
 

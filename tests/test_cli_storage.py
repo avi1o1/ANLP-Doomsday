@@ -2,7 +2,10 @@ import subprocess
 import sys
 from types import SimpleNamespace
 
-from src.cli import parser
+import pytest
+import yaml
+
+from src.cli import freeze_models, parser
 from src.config import load_config
 from src.experiments import write_manifest
 from src.launch import run_stage
@@ -32,3 +35,39 @@ def test_saved_manifest_output_wins_over_inherited_default(tmp_path, monkeypatch
     subprocess.run([sys.executable, "-m", "src", "task", "--manifest", stage["tasks"],
                     "--task-index", "0", "--task-config", manifest["config"]], check=True, capture_output=True)
     assert not (tmp_path / "wrong-run").exists()
+
+
+@pytest.mark.parametrize("denied_role", ["external_splade", "encoder"])
+def test_freeze_records_optional_access_failure_but_requires_encoder(tmp_path, monkeypatch, denied_role):
+    import huggingface_hub
+
+    class AccessDenied(Exception):
+        response = SimpleNamespace(status_code=401)
+
+    class API:
+        def model_info(self, name, **kwargs):
+            return SimpleNamespace(sha="frozen-" + name)
+
+        def dataset_info(self, name, **kwargs):
+            return SimpleNamespace(sha="dataset-revision")
+
+    def download(name, *args, **kwargs):
+        if name == denied_role:
+            raise AccessDenied()
+
+    monkeypatch.setattr(huggingface_hub, "HfApi", API)
+    monkeypatch.setattr(huggingface_hub, "hf_hub_download", download)
+    config = {"encoder": {"model": "encoder"}, "external": {"splade": {"model": "external_splade"}},
+              "datasets": {}}
+    path = tmp_path / "frozen.yaml"
+    if denied_role == "encoder":
+        with pytest.raises(AccessDenied):
+            freeze_models(config, path)
+        assert not path.exists()
+    else:
+        freeze_models(config, path)
+        result = yaml.safe_load(path.read_text())
+        assert result["encoder"]["revision"] == "frozen-encoder"
+        assert result["external"]["splade"]["revision"] == "frozen-external_splade"
+        assert result["external"]["splade_access"]["status"] == "requires_checkpoint_access"
+        assert "splade_access" not in config["external"]
