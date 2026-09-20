@@ -48,7 +48,7 @@ budgets:
   - {name: native, query: null, document: null, collections: [scifact, nfcorpus, arguana]}
 shard_size: 4096
 evaluation_batch_size: 32
-bm25: {implementation: bm25s, version: 0.3.11, method: lucene, k1: 1.2, b: 0.75, backend: numpy,
+bm25: {implementation: bm25s, version: 0.3.11, method: lucene, k1: 1.2, b: 0.75, backend: numba,
        csc_backend: numpy, mmap: true, threads: 36, candidate_buffer: 4096}
 analysis: {bootstrap_samples: 2000, seed: 0}
 experiments:

@@ -116,7 +116,7 @@ export OUTPUT_ROOT="/ssd_scratch/$USER/output/research-v4"
 bash submit-setting-a.sh
 ```
 
-BM25 uses BM25S 0.3.11 with its NumPy retrieval backend and mmap-loaded CSC index.
+BM25 uses BM25S 0.3.11 with its Numba retrieval backend and mmap-loaded CSC index.
 It remains a CPU job. Dense encoding, SAE fitting and corpus encoding use GPU jobs;
 indexing, evaluation, diagnostics, predictor fitting and reporting use CPU jobs.
 You can also submit one stage directly, for example
