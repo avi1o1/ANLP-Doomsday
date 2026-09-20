@@ -100,7 +100,8 @@ Setting A uses separate [CPU](train-cpu.sbatch) and [GPU](train-gpu.sbatch) jobs
 [submit-setting-a.sh](submit-setting-a.sh) submits their dependency graph, overlapping
 the independent BM25S CPU job with dense-baseline and sample-encoding GPU work. Both
 job types currently target `gnode069` to preserve node-local SSD data, activate `.venv`
-(or `VENV_DIR`), and set the same storage defaults:
+(or `VENV_DIR`), request eight CPUs, and set the same storage defaults. GPU jobs
+request one GPU and run one GPU task at a time:
 
 ```sh
 export IR_DATASETS_HOME="${IR_DATASETS_HOME:-/ssd_scratch/$USER/ir-datasets}"
@@ -128,7 +129,8 @@ and the cache/output directories before training. After the runner exits, it use
 `/share1/$USER/output` on `ada`. Local files remain available. This requires
 noninteractive SSH access from the compute node and `rsync` on both machines.
 Set `OUTPUT_ROOT` for another output directory; it is copied under its own name.
-Set `PROJECT_DIR` if submitting from elsewhere, or `WORKERS=2` to reduce concurrency.
+Set `PROJECT_DIR` if submitting from elsewhere. `WORKERS` defaults to one for the
+one-GPU allocation.
 Training does not build LaTeX or package submissions.
 
 ### Layout
