@@ -17,7 +17,7 @@ dependencies = [
   "ir-measures==0.3.7",
   "huggingface-hub==0.36.2",
   "python-dotenv==1.1.1",
-  "bm25s[core]==0.3.11",
+  "bm25s==0.3.11",
 ]
 
 [project.optional-dependencies]
