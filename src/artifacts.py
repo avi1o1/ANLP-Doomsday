@@ -82,7 +82,7 @@ def provenance() -> dict:
     source = {str(p.relative_to(package)): file_hash(p) for p in sorted(package.rglob("*.py"))}
     versions = {}
     for package in ("numpy", "scipy", "scikit-learn", "torch", "transformers", "ir_datasets", "ir-measures",
-                    "faiss-cpu", "huggingface-hub", "accelerate", "datasets"):
+                    "faiss-cpu", "huggingface-hub", "accelerate", "datasets", "bm25s", "numba"):
         with contextlib.suppress(importlib.metadata.PackageNotFoundError):
             versions[package] = importlib.metadata.version(package)
     return {"code_revision": revision, "source_hash": digest(source), "versions": versions}

@@ -12,7 +12,6 @@ from src.artifacts import atomic_json, jsonl, write_jsonl
 from src.config import digest, public_config
 from src.retrieval.pipeline import fit_dataset
 
-
 SETTING_FAMILIES = {
     "setting-a": "primary",
     "setting-b": "attention",

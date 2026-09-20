@@ -17,7 +17,6 @@ from src import __version__
 from src.artifacts import StopFlag, StopRequested, atomic_json, provenance
 from src.config import load_config, public_config
 
-
 EXPERIMENT_FAMILIES = ["primary", "retrieval", "setting-a", "sparsity", "parameters", "robustness",
                        "controls", "shared_sae", "external", "attention", "setting-b", "routing",
                        "setting-c", "smoke", "all"]
@@ -55,11 +54,12 @@ def parser():
     p = sub.add_parser("manifest")
     p.add_argument("--family", choices=EXPERIMENT_FAMILIES, default="primary")
     p.add_argument("--directory", default="results/manifests/primary")
-    p = sub.add_parser("launch", help="Run an experiment family within the current GPU allocation")
+    p = sub.add_parser("launch", help="Run selected experiment stages within the current allocation")
     p.add_argument("--family", choices=EXPERIMENT_FAMILIES, default="primary")
     p.add_argument("--gpus", type=int, default=4)
     p.add_argument("--workers", type=int, default=4)
     p.add_argument("--cpus", type=int, default=36)
+    p.add_argument("--stages", nargs="+", help="Only run these named manifest stages")
     p = sub.add_parser("task")
     p.add_argument("--manifest", required=True)
     p.add_argument("--task-index", type=int, required=True)
@@ -202,7 +202,7 @@ def main(argv=None):
             result = write_manifest(config, args.directory, args.family)
         elif args.stage == "launch":
             from src.launch import launch
-            return launch(config, args.family, args.gpus, args.workers, args.cpus, stop)
+            return launch(config, args.family, args.gpus, args.workers, args.cpus, stop, args.stages)
         elif args.stage == "run-retrieval":
             result = {"completed_rows": len(pipeline.run_retrieval(config, stop))}
         elif args.stage == "encode-sample":

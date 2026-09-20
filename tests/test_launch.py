@@ -101,12 +101,30 @@ def test_launch_reports_failure_without_running_dependents(tmp_path, monkeypatch
 
 
 def test_cuda_visibility_validation(monkeypatch):
+    assert allocated_devices(0) == []
     monkeypatch.setattr("torch.cuda.device_count", lambda: 4)
     monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "GPU-a,GPU-b,GPU-c,GPU-d")
     assert allocated_devices(2) == ["GPU-a", "GPU-b"]
     monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
     with pytest.raises(ValueError, match="only 1 CUDA"):
         allocated_devices(4)
+
+
+def test_launch_can_select_cpu_only_stages(tmp_path, monkeypatch):
+    config = load_config("configs/fixture.yaml")
+    config["output_root"] = str(tmp_path)
+    executed = []
+    monkeypatch.setattr("src.launch.run_stage", lambda stage, *_: executed.append(stage["name"]) or 0)
+    assert launch(config, "setting-a", 0, 1, 2, SimpleNamespace(requested=False),
+                  ["prepare", "baselines-cpu"]) == 0
+    assert executed == ["prepare", "baselines-cpu"]
+    with pytest.raises(ValueError, match="require more than 0"):
+        launch(config, "setting-a", 0, 1, 2, SimpleNamespace(requested=False), ["encode-sample"])
+
+
+@pytest.mark.parametrize("script", ["train-cpu.sbatch", "train-gpu.sbatch", "submit-setting-a.sh"])
+def test_split_slurm_scripts_have_valid_shell(script):
+    subprocess.run(["bash", "-n", script], check=True)
 
 
 def batch_fixture(tmp_path, training_exit=0, sync_exit=0, checkpoint=False):

@@ -96,9 +96,10 @@ Completed artifact checksums are verified before reuse.
 
 ### Cluster execution
 
-Submit [train.sbatch](train.sbatch) from the checkout on the cluster. It uses
-`gnode083`, four GPUs, 36 CPUs, 2 GB per CPU and a four-day job limit, and activates
-`.venv` (or `VENV_DIR`). The two download-cache defaults are set directly in the script:
+Setting A uses separate [CPU](train-cpu.sbatch) and [GPU](train-gpu.sbatch) jobs.
+[submit-setting-a.sh](submit-setting-a.sh) submits their dependency graph, overlapping
+the independent BM25S CPU job with dense-baseline and sample-encoding GPU work. Both
+job types activate `.venv` (or `VENV_DIR`) and set the same storage defaults:
 
 ```sh
 export IR_DATASETS_HOME="${IR_DATASETS_HOME:-/ssd_scratch/$USER/ir-datasets}"
@@ -110,13 +111,15 @@ for the interactive GPU fixture and environment setup. After freezing model vers
 
 ```sh
 export CONFIG=configs/frozen.yaml
-sbatch train.sbatch
+export OUTPUT_ROOT="/ssd_scratch/$USER/output/research-v4"
+bash submit-setting-a.sh
 ```
 
-The default job executes data preparation, reference baselines, sample encoding,
-basis fitting, corpus encoding, indexing, evaluation, predictor fitting and reporting.
-Independent GPU tasks use up to four GPUs; CPU stages run serially. E5 stays frozen;
-SAE bases and the retrieval predictor are trained.
+BM25 uses BM25S 0.3.11 with its Numba retrieval backend and mmap-loaded CSC index.
+It remains a CPU job. Dense encoding, SAE fitting and corpus encoding use GPU jobs;
+indexing, evaluation, diagnostics, predictor fitting and reporting use CPU jobs.
+You can also submit one stage directly, for example
+`sbatch train-cpu.sbatch setting-a baselines-cpu`.
 
 Outputs default to `/ssd_scratch/$USER/output`. The script creates `/ssd_scratch/$USER`
 and the cache/output directories before training. After the runner exits, it uses
@@ -139,7 +142,8 @@ Training does not build LaTeX or package submissions.
 | `configs/fixture.yaml` | Offline engineering fixture |
 | `configs/gpu-smoke.yaml` | Engineering fixture with real E5 encoding and CUDA SAE fitting |
 | `context/CLUSTER.md` | Interactive commands, environment variables and storage layout |
-| `train.sbatch` | Direct four-GPU Slurm launcher |
+| `train-cpu.sbatch`, `train-gpu.sbatch` | Resource-specific Slurm launchers |
+| `submit-setting-a.sh` | Setting A dependency-aware submission helper |
 | `tests/` | Numerical, recovery, pipeline and tiny-model parity checks |
 | `context/IMPLEMENTATION.md` | Commands, artifact formats, validation and limitations |
 | `context/PROTOCOL.md` | Scientific definitions and transfer decisions |
@@ -159,4 +163,4 @@ The source tree is also the Python package: `python -m src` runs the same CLI as
 entry point uses the new layout. Shared modules at the `src/` root coordinate the
 setting packages; each setting owns its benchmark adapters and experiment pipeline.
 Make targets continue to build documents and archives. Python commands run local
-checks and experiment stages, and `train.sbatch` launches cluster work.
+checks and experiment stages, and the resource-specific Slurm scripts launch cluster work.

@@ -24,6 +24,73 @@ from src.retrieval.index import (
 from src.retrieval.pipeline import chunks, prepared_paths, spec_for
 from src.scoring import CollectionStats, Switches, stable_topk
 
+BM25S_FILES = ["data.csc.index.npy", "indices.csc.index.npy", "indptr.csc.index.npy",
+               "vocab.index.json", "params.index.json", "nonoccurrence_array.index.npy"]
+
+
+class _TokenCorpus:
+    """Re-iterable token stream: BM25S makes two passes while building its index."""
+
+    def __init__(self, path, stop):
+        self.path, self.stop = path, stop
+
+    def __iter__(self):
+        for number, record in enumerate(jsonl(self.path)):
+            if number % 4096 == 0:
+                self.stop.check()
+            yield lexical_tokens(Document(**record).content)
+
+
+def _bm25_config(config):
+    return {"implementation": "bm25s", "method": "lucene", "k1": 1.2, "b": 0.75,
+            "backend": "numpy" if config.get("fixture", False) else "numba",
+            "csc_backend": "numpy", "mmap": not config.get("fixture", False),
+            "threads": int(config.get("bm25", {}).get("threads", 0)),
+            "candidate_buffer": int(config.get("bm25", {}).get("candidate_buffer", 4096)),
+            **config.get("bm25", {})}
+
+
+def _bm25_full_scores(retriever, tokens):
+    """Exact BM25S scores used only when a candidate-boundary tie is unresolved."""
+    scores = np.zeros(int(retriever.scores["num_docs"]), dtype=np.float32)
+    for token in dict.fromkeys(tokens):
+        feature = retriever.vocab_dict.get(token)
+        if feature is None:
+            continue
+        start, end = retriever.scores["indptr"][feature:feature + 2]
+        rows = retriever.scores["indices"][start:end]
+        scores[rows] += retriever.scores["data"][start:end]
+    return scores
+
+
+def _bm25_rank(retriever, tokens, doc_ids, k, exclude_id, settings, candidates=None):
+    # Collections that request this option define queries over their own document IDs.
+    eligible = len(doc_ids) - int(exclude_id is not None)
+    wanted = min(k, eligible)
+    if wanted <= 0:
+        return []
+    candidate_k = min(len(doc_ids), wanted + settings["candidate_buffer"] + int(exclude_id is not None))
+    if candidates is None:
+        indices, scores = retriever.retrieve([list(dict.fromkeys(tokens))], k=candidate_k, sorted=True,
+                                             show_progress=False, n_threads=settings["threads"])
+        indices, scores = indices[0], scores[0]
+    else:
+        indices, scores = candidates
+    indices, scores = np.asarray(indices), np.asarray(scores, dtype=np.float32)
+    names = np.asarray(doc_ids, dtype=str)[indices]
+    keep = names != exclude_id if exclude_id is not None else np.ones(len(names), dtype=bool)
+    order = np.lexsort((names[keep], -scores[keep]))
+    selected_indices, selected_scores = indices[keep][order], scores[keep][order]
+    # BM25S may choose an arbitrary subset when a score tie crosses its requested k.
+    # Resolve that uncommon case against its mmap'd CSC arrays.
+    if candidate_k < len(doc_ids) and len(selected_scores) >= wanted and selected_scores[wanted - 1] == scores[-1]:
+        full = _bm25_full_scores(retriever, tokens)
+        selected_indices = stable_topk(full, doc_ids, wanted, exclude_id)
+        selected_scores = full[selected_indices]
+    else:
+        selected_indices, selected_scores = selected_indices[:wanted], selected_scores[:wanted]
+    return [(str(doc_ids[i]), float(score)) for i, score in zip(selected_indices, selected_scores)]
+
 
 def baseline(config, dataset, method, stop):
     if method not in {"bm25", "dense", "splade"}:
@@ -32,21 +99,33 @@ def baseline(config, dataset, method, stop):
     model_spec = config.get("external", {}).get("splade", {}) if method == "splade" else config["encoder"]
     directory = root(config) / "baselines" / method / corpus_key(spec_for(config, dataset))
     encoder, vocabulary = None, None
+    bm25_settings = _bm25_config(config) if method == "bm25" else None
     with Artifact(directory, {"method": method, "model": model_spec if method != "bm25" else None,
+                              "bm25": bm25_settings,
                               "tokenizer": "unicode_NFC_casefold_LNM", "shard_size": config.get("shard_size", 4096)}, [corpus]) as work:
         if not work.reused:
             if method == "bm25":
-                terms = set()
-                for batch in chunks(jsonl(corpus / "documents.jsonl"), 4096):
-                    stop.check()
-                    for record in batch:
-                        terms.update(lexical_tokens(Document(**record).content))
-                vocabulary = {term: i for i, term in enumerate(sorted(terms))}
-                atomic_json(directory / "vocabulary.json", vocabulary)
+                import bm25s
+
+                ids = [record["doc_id"] for record in jsonl(corpus / "documents.jsonl")]
+                if len(ids) != len(set(ids)):
+                    raise ValueError("Document IDs must be unique")
+                atomic_json(directory / "ids.json", ids)
+                retriever = bm25s.BM25(k1=bm25_settings["k1"], b=bm25_settings["b"],
+                                       method=bm25_settings["method"], backend=bm25_settings["backend"],
+                                       csc_backend=bm25_settings["csc_backend"])
+                retriever.index(_TokenCorpus(corpus / "documents.jsonl", stop), show_progress=True)
+                retriever.save(directory, show_progress=False)
+                work.complete(["ids.json"] + [name for name in BM25S_FILES if (directory / name).exists()],
+                              documents=len(ids), nonzeros=len(retriever.scores["data"]))
+                retriever = None
             else:
                 encoder = SpladeEncoder(**model_spec) if method == "splade" else make_encoder(model_spec)
-            shards, outputs, stats = [], [], None
-            for number, records in enumerate(chunks(jsonl(corpus / "documents.jsonl"), config.get("shard_size", 4096))):
+            if method == "bm25":
+                pass
+            else:
+                shards, outputs, stats = [], [], None
+            for number, records in (() if method == "bm25" else enumerate(chunks(jsonl(corpus / "documents.jsonl"), config.get("shard_size", 4096)))):
                 stop.check()
                 shard = directory / f"{number:06d}"
                 with Artifact(shard, {"number": number, "method": method, "model": model_spec}, [corpus]) as part:
@@ -74,13 +153,12 @@ def baseline(config, dataset, method, stop):
                     if stats is None:
                         stats = CollectionStats.empty(values.shape[1])
                     stats.update(values)
-            if stats:
-                atomic_json(directory / "statistics.json", stats.to_dict())
-                outputs.append("statistics.json")
-            if method == "bm25":
-                outputs.append("vocabulary.json")
-            atomic_json(directory / "shards.json", shards)
-            work.complete(outputs + ["shards.json"])
+            if method != "bm25":
+                if stats:
+                    atomic_json(directory / "statistics.json", stats.to_dict())
+                    outputs.append("statistics.json")
+                atomic_json(directory / "shards.json", shards)
+                work.complete(outputs + ["shards.json"])
     evaluation = root(config) / "baseline_evaluations" / dataset / method
     with Artifact(evaluation, {"dataset": dataset, "method": method}, [directory, collection]) as work:
         if work.reused:
@@ -89,15 +167,21 @@ def baseline(config, dataset, method, stop):
         judgments = qrels_mapping(jsonl(collection / "qrels.jsonl"))
         queries = [q for q in queries if q["query_id"] in judgments]
         if method == "bm25":
-            vocabulary = read_json(directory / "vocabulary.json")
-            matrix = counts_matrix([q["text"] for q in queries], vocabulary, binary=True)
+            import bm25s
+
+            doc_ids = read_json(directory / "ids.json")
+            retriever = bm25s.BM25.load(directory, load_corpus=False, mmap=bm25_settings["mmap"],
+                                        override_params={"backend": bm25_settings["backend"],
+                                                         "csc_backend": bm25_settings["csc_backend"]},
+                                        show_progress=False)
+            query_tokens = [lexical_tokens(q["text"]) for q in queries]
         else:
             if encoder is None:
                 encoder = SpladeEncoder(**model_spec) if method == "splade" else make_encoder(model_spec)
             blocks = [encoder.encode([q["text"] for q in batch], "query")
                       for batch in chunks(queries, config["encoder"].get("batch_size", 8))]
             matrix = sparse.vstack(blocks) if method == "splade" else np.concatenate([b.dense for b in blocks])
-        stats = CollectionStats.from_dict(read_json(directory / "statistics.json")) if method != "dense" else None
+        stats = CollectionStats.from_dict(read_json(directory / "statistics.json")) if method == "splade" else None
         records, outputs = [], []
         for start in range(0, len(queries), config.get("evaluation_batch_size", 32)):
             stop.check()
@@ -109,7 +193,17 @@ def baseline(config, dataset, method, stop):
             end = min(len(queries), start + config.get("evaluation_batch_size", 32))
             ranking = [[] for _ in range(end-start)]
             tick = time.perf_counter()
-            for path in read_json(directory / "shards.json"):
+            if method == "bm25":
+                token_batch = [list(dict.fromkeys(query_tokens[i])) for i in range(start, end)]
+                candidate_k = min(len(doc_ids), 1001 + bm25_settings["candidate_buffer"])
+                candidate_ids, candidate_scores = retriever.retrieve(
+                    token_batch, k=candidate_k, sorted=True, show_progress=False,
+                    n_threads=bm25_settings["threads"])
+                ranking = [_bm25_rank(retriever, query_tokens[i], doc_ids, 1000,
+                           queries[i]["query_id"] if spec_for(config, dataset).get("exclude_identical_ids") else None,
+                           bm25_settings, (candidate_ids[i-start], candidate_scores[i-start]))
+                           for i in range(start, end)]
+            for path in ([] if method == "bm25" else read_json(directory / "shards.json")):
                 stop.check()
                 shard = Path(path)
                 ids = read_json(shard / "ids.json")
@@ -149,6 +243,9 @@ def baseline(config, dataset, method, stop):
             outputs.append(filename)
         atomic_json(evaluation / "result.json", {
             "collection": dataset, "method": method, "external": method == "splade",
+            "implementation": bm25_settings["implementation"] if method == "bm25" else None,
+            "index_bytes": sum((directory / name).stat().st_size for name in BM25S_FILES
+                               if method == "bm25" and (directory / name).exists()) if method == "bm25" else None,
             "fixture": config.get("fixture", False), "corpus_id": spec_for(config, dataset)["corpus_id"],
             "metrics": {k: float(np.mean([r["metrics"][k] for r in records])) for k in records[0]["metrics"]},
             "examples": len(records)})

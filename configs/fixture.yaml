@@ -16,6 +16,8 @@ seeds: [0]
 budgets: [{name: small, query: 4, document: 8, primary: true}]
 shard_size: 7
 evaluation_batch_size: 2
+bm25: {implementation: bm25s, version: 0.3.11, method: lucene, k1: 1.2, b: 0.75, backend: numpy,
+       csc_backend: numpy, mmap: false, threads: 1, candidate_buffer: 32}
 analysis: {bootstrap_samples: 40, seed: 0}
 datasets:
   train: {source: local, path: tests/fixtures/ir, corpus_id: fixture-fit, language: en, split: train, role: fit}

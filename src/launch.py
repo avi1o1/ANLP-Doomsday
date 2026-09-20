@@ -15,8 +15,10 @@ from src.experiments import write_manifest
 
 
 def allocated_devices(count):
-    if not 1 <= count <= 4:
-        raise ValueError("Request between one and four allocated GPUs")
+    if not 0 <= count <= 4:
+        raise ValueError("Request between zero and four allocated GPUs")
+    if count == 0:
+        return []
     import torch
 
     available = torch.cuda.device_count()
@@ -96,13 +98,22 @@ def run_stage(stage, config_path, directory, devices, workers, cpus, stop):
     return 99 if interrupted else failure
 
 
-def launch(config, family, gpus, workers, cpus, stop):
+def launch(config, family, gpus, workers, cpus, stop, stages=None):
     if workers < 1 or cpus < 1:
         raise ValueError("Worker and CPU counts must be positive")
     devices = allocated_devices(gpus)
     job = os.environ.get("SLURM_JOB_ID", "local") + "-" + uuid.uuid4().hex[:8]
     directory = Path(config["output_root"]).resolve() / "jobs" / family / job
     manifest = write_manifest(config, directory, family)
+    available = {stage["name"] for stage in manifest["stages"]}
+    selected = set(stages or available)
+    unknown = selected - available
+    if unknown:
+        raise ValueError(f"Unknown stages for {family}: {', '.join(sorted(unknown))}")
+    manifest["stages"] = [stage for stage in manifest["stages"] if stage["name"] in selected]
+    incompatible = [stage["name"] for stage in manifest["stages"] if stage["gpus"] > gpus]
+    if incompatible:
+        raise ValueError(f"Stages require more than {gpus} allocated GPUs: {', '.join(incompatible)}")
     records, failure = [], 0
     print(f"Run manifest and task logs: {directory}", flush=True)
     for stage in manifest["stages"]:
