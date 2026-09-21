@@ -123,6 +123,19 @@ indexing, evaluation, diagnostics, predictor fitting and reporting use CPU jobs.
 You can also submit one stage directly, for example
 `sbatch train-cpu.sbatch setting-a baselines-cpu`.
 
+Dense reference evaluation uses GPU FAISS shard indexes with 256-query batches. The
+full MS MARCO corpus cannot fit in one 11 GB 2080 Ti, so each stored 4,096-vector shard
+is searched exactly on the GPU. Create the GPU environment on the cluster with:
+
+```sh
+conda env create -f environment/faiss-gpu.yaml
+conda run -n collectionstats-faiss-gpu python -m pip install -e '.[benchmarks]'
+```
+
+Then set `VENV_DIR` to that environment before submitting GPU stages. The standard
+`.venv` contains CPU FAISS for fixtures only. GPU FAISS is supplied through Conda, as
+required by the upstream FAISS distribution.
+
 Outputs default to `/ssd_scratch/$USER/output`. The script creates `/ssd_scratch/$USER`
 and the cache/output directories before training. After the runner exits, it uses
 `rsync` to copy this directory to `ada:/share1/$USER/`, resulting in

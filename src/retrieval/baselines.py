@@ -92,6 +92,39 @@ def _bm25_rank(retriever, tokens, doc_ids, k, exclude_id, settings, candidates=N
     return [(str(doc_ids[i]), float(score)) for i, score in zip(selected_indices, selected_scores)]
 
 
+def _dense_config(config):
+    defaults = {"backend": "cpu" if config.get("fixture", False) else "gpu",
+                "query_batch_size": 256, "candidate_buffer": 128, "gpu_id": 0}
+    return {**defaults, **config.get("dense_search", {})}
+
+
+def _gpu_dense_ranking(index, values, queries, ids, exclude_ids, settings):
+    """Exact top-k from a GPU shard, with CPU fallback only at a tied cutoff."""
+    wanted = min(1000, len(ids))
+    candidate_k = min(len(ids), wanted + settings["candidate_buffer"] + 1)
+    distances, neighbors = index.search(np.ascontiguousarray(queries, dtype=np.float32), candidate_k)
+    output = []
+    for query, exclude_id, raw_scores, rows in zip(queries, exclude_ids, distances, neighbors):
+        scores = raw_scores
+        valid = rows >= 0
+        rows, scores = rows[valid], scores[valid]
+        names = np.asarray(ids, dtype=str)[rows]
+        if exclude_id is not None:
+            keep = names != exclude_id
+            rows, scores, names = rows[keep], scores[keep], names[keep]
+        order = np.lexsort((names, -scores))
+        rows, scores = rows[order], scores[order]
+        # GPU Faiss returns an arbitrary subset at a tied candidate boundary.
+        # Full CPU scores preserve the project's documented deterministic doc-ID tie rule.
+        if candidate_k < len(ids) and len(scores) >= wanted and scores[wanted - 1] == raw_scores[-1]:
+            full = np.asarray(query @ values.T, dtype=np.float32)
+            selected = stable_topk(full, ids, wanted, exclude_id)
+            output.append([(str(ids[i]), float(full[i])) for i in selected])
+        else:
+            output.append([(str(ids[i]), float(score)) for i, score in zip(rows[:wanted], scores[:wanted])])
+    return output
+
+
 def baseline(config, dataset, method, stop):
     if method not in {"bm25", "dense", "splade"}:
         raise ValueError("Baseline must be bm25, dense, or splade")
@@ -100,6 +133,7 @@ def baseline(config, dataset, method, stop):
     directory = root(config) / "baselines" / method / corpus_key(spec_for(config, dataset))
     encoder, vocabulary = None, None
     bm25_settings = _bm25_config(config) if method == "bm25" else None
+    dense_settings = _dense_config(config) if method == "dense" else None
     with Artifact(directory, {"method": method, "model": model_spec if method != "bm25" else None,
                               "bm25": bm25_settings,
                               "tokenizer": "unicode_NFC_casefold_LNM", "shard_size": config.get("shard_size", 4096)}, [corpus]) as work:
@@ -160,7 +194,7 @@ def baseline(config, dataset, method, stop):
                 atomic_json(directory / "shards.json", shards)
                 work.complete(outputs + ["shards.json"])
     evaluation = root(config) / "baseline_evaluations" / dataset / method
-    with Artifact(evaluation, {"dataset": dataset, "method": method}, [directory, collection]) as work:
+    with Artifact(evaluation, {"dataset": dataset, "method": method, "dense_search": dense_settings}, [directory, collection]) as work:
         if work.reused:
             return evaluation
         queries = list(jsonl(collection / "queries.jsonl"))
@@ -181,9 +215,17 @@ def baseline(config, dataset, method, stop):
             blocks = [encoder.encode([q["text"] for q in batch], "query")
                       for batch in chunks(queries, config["encoder"].get("batch_size", 8))]
             matrix = sparse.vstack(blocks) if method == "splade" else np.concatenate([b.dense for b in blocks])
+        gpu_resources = None
+        if method == "dense" and dense_settings["backend"] == "gpu" and not config.get("fixture", False):
+            import faiss
+
+            if not hasattr(faiss, "StandardGpuResources"):
+                raise RuntimeError("Dense GPU evaluation requires a GPU-enabled Faiss build; see environment/faiss-gpu.yaml")
+            gpu_resources = faiss.StandardGpuResources()
         stats = CollectionStats.from_dict(read_json(directory / "statistics.json")) if method == "splade" else None
         records, outputs = [], []
-        for start in range(0, len(queries), config.get("evaluation_batch_size", 32)):
+        batch_size = dense_settings["query_batch_size"] if method == "dense" else config.get("evaluation_batch_size", 32)
+        for start in range(0, len(queries), batch_size):
             stop.check()
             filename = f"batch-{start:08d}.json"
             if (evaluation / filename).exists():
@@ -209,20 +251,18 @@ def baseline(config, dataset, method, stop):
                 ids = read_json(shard / "ids.json")
                 if method == "dense":
                     values = np.load(shard / "vectors.npy")
-                    if config.get("fixture", False):
+                    excluded = [queries[start+i]["query_id"] if spec_for(config, dataset).get("exclude_identical_ids") else None
+                                for i in range(end-start)]
+                    if config.get("fixture", False) or dense_settings["backend"] == "cpu":
                         scores = matrix[start:end] @ values.T
+                        partial = [[(ids[j], float(s[j])) for j in stable_topk(s, ids, 1000, excluded[i])]
+                                   for i, s in enumerate(scores)]
                     else:
                         import faiss
 
-                        index = faiss.IndexFlatIP(values.shape[1])
+                        index = faiss.GpuIndexFlatIP(gpu_resources, values.shape[1])
                         index.add(values)
-                        # Full shard search retains exact deterministic ties even at the top-k cutoff.
-                        distances, neighbors = index.search(np.ascontiguousarray(matrix[start:end]), len(ids))
-                        scores = np.empty_like(distances)
-                        np.put_along_axis(scores, neighbors, distances, axis=1)
-                    partial = [[(ids[j], float(s[j])) for j in stable_topk(s, ids, 1000,
-                        queries[start+i]["query_id"] if spec_for(config, dataset).get("exclude_identical_ids") else None)]
-                               for i, s in enumerate(scores)]
+                        partial = _gpu_dense_ranking(index, values, matrix[start:end], ids, excluded, dense_settings)
                 else:
                     index = InvertedIndex(sparse.load_npz(shard / "vectors.npz"), ids, stats,
                                           Switches(True, True, True) if method == "bm25" else Switches())
@@ -244,6 +284,7 @@ def baseline(config, dataset, method, stop):
         atomic_json(evaluation / "result.json", {
             "collection": dataset, "method": method, "external": method == "splade",
             "implementation": bm25_settings["implementation"] if method == "bm25" else None,
+            "dense_search": dense_settings if method == "dense" else None,
             "index_bytes": sum((directory / name).stat().st_size for name in BM25S_FILES
                                if method == "bm25" and (directory / name).exists()) if method == "bm25" else None,
             "fixture": config.get("fixture", False), "corpus_id": spec_for(config, dataset)["corpus_id"],
