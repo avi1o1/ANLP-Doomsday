@@ -21,8 +21,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-ml = ["torch==2.6.0", "transformers==4.51.3", "accelerate==1.6.0", "faiss-cpu==1.10.0"]
-gpu-faiss = ["faiss-gpu==1.15.1"]
+ml = ["torch==2.14.0", "transformers==4.51.3", "accelerate==1.6.0", "faiss-gpu==1.15.1"]
 test = ["pytest==8.3.5", "ruff==0.11.13"]
 benchmarks = ["datasets==3.5.0", "matplotlib==3.10.1"]
 quantization = ["bitsandbytes==0.45.5"]
@@ -32,9 +31,6 @@ csx = "src.cli:entrypoint"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
-
-[tool.uv]
-conflicts = [[{ extra = "ml" }, { extra = "gpu-faiss" }]]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

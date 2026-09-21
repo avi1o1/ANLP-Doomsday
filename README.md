@@ -129,13 +129,11 @@ is searched exactly on the GPU. Install the pinned PyPI GPU wheel into the clust
 environment before submitting a GPU baseline job:
 
 ```sh
-uv pip uninstall --python "$VENV_DIR/bin/python" faiss-cpu
-uv pip install --python "$VENV_DIR/bin/python" --no-deps 'faiss-gpu==1.15.1'
+uv sync --python "$VENV_DIR/bin/python" --extra ml
 ```
 
-The wheel is for Linux x86-64, Python 3.10+ and CUDA 12. It is pinned through the
-separate `gpu-faiss` extra because it requires CUDA BLAS 12.6+, while Torch 2.6 pins
-CUDA BLAS 12.4. The existing Torch CUDA libraries are retained with `--no-deps`.
+The wheel is for Linux x86-64, Python 3.10+ and CUDA 12. The `ml` extra pins a
+matching Torch 2.14 CUDA runtime and GPU FAISS into one environment.
 
 Outputs default to `/ssd_scratch/$USER/output`. The script creates `/ssd_scratch/$USER`
 and the cache/output directories before training. After the runner exits, it uses
