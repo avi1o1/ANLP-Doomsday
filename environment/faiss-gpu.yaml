@@ -1,9 +1,0 @@
-name: collectionstats-faiss-gpu
-channels: [pytorch, nvidia, conda-forge]
-dependencies:
-  - python=3.12
-  - pytorch=2.6
-  - pytorch-cuda=12.1
-  - faiss-gpu=1.15.1
-  - numpy=1.26
-  - pip

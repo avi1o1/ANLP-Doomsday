@@ -125,16 +125,17 @@ You can also submit one stage directly, for example
 
 Dense reference evaluation uses GPU FAISS shard indexes with 256-query batches. The
 full MS MARCO corpus cannot fit in one 11 GB 2080 Ti, so each stored 4,096-vector shard
-is searched exactly on the GPU. Create the GPU environment on the cluster with:
+is searched exactly on the GPU. Install the pinned PyPI GPU wheel into the cluster
+environment before submitting a GPU baseline job:
 
 ```sh
-conda env create -f environment/faiss-gpu.yaml
-conda run -n collectionstats-faiss-gpu python -m pip install -e '.[benchmarks]'
+uv pip uninstall --python "$VENV_DIR/bin/python" faiss-cpu
+uv pip install --python "$VENV_DIR/bin/python" --no-deps 'faiss-gpu==1.15.1'
 ```
 
-Then set `VENV_DIR` to that environment before submitting GPU stages. The standard
-`.venv` contains CPU FAISS for fixtures only. GPU FAISS is supplied through Conda, as
-required by the upstream FAISS distribution.
+The wheel is for Linux x86-64, Python 3.10+ and CUDA 12. It is pinned through the
+separate `gpu-faiss` extra because it requires CUDA BLAS 12.6+, while Torch 2.6 pins
+CUDA BLAS 12.4. The existing Torch CUDA libraries are retained with `--no-deps`.
 
 Outputs default to `/ssd_scratch/$USER/output`. The script creates `/ssd_scratch/$USER`
 and the cache/output directories before training. After the runner exits, it uses
