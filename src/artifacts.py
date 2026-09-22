@@ -13,6 +13,7 @@ import signal
 import subprocess
 import tempfile
 import time
+from functools import lru_cache
 from pathlib import Path
 from typing import Iterator
 
@@ -88,6 +89,22 @@ def provenance() -> dict:
     return {"code_revision": revision, "source_hash": digest(source), "versions": versions}
 
 
+@lru_cache(maxsize=4)
+def _reuse_approvals(path):
+    return read_json(path)["manifests"]
+
+
+def approved_completed(path, manifest):
+    """Explicit, read-only reuse across upgrades; never approve partial checkpoints.
+
+    The migration audit maps absolute artifact paths to the hash of their original
+    manifest. Config/parent matching and output checks remain Artifact's responsibility.
+    """
+    audit = os.environ.get("CSX_REUSE_COMPLETED")
+    return bool(audit and manifest["status"] == "complete" and
+                _reuse_approvals(audit).get(str(Path(path).resolve())) == digest(manifest))
+
+
 class StopRequested(KeyboardInterrupt):
     pass
 
@@ -149,7 +166,9 @@ class Artifact:
         manifest_path = self.path / "manifest.json"
         if manifest_path.exists():
             old = read_json(manifest_path)
-            if old["fingerprint"] != self.fingerprint:
+            imported = (approved_completed(self.path, old) and old["config"] == self.config
+                        and old["parents"] == self.parent_records)
+            if old["fingerprint"] != self.fingerprint and not imported:
                 self._unlock()
                 raise ValueError(f"Artifact identity changed at {self.path}; use a new output_root")
             if old["status"] == "complete":

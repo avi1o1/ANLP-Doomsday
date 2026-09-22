@@ -100,8 +100,8 @@ Setting A uses separate [CPU](train-cpu.sbatch) and [GPU](train-gpu.sbatch) jobs
 [submit-setting-a.sh](submit-setting-a.sh) submits their dependency graph, overlapping
 the independent BM25S CPU job with dense-baseline and sample-encoding GPU work. Both
 job types currently target `gnode069` to preserve node-local SSD data, activate `.venv`
-(or `VENV_DIR`), request eight CPUs, and set the same storage defaults. GPU jobs
-request one GPU and run one GPU task at a time:
+(or `VENV_DIR`), request 36 CPUs, and set the same storage defaults. GPU jobs
+request four GPUs and run up to four independent tasks (nine CPU threads each):
 
 ```sh
 export IR_DATASETS_HOME="${IR_DATASETS_HOME:-/ssd_scratch/$USER/ir-datasets}"
@@ -129,11 +129,11 @@ is searched exactly on the GPU. Install the pinned PyPI GPU wheel into the clust
 environment before submitting a GPU baseline job:
 
 ```sh
-uv sync --python "$VENV_DIR/bin/python" --extra ml
+UV_PROJECT_ENVIRONMENT="$VENV_DIR" uv sync --extra ml --extra test --extra benchmarks --frozen
 ```
 
 The wheel is for Linux x86-64, Python 3.10+ and CUDA 12. The `ml` extra pins a
-matching Torch 2.14 CUDA runtime and GPU FAISS into one environment.
+Torch 2.8 / CUDA 12.8 runtime and GPU FAISS into one environment.
 
 Outputs default to `/ssd_scratch/$USER/output`. The script creates `/ssd_scratch/$USER`
 and the cache/output directories before training. After the runner exits, it uses
@@ -141,8 +141,7 @@ and the cache/output directories before training. After the runner exits, it use
 `/share1/$USER/output` on `ada`. Local files remain available. This requires
 noninteractive SSH access from the compute node and `rsync` on both machines.
 Set `OUTPUT_ROOT` for another output directory; it is copied under its own name.
-Set `PROJECT_DIR` if submitting from elsewhere. `WORKERS` defaults to one for the
-one-GPU allocation.
+Set `PROJECT_DIR` if submitting from elsewhere. `WORKERS` defaults to four for the four-GPU allocation.
 Training does not build LaTeX or package submissions.
 
 ### Layout
@@ -179,3 +178,20 @@ entry point uses the new layout. Shared modules at the `src/` root coordinate th
 setting packages; each setting owns its benchmark adapters and experiment pipeline.
 Make targets continue to build documents and archives. Python commands run local
 checks and experiment stages, and the resource-specific Slurm scripts launch cluster work.
+
+To resume after a reviewed code/environment upgrade, run the audit on the compute
+node with the existing outputs mounted, then submit from the checkout:
+
+```sh
+export OUTPUT_ROOT="/ssd_scratch/$USER/output/research-v5"
+python -m scripts.audit_resume "$OUTPUT_ROOT"
+export CSX_REUSE_COMPLETED="$OUTPUT_ROOT/resume_approval.json"
+bash submit-setting-a.sh --resume
+```
+
+This mode assumes preparation and all BM25 baselines already completed. It retains
+completed exact CPU dense results as CPU measurements, verifies checksums and query
+coverage, and uses GPU FAISS for remaining dense evaluations. Original manifests
+and provenance remain unchanged. Incomplete evaluations are archived before restart;
+partial representations require separate review. Do not edit code or update the
+environment while these jobs are running. CPU stages request no GPUs.

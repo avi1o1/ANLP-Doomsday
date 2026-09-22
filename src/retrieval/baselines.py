@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 from scipy import sparse
 
-from src.artifacts import Artifact, atomic_json, jsonl, read_json
+from src.artifacts import Artifact, approved_completed, atomic_json, jsonl, read_json
 from src.config import root
 from src.retrieval.data import Document, corpus_key
 from src.retrieval.encoding import SpladeEncoder, make_encoder
@@ -194,7 +194,16 @@ def baseline(config, dataset, method, stop):
                 atomic_json(directory / "shards.json", shards)
                 work.complete(outputs + ["shards.json"])
     evaluation = root(config) / "baseline_evaluations" / dataset / method
-    with Artifact(evaluation, {"dataset": dataset, "method": method, "dense_search": dense_settings}, [directory, collection]) as work:
+    evaluation_config = {"dataset": dataset, "method": method, "dense_search": dense_settings}
+    if method == "dense" and (evaluation / "manifest.json").exists():
+        previous = read_json(evaluation / "manifest.json")
+        if (approved_completed(evaluation, previous) and
+                {k: v for k, v in previous["config"].items() if k != "dense_search"} ==
+                {"dataset": dataset, "method": method}):
+            # Completed exact CPU results remain CPU measurements with original
+            # provenance; only unfinished evaluations use the new GPU backend.
+            evaluation_config = previous["config"]
+    with Artifact(evaluation, evaluation_config, [directory, collection]) as work:
         if work.reused:
             return evaluation
         queries = list(jsonl(collection / "queries.jsonl"))
@@ -220,7 +229,7 @@ def baseline(config, dataset, method, stop):
             import faiss
 
             if not hasattr(faiss, "StandardGpuResources"):
-                raise RuntimeError("Dense GPU evaluation requires a GPU-enabled Faiss build; see environment/faiss-gpu.yaml")
+                raise RuntimeError("Dense GPU evaluation requires GPU Faiss; install the locked ml extra")
             gpu_resources = faiss.StandardGpuResources()
         stats = CollectionStats.from_dict(read_json(directory / "statistics.json")) if method == "splade" else None
         records, outputs = [], []
@@ -232,7 +241,7 @@ def baseline(config, dataset, method, stop):
                 records.extend(read_json(evaluation / filename))
                 outputs.append(filename)
                 continue
-            end = min(len(queries), start + config.get("evaluation_batch_size", 32))
+            end = min(len(queries), start + batch_size)
             ranking = [[] for _ in range(end-start)]
             tick = time.perf_counter()
             if method == "bm25":
@@ -260,7 +269,9 @@ def baseline(config, dataset, method, stop):
                     else:
                         import faiss
 
-                        index = faiss.GpuIndexFlatIP(gpu_resources, values.shape[1])
+                        gpu_config = faiss.GpuIndexFlatConfig()
+                        gpu_config.device = dense_settings["gpu_id"]
+                        index = faiss.GpuIndexFlatIP(gpu_resources, values.shape[1], gpu_config)
                         index.add(values)
                         partial = _gpu_dense_ranking(index, values, matrix[start:end], ids, excluded, dense_settings)
                 else:
@@ -281,6 +292,8 @@ def baseline(config, dataset, method, stop):
             atomic_json(evaluation / filename, batch_records)
             records.extend(batch_records)
             outputs.append(filename)
+        if [r["query_id"] for r in records] != [q["query_id"] for q in queries]:
+            raise ValueError("Evaluation checkpoints contain missing, duplicate, or out-of-order query IDs")
         atomic_json(evaluation / "result.json", {
             "collection": dataset, "method": method, "external": method == "splade",
             "implementation": bm25_settings["implementation"] if method == "bm25" else None,

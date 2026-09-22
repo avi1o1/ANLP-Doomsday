@@ -3,6 +3,7 @@ import json
 import pytest
 
 from src.artifacts import Artifact, StopFlag, StopRequested, atomic_json, jsonl, read_json
+from src.config import digest
 from src.retrieval.data import Document, deterministic_sample, prepare_dataset, split_documents
 
 
@@ -20,6 +21,30 @@ def test_interrupted_artifact_and_corruption(tmp_path):
     with pytest.raises(ValueError), Artifact(path, {"seed": 1}):
         pass
     atomic_json(path / "checkpoint.json", {"cursor": 9})
+    with pytest.raises(ValueError, match="corrupted"), Artifact(path, {"seed": 0}):
+        pass
+
+
+def test_explicit_completed_reuse_keeps_original_provenance(tmp_path, monkeypatch):
+    from src import artifacts
+
+    path = tmp_path / "artifact"
+    with Artifact(path, {"seed": 0}) as work:
+        atomic_json(path / "value.json", {"value": 2})
+        work.complete(["value.json"])
+    original = read_json(path / "manifest.json")
+    monkeypatch.setattr(artifacts, "provenance", lambda: {"source_hash": "new", "versions": {}})
+    with pytest.raises(ValueError, match="identity changed"), Artifact(path, {"seed": 0}):
+        pass
+    audit = tmp_path / "audit.json"
+    atomic_json(audit, {"manifests": {str(path): digest(original)}})
+    monkeypatch.setenv("CSX_REUSE_COMPLETED", str(audit))
+    with Artifact(path, {"seed": 0}) as work:
+        assert work.reused
+    assert read_json(path / "manifest.json") == original
+    with pytest.raises(ValueError, match="identity changed"), Artifact(path, {"seed": 1}):
+        pass
+    atomic_json(path / "value.json", {"value": 99})
     with pytest.raises(ValueError, match="corrupted"), Artifact(path, {"seed": 0}):
         pass
 

@@ -47,6 +47,20 @@ def test_offline_pipeline_resume_shards_baselines_and_report(tmp_path):
     assert not train & val
 
 
+def test_dense_query_batch_size_covers_every_query(tmp_path):
+    config = load_config("configs/fixture.yaml")
+    config["output_root"] = str(tmp_path)
+    config["dense_search"]["query_batch_size"] = 4
+    config["evaluation_batch_size"] = 2
+    with StopFlag() as stop:
+        pipeline.prepare(config, "english", stop)
+        path = baseline(config, "english", "dense", stop)
+        assert read_json(path / "result.json")["examples"] == 6
+        assert len(read_json(path / "batch-00000000.json")) == 4
+        assert len(read_json(path / "batch-00000004.json")) == 2
+        baseline(config, "english", "dense", stop)
+
+
 def test_manifest_counts_groups_and_resources(tmp_path):
     config = load_config("configs/research.yaml")
     rows = experiment_rows(config)
