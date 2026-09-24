@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from pathlib import Path
@@ -10,6 +11,7 @@ import yaml
 
 from src.artifacts import atomic_json, jsonl, write_jsonl
 from src.config import digest, public_config
+from src.retrieval.data import corpus_key
 from src.retrieval.pipeline import fit_dataset
 
 SETTING_FAMILIES = {
@@ -69,7 +71,7 @@ def experiment_rows(config, family="primary"):
 
 def build_tasks(config, rows, include_baselines=True):
     stages = {name: [] for name in ["prepare", "baselines-cpu", "baselines-gpu", "encode-sample", "fit-cpu",
-                                  "fit-gpu", "fit-shared", "encode-corpus", "index", "evaluate", "analysis"]}
+                                  "fit-gpu", "fit-shared", "encode-corpus", "join-encoded", "index", "evaluate", "analysis"]}
     datasets = sorted({r["collection"] for r in rows} | {fit_dataset(config)})
     stages["prepare"] = [["prepare", "--dataset", d] for d in datasets]
     stages["encode-sample"] = [["encode-sample"]]
@@ -88,6 +90,22 @@ def build_tasks(config, rows, include_baselines=True):
     for dataset, name, granularity, seed in encoded:
         stages["encode-corpus"].append(["encode-corpus", "--dataset", dataset, "--basis", name,
                                        "--granularity", granularity, "--seed", str(seed)])
+    if config.get("shared_encoding", {}).get("enabled", False):
+        stages["encode-corpus"] = []
+        groups = {}
+        for dataset, name, granularity, seed in encoded:
+            for side in ("documents", "queries"):
+                key = corpus_key(config["datasets"][dataset]) if side == "documents" else dataset
+                group = groups.setdefault((side, key), {"dataset": dataset, "representations": set()})
+                group["representations"].add((name, granularity, seed))
+        for (side, _), group in sorted(groups.items()):
+            arguments = ["--dataset", group["dataset"], "--side", side,
+                         "--representations", json.dumps(sorted(group["representations"]))]
+            count = config["shared_encoding"].get("shards_per_corpus", 4) if side == "documents" else 1
+            for shard in range(count):
+                stages["encode-corpus"].append(["encode-shared", *arguments,
+                                               "--shard-id", str(shard), "--num-shards", str(count)])
+            stages["join-encoded"].append(["join-encoded", *arguments])
     indexes = sorted({(r["collection"], r["basis"], r["granularity"], r["seed"], r["budget"]) for r in rows})
     for dataset, name, granularity, seed, budget in indexes:
         stages["index"].append(["index", "--dataset", dataset, "--basis", name, "--granularity", granularity,

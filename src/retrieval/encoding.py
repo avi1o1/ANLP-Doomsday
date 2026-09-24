@@ -26,7 +26,7 @@ class FixtureEncoder:
         self.dimension = dimension
         self.revision = "fixture-v1"
 
-    def encode(self, texts, kind="document"):
+    def encode(self, texts, kind="document", device_output=False):
         tokens = []
         for text in texts:
             words = text.split()
@@ -63,7 +63,7 @@ class E5Encoder:
         self.dimension = self.model.config.hidden_size
         self.revision = getattr(self.model.config, "_commit_hash", None) or revision
 
-    def encode(self, texts, kind="document"):
+    def encode(self, texts, kind="document", device_output=False):
         torch = self.torch
         prefix = "query: " if kind == "query" else "passage: "
         inputs = [prefix + text for text in texts]
@@ -83,7 +83,13 @@ class E5Encoder:
             mask = encoded["attention_mask"].bool()
             dense = (hidden * mask.unsqueeze(-1)).sum(1) / mask.sum(1, keepdim=True).clamp_min(1)
             dense = torch.nn.functional.normalize(dense, dim=1)
-            tokens = [h[m.to(h.device)].cpu().numpy() for h, m in zip(hidden, content)]
+            tokens = [h[m.to(h.device)] for h, m in zip(hidden, content)]
+            if device_output:
+                pooled = torch.stack([t.mean(0) if len(t) else hidden.new_zeros(self.dimension) for t in tokens])
+                return EncodedBatch(pooled, tokens, dense,
+                                    [n > self.max_length for n in lengths], [len(t) for t in tokens],
+                                    [m.numpy() for m in content], [m.cpu().numpy() for m in mask])
+            tokens = [t.cpu().numpy() for t in tokens]
         pooled = np.stack([t.mean(0) if len(t) else np.zeros(self.dimension, dtype=np.float32) for t in tokens])
         return EncodedBatch(pooled, tokens, dense.cpu().numpy(),
                             [n > self.max_length for n in lengths], [len(t) for t in tokens],

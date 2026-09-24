@@ -15,14 +15,18 @@ from src.config import digest
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output_root", type=Path)
+    parser.add_argument("--encoding", action="store_true", help="Also validate fitting and encoded shards")
     args = parser.parse_args()
     root = args.output_root.resolve()
     approved, archived = {}, []
-    for subtree in ("datasets", "baselines", "baseline_evaluations"):
+    folders = ["datasets", "baselines", "baseline_evaluations"]
+    if args.encoding:
+        folders += ["sample", "bases", "encoded"]
+    for subtree in folders:
         for path in sorted((root / subtree).rglob("manifest.json")):
             manifest = read_json(path)
             if manifest["status"] != "complete":
-                if subtree == "baseline_evaluations":
+                if subtree == "baseline_evaluations" or (subtree == "encoded" and path.parent.parent.name == "shards"):
                     target = root / "resume_archive" / str(time.time_ns()) / path.parent.relative_to(root)
                     target.parent.mkdir(parents=True, exist_ok=True)
                     path.parent.rename(target)
@@ -45,7 +49,7 @@ def main():
             approved[str(path.parent)] = digest(manifest)
     if not approved:
         raise ValueError("No completed artifacts found")
-    target = root / "resume_approval.json"
+    target = root / ("encoding_resume_approval.json" if args.encoding else "resume_approval.json")
     atomic_json(target, {"manifests": approved, "archived": archived,
                          "new_provenance": provenance(), "created": time.time()})
     print(f"Verified {len(approved)} completed artifacts; reuse audit: {target}", flush=True)

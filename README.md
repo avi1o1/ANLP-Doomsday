@@ -195,3 +195,30 @@ coverage, and uses GPU FAISS for remaining dense evaluations. Original manifests
 and provenance remain unchanged. Incomplete evaluations are archived before restart;
 partial representations require separate review. Do not edit code or update the
 environment while these jobs are running. CPU stages request no GPUs.
+
+The corpus encoder now supports shared GPU execution through `shared_encoding` in
+the experiment config. `launch --stages encode-corpus` partitions each unique
+document corpus across four workers, runs E5 once per unfinished batch, and applies
+all required dictionaries on the same GPU activations. Token transforms are batched
+in bounded chunks; exact feature-value ties prefer lower feature IDs. The final CPU
+job runs `join-encoded` before indexing. Shared MS MARCO/TREC-DL documents are encoded
+once per representation, while query sets stay separate.
+
+For the reviewed migration of an existing encoding run, stop its launcher with
+SIGUSR1, wait for every worker to exit, and run `python -m scripts.audit_resume
+"$OUTPUT_ROOT" --encoding` on the compute node. Use a frozen configuration containing
+`shared_encoding: {enabled: true, backend: cuda, batch_size: 8,
+token_chunk_size: 1024, shards_per_corpus: 4}`. Then submit:
+
+```sh
+export CSX_REUSE_COMPLETED="$OUTPUT_ROOT/encoding_resume_approval.json"
+bash submit-setting-a.sh --resume-encoding
+```
+
+This resumes encoding and queues CPU joining/evaluation without refitting any basis.
+Completed artifacts retain original provenance; incomplete shards are archived and
+recomputed. CPU and CUDA arithmetic are validated numerically, not claimed bitwise
+identical. Batch size 8 is retained for compatibility with existing FP16 E5 outputs;
+larger tested batches changed quantized assignments beyond the migration tolerance.
+Benchmark tools and tests are in `scripts/benchmark_shared.py` and
+`tests/test_shared_encoding.py`.

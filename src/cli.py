@@ -29,6 +29,13 @@ def parser():
     command.add_argument("--output-root", default=os.environ.get("OUTPUT_ROOT"))
     command.add_argument("--device", choices=["cpu", "cuda"])
     sub = command.add_subparsers(dest="stage", required=True)
+    for stage in ("encode-shared", "join-encoded"):
+        p = sub.add_parser(stage)
+        p.add_argument("--dataset", required=True)
+        p.add_argument("--side", choices=["documents", "queries"], required=True)
+        p.add_argument("--representations", type=json.loads, required=True)
+        p.add_argument("--shard-id", type=int, default=0)
+        p.add_argument("--num-shards", type=int, default=1)
     for stage in ("prepare", "encode-sample", "fit-bases", "encode-corpus", "index", "evaluate", "baseline"):
         p = sub.add_parser(stage)
         p.add_argument("--dataset")
@@ -220,6 +227,13 @@ def main(argv=None):
             result = smoke(config, args.model)
         elif args.stage == "freeze-models":
             result = freeze_models(config, args.destination)
+        elif args.stage in {"encode-shared", "join-encoded"}:
+            from src.retrieval.shared_encoding import encode_shared, join_shared
+            if args.stage == "encode-shared":
+                result = encode_shared(config, args.dataset, args.side, args.representations, stop,
+                                       args.shard_id, args.num_shards)
+            else:
+                result = join_shared(config, args.dataset, args.side, args.representations, stop)
         elif args.stage == "controls":
             from src.retrieval.controls import run_controls
             result = run_controls(config)
