@@ -166,7 +166,7 @@ Path('mkdir.json').write_text(json.dumps(sys.argv[1:]))
         executable.chmod(0o755)
     environment = {**os.environ, "SLURM_JOB_ID": "123", "SLURM_SUBMIT_DIR": str(project),
                    "CONFIG": "configs/frozen config.yaml", "NGPU": "4", "WORKERS": "2",
-                   "SLURM_CPUS_PER_TASK": "36", "TEST_TRAIN_EXIT": str(training_exit),
+                   "SLURM_CPUS_PER_TASK": "36", "SYNC_OUTPUT": "1", "TEST_TRAIN_EXIT": str(training_exit),
                    "TEST_SYNC_EXIT": str(sync_exit), "TEST_CHECKPOINT": str(int(checkpoint))}
     for name in ("PROJECT_DIR", "VENV_DIR", "IR_DATASETS_HOME", "HF_HOME", "OUTPUT_ROOT"):
         environment.pop(name, None)
@@ -290,3 +290,11 @@ def test_gpu_evaluation_isolation(tmp_path, monkeypatch):
     assert launch(config, 'setting-a', 1, 1, 4, SimpleNamespace(requested=False), ['evaluate']) == 0
     assert observed == [1]
     subprocess.run(['bash', '-n', 'evaluate-gpu.sbatch'], check=True)
+
+
+def test_full_directory_sync_is_disabled_by_default(tmp_path):
+    script, project, environment = batch_fixture(tmp_path)
+    environment.pop("SYNC_OUTPUT", None)
+    result = subprocess.run(["bash", str(script)], env=environment, capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert not (project / "rsync.json").exists()

@@ -5,7 +5,7 @@ if [[ "${1:-}" == --resume-encoding ]]; then
     : "${OUTPUT_ROOT:?Set the existing run directory}"
     : "${CSX_REUSE_COMPLETED:?Set the validated encoding migration audit}"
     encode=$(sbatch --parsable train-gpu.sbatch setting-a encode-corpus)
-    evaluate=$(sbatch --parsable --dependency="afterok:$encode" --export=ALL,SYNC_OUTPUT=1 \
+    evaluate=$(sbatch --parsable --dependency="afterok:$encode" --export="ALL,SYNC_OUTPUT=${SYNC_OUTPUT:-0}" \
         train-cpu.sbatch setting-a join-encoded index evaluate analysis fit-predictor report)
     printf 'encode=%s evaluate=%s\n' "$encode" "$evaluate"
     exit 0
@@ -28,7 +28,7 @@ fit=$(sbatch --parsable --dependency="afterok:$reference" train-cpu.sbatch setti
 encode=$(sbatch --parsable --dependency="afterok:$fit" train-gpu.sbatch setting-a fit-gpu encode-corpus)
 dependencies="$encode"
 [[ "$bm25" == reused ]] || dependencies="$bm25:$encode"
-evaluate=$(sbatch --parsable --dependency="afterok:$dependencies" --export=ALL,SYNC_OUTPUT=1 \
+evaluate=$(sbatch --parsable --dependency="afterok:$dependencies" --export="ALL,SYNC_OUTPUT=${SYNC_OUTPUT:-0}" \
     train-cpu.sbatch setting-a join-encoded index evaluate analysis fit-predictor report)
 
 printf 'prepare=%s bm25=%s reference=%s fit=%s encode=%s evaluate=%s\n' \

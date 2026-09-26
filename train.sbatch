@@ -60,9 +60,11 @@ done
 trap - USR1 TERM INT
 
 # Copy the output directory, preserving local files and existing unrelated remote files.
-echo "Syncing $OUTPUT_ROOT to ada:/share1/$USER/"
 sync_status=0
-rsync -a --partial -e 'ssh -o BatchMode=yes' -- "$OUTPUT_ROOT" "ada:/share1/$USER/" || sync_status=$?
+if [[ "${SYNC_OUTPUT:-0}" == 1 ]]; then
+    echo "Syncing $OUTPUT_ROOT to ada:/share1/$USER/"
+    rsync -a --partial -e 'ssh -o BatchMode=yes' -- "$OUTPUT_ROOT" "ada:/share1/$USER/" || sync_status=$?
+fi
 if [[ "$sync_status" -ne 0 ]]; then
     echo "Output sync failed (exit $sync_status); local files remain at $OUTPUT_ROOT" >&2
 fi

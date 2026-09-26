@@ -307,3 +307,23 @@ or source provenance select a fresh cache directory; canonical tables remain und
 prerequisite succeeds, through `scripts/apply_analysis_update.py`. The installer
 verifies the staged source inventory and saves before/after provenance under
 `analysis/deployment/`; it never modifies the source of a running GPU job.
+
+Full-directory syncing is now **disabled by default**, including the submission
+helper and final analysis launcher. Explicit `SYNC_OUTPUT=1` still opts into the
+legacy full copy and can exceed both space and file-count quotas. For a storage-limited
+backup, use the size-capped archive builder instead:
+
+```bash
+python -m scripts.backup_results "$OUTPUT_ROOT" \
+  --archive "/ssd_scratch/$USER/output/research-v5-results.tar.gz" \
+  --max-bytes 39999000000 --workers 8
+```
+
+The archive includes per-query evaluations, outcomes, fitted bases, diagnostics,
+predictors, reports, run configuration/provenance and code. It excludes corpus
+embeddings, index matrices, token fitting caches, raw corpus documents, disposable
+postings caches, and `.env` secrets. Original manifests are retained as provenance;
+missing vector artifacts must be regenerated before resuming encoding/indexing
+from this archive. The script builds on scratch, refuses archives over the cap,
+and emits a SHA-256 sidecar. Transfer the completed archive as one file only after
+checking the destination quota; filesystem free space is not the user's quota.
