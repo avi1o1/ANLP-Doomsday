@@ -93,3 +93,81 @@ def test_shared_sae_dictionary_reuses_exact_weights(tmp_path):
     with np.load(a / "weights.npz") as source, np.load(b / "weights.npz") as target:
         for key in source.files:
             np.testing.assert_array_equal(source[key], target[key])
+
+
+def test_cached_evaluation_matches_uncached_and_resumes(tmp_path, monkeypatch):
+    import pytest
+
+    from src.artifacts import StopRequested
+    config = load_config('configs/fixture.yaml')
+    config['output_root'] = str(tmp_path / 'run')
+    config['evaluation_batch_size'] = 2
+    with StopFlag() as stop:
+        for dataset in ('train', 'english'):
+            pipeline.prepare(config, dataset, stop)
+        pipeline.encode_sample(config, stop)
+        pipeline.fit_basis(config, 'identity', 'pooled', 0, stop)
+        pipeline.encode_corpus(config, 'english', 'identity', 'pooled', 0, stop)
+        pipeline.build_index(config, 'english', 'identity', 'pooled', 0, 'small', stop)
+        directory = pipeline.evaluate(config, 'english', 'identity', 'pooled', 0, 'small', stop)
+        outcomes = np.load(directory / 'outcomes.npy').copy()
+        batches = {str(p.relative_to(directory)): read_json(p) for p in directory.glob('[01][01][01]/*.json')}
+        import shutil
+        shutil.rmtree(directory)
+        monkeypatch.setenv('CSX_POSTINGS_CACHE', str(tmp_path / 'cache'))
+        class Interrupted:
+            calls = 0
+            def check(self):
+                self.calls += 1
+                if self.calls == 2 + len(read_json(pipeline.index_path(
+                        config, 'english', 'identity', 'pooled', 0, 'small') / 'shards.json')):
+                    raise StopRequested()
+        with pytest.raises(StopRequested):
+            pipeline.evaluate(config, 'english', 'identity', 'pooled', 0, 'small', Interrupted())
+        saved = {p: p.read_bytes() for p in directory.glob('[01][01][01]/*.json')}
+        assert saved
+        pipeline.evaluate(config, 'english', 'identity', 'pooled', 0, 'small', stop)
+        assert all(p.read_bytes() == data for p, data in saved.items())
+        np.testing.assert_array_equal(np.load(directory / 'outcomes.npy'), outcomes)
+        for name, records in batches.items():
+            for expected, actual in zip(records, read_json(directory / name)):
+                for field in ('query_id', 'ranking', 'metrics', 'posting_visits', 'query_nonzeros'):
+                    assert expected[field] == actual[field]
+
+
+def test_gpu_grouping_preserves_existing_cpu_checkpoints(tmp_path, monkeypatch):
+    import functools
+
+    import src.retrieval.gpu_scoring as gpu
+    config = load_config('configs/fixture.yaml')
+    config['output_root'] = str(tmp_path / 'run')
+    config['evaluation_batch_size'] = 2
+    with StopFlag() as stop:
+        for dataset in ('train', 'english'):
+            pipeline.prepare(config, dataset, stop)
+        pipeline.encode_sample(config, stop)
+        pipeline.fit_basis(config, 'identity', 'pooled', 0, stop)
+        pipeline.encode_corpus(config, 'english', 'identity', 'pooled', 0, stop)
+        pipeline.build_index(config, 'english', 'identity', 'pooled', 0, 'small', stop)
+        directory = pipeline.evaluate(config, 'english', 'identity', 'pooled', 0, 'small', stop)
+        outcomes = np.load(directory / 'outcomes.npy').copy()
+        expected = {str(p.relative_to(directory)): read_json(p) for p in directory.glob('[01][01][01]/*.json')}
+        retained = directory / '000/00000002.json'
+        retained_bytes = retained.read_bytes()
+        for p in directory.glob('[01][01][01]/*.json'):
+            if p != retained:
+                p.unlink()
+        manifest = read_json(directory / 'manifest.json')
+        manifest['status'] = 'interrupted'
+        from src.artifacts import atomic_json
+        atomic_json(directory / 'manifest.json', manifest)
+        monkeypatch.setenv('CSX_EVALUATION_BACKEND', 'cuda')
+        monkeypatch.setenv('CSX_GPU_QUERY_BATCH', '4')
+        monkeypatch.setattr(gpu, 'BatchedScorer', functools.partial(gpu.BatchedScorer, device='cpu'))
+        pipeline.evaluate(config, 'english', 'identity', 'pooled', 0, 'small', stop)
+        assert retained.read_bytes() == retained_bytes
+        np.testing.assert_array_equal(np.load(directory / 'outcomes.npy'), outcomes)
+        for name, records in expected.items():
+            for ref, actual in zip(records, read_json(directory / name)):
+                for key in ('ranking', 'metrics', 'posting_visits', 'query_id'):
+                    assert ref[key] == actual[key]

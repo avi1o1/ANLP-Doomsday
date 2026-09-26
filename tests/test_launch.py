@@ -223,3 +223,70 @@ def test_sbatch_checkpoint_signal_finishes_before_sync(tmp_path):
         if process.poll() is None:
             process.kill()
             process.communicate()
+
+
+@pytest.mark.parametrize("cpus,workers,slots", [(36, 4, 4), (2, 4, 2), (36, 1, 1)])
+def test_evaluation_cpu_concurrency(tmp_path, monkeypatch, cpus, workers, slots):
+    stage = worker_tasks(tmp_path, monkeypatch, gpu=0, delay=0.3, codes=(0,) * 4)
+    stage["name"] = "evaluate"
+    assert run_stage(stage, "unused", tmp_path / "logs", [], workers, cpus,
+                     SimpleNamespace(requested=False)) == 0
+    records = read_json(tmp_path / "logs/status.json")["tasks"]
+    timings = [list(map(json.loads, Path(r["log"]).read_text().splitlines())) for r in records]
+    assert all(r["worker_slots"] == slots and r["threads_per_worker"] == cpus // slots for r in records)
+    assert all(start["devices"] == "" for start, _ in timings)
+    maximum = max(sum(s["start"] <= at < e["end"] for s, e in timings)
+                  for at in [s["start"] for s, _ in timings])
+    assert maximum == slots
+
+
+def test_cpu_evaluation_interrupt_preserves_workers(tmp_path, monkeypatch):
+    stage = worker_tasks(tmp_path, monkeypatch, gpu=0, delay=10)
+    stage["name"] = "evaluate"
+    stop = SimpleNamespace(requested=False)
+    timer = threading.Timer(0.5, setattr, args=(stop, "requested", True))
+    timer.start()
+    try:
+        assert run_stage(stage, "unused", tmp_path / "logs", [], 4, 36, stop) == 99
+    finally:
+        timer.cancel()
+        timer.join()
+    status = read_json(tmp_path / "logs/status.json")
+    assert status["unstarted"] == 1
+    assert all(r["exit_code"] == 99 for r in status["tasks"])
+
+
+def test_cpu_sbatch_forwards_checkpoint_signal(tmp_path):
+    _, project, environment = batch_fixture(tmp_path, checkpoint=True)
+    environment.update(CPU_WORKERS='36', SYNC_OUTPUT='0')
+    for name in ('SCHEDULER_RESUME_INVENTORY', 'EVALUATOR_RESUME_VALIDATION'):
+        environment.pop(name, None)
+    process = subprocess.Popen(['bash', str(Path('train-cpu.sbatch').resolve()), 'setting-a', 'evaluate'],
+                               env=environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    try:
+        deadline = time.monotonic() + 5
+        while not (project / 'ready').exists() and time.monotonic() < deadline:
+            time.sleep(0.02)
+        assert (project / 'ready').exists()
+        process.send_signal(signal.SIGUSR1)
+        _, stderr = process.communicate(timeout=5)
+        assert process.returncode == 99, stderr
+        assert (project / 'checkpoint-complete').exists()
+        args = read_json(project / 'invocation.json')['argv']
+        assert args[args.index('--workers') + 1] == '36'
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.communicate()
+
+
+def test_gpu_evaluation_isolation(tmp_path, monkeypatch):
+    config = load_config('configs/fixture.yaml')
+    config['output_root'] = str(tmp_path)
+    monkeypatch.setenv('CSX_EVALUATION_BACKEND', 'cuda')
+    monkeypatch.setattr('src.launch.allocated_devices', lambda _: ['GPU-test'])
+    observed = []
+    monkeypatch.setattr('src.launch.run_stage', lambda stage, *_: observed.append(stage['gpus']) or 0)
+    assert launch(config, 'setting-a', 1, 1, 4, SimpleNamespace(requested=False), ['evaluate']) == 0
+    assert observed == [1]
+    subprocess.run(['bash', '-n', 'evaluate-gpu.sbatch'], check=True)

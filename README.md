@@ -222,3 +222,88 @@ identical. Batch size 8 is retained for compatibility with existing FP16 E5 outp
 larger tested batches changed quantized assignments beyond the migration tolerance.
 Benchmark tools and tests are in `scripts/benchmark_shared.py` and
 `tests/test_shared_encoding.py`.
+
+CPU retrieval evaluation runs up to one independent experiment per allocated CPU
+(`CPU_WORKERS` defaults to the allocation CPU count). On a 36-CPU allocation this
+allows 36 single-threaded workers while enough unfinished experiments remain. Other CPU stages
+remain serial; stage dependencies and artifact locks are retained. Use
+`CPU_WORKERS=1` for isolated latency measurements: concurrent timings include
+resource contention and must not be compared directly with earlier serial timings.
+
+For an existing run, keep `OUTPUT_ROOT` and the scientific configuration unchanged.
+After stopping the old job cooperatively, verify completed artifacts with
+`python -m scripts.audit_resume "$OUTPUT_ROOT" --evaluation`, export the resulting
+`evaluation_resume_approval.json` as `CSX_REUSE_COMPLETED`, and submit only the
+remaining stages:
+
+```bash
+export CPU_WORKERS=36
+sbatch train-cpu.sbatch setting-a evaluate analysis fit-predictor report
+```
+
+Partial checkpoints across a launcher-only update require an explicit source
+inventory captured before deployment. `SCHEDULER_RESUME_INVENTORY` enables the
+validated migration in `scripts/resume_scheduler.py` before the completion audit.
+It rejects changes to scientific source or package versions, validates saved query
+batches and parent identities, and preserves the old manifest and batch hashes in
+`scheduler_migration.json`. `RESUME_BATCH_SIZE` must match the original evaluation
+batch size (default 32). Do not deploy source changes while workers are running.
+
+Transformed postings are cached on local SSD at
+`CSX_POSTINGS_CACHE=/ssd_scratch/$USER/postings-cache`. The global cache is bounded
+by `CSX_POSTINGS_CACHE_GIB=192`, shared between workers, and evicts least-recently
+used entries. It leaves at least 32 GiB free before writing new entries and falls
+back to uncached scoring if space is scarce. Keys include parent artifact identity,
+statistics, all scoring switches/parameters, and implementation hashes. Cache files
+use checksummed NPZ arrays; corrupt entries rebuild automatically. Research outputs
+remain under `OUTPUT_ROOT`; the disposable cache is not included in the final rsync.
+The first query batch builds entries; subsequent batches reuse transformed CSC
+postings without decompressing source representations or reapplying corrections.
+
+New query batches record cache use and worker concurrency. Earlier saved batches
+retain their original timings. Caching and concurrency change execution costs, so
+mixed timings are not an isolated scoring benchmark. For this evaluator update,
+`EVALUATOR_RESUME_VALIDATION` points to a production-shard parity certificate made
+by `scripts/validate_postings_cache.py` before checkpoint migration. Migration
+rejects changes outside the explicitly validated execution files, preserves prior
+migration records, and retains completed batches byte-for-byte.
+
+GPU retrieval evaluation is available through `evaluate-gpu.sbatch`:
+
+```bash
+# Set CONFIG, OUTPUT_ROOT and VENV_DIR to the existing run/environment first.
+sbatch evaluate-gpu.sbatch setting-a evaluate
+```
+
+The default request is one GPU and 36 CPUs on gnode069. Each GPU runs one independent
+evaluation; request `--gres=gpu:4` and export `NGPU=4 WORKERS=4` when four GPUs are
+available. `CSX_EVALUATION_BACKEND=cuda` activates ordered FP32 scoring and GPU
+lexicographic top-k merging. `CSX_GPU_QUERY_BATCH=512` groups missing queries for
+one corpus pass, while preserving the original 32-query checkpoint boundaries.
+Completed CPU batches remain untouched. A stop request discards only the current
+unfinished GPU group; already saved groups resume normally.
+
+The GPU path intentionally uses separately rounded multiplication and addition in
+feature-ID order rather than GEMM/TF32/mixed precision. The production validation
+script `scripts/validate_gpu_scoring.py` checks CPU/GPU rankings and posting visits,
+then benchmarks a 512-query group. A source-bound validation certificate is required
+for migration across this evaluator change. Existing timings retain their execution
+metadata; new batches report `cuda_ordered_fp32` and the actual query group size.
+The postings cache remains shared and bounded. Submit analysis/predictor/report as
+a dependent CPU job; no GPU is needed for those stages.
+
+CPU analysis supports `CSX_ANALYSIS_WORKERS` (default 1 for interactive calls).
+`analysis-cpu.sbatch` sets it to the allocated CPU count: component ablations can
+use up to 36 independent processes, and the 12 predictor-validation variants can
+run concurrently. Each worker uses one BLAS/OpenMP thread. Seeds, fold boundaries,
+regularization selection, bootstrap draws, Holm correction and result ordering
+remain unchanged. Reporting remains serial because it mainly writes small tables.
+
+Diagnostics are cached under `analysis/diagnostics/<input-and-code-hash>/`, with
+atomic per-representation ablation checkpoints. Predictor fitting reuses that pass
+rather than repeating all bootstraps. Changed outcomes, configuration, result rows
+or source provenance select a fresh cache directory; canonical tables remain under
+`analysis/`. The pending cluster analysis update is installed only after the GPU
+prerequisite succeeds, through `scripts/apply_analysis_update.py`. The installer
+verifies the staged source inventory and saves before/after provenance under
+`analysis/deployment/`; it never modifies the source of a running GPU job.

@@ -1,11 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=csx-cpu
+#SBATCH --job-name=csx-eval-gpu
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
 #SBATCH --mail-type=END
 #SBATCH --nodes=1
 #SBATCH --nodelist=gnode069
 #SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=36
 #SBATCH --mem-per-cpu=2G
 #SBATCH --time=4-00:00:00
@@ -22,13 +23,13 @@ export HF_HOME="${HF_HOME:-/ssd_scratch/$USER/huggingface}"
 export OUTPUT_ROOT="${OUTPUT_ROOT:-/ssd_scratch/$USER/output}"
 mkdir -p "/ssd_scratch/$USER" "$IR_DATASETS_HOME" "$HF_HOME" "$OUTPUT_ROOT"
 
-# Explicit scheduler-only migration, after the previous allocation has stopped.
+export NGPU="${NGPU:-${SLURM_GPUS_ON_NODE:-1}}"
+export CSX_EVALUATION_BACKEND=cuda
+export CSX_GPU_QUERY_BATCH="${CSX_GPU_QUERY_BATCH:-512}"
+# Migrate only after a production GPU parity certificate has been generated.
 if [[ -n "${SCHEDULER_RESUME_INVENTORY:-}" ]]; then
     migration_args=()
     if [[ -n "${EVALUATOR_RESUME_VALIDATION:-}" ]]; then
-        python -m scripts.validate_postings_cache "${CONFIG:-configs/research.yaml}" \
-            "$SCHEDULER_RESUME_INVENTORY" "$EVALUATOR_RESUME_VALIDATION" \
-            --scratch "/ssd_scratch/$USER"
         migration_args+=(--evaluator-validation "$EVALUATOR_RESUME_VALIDATION")
     fi
     python -m scripts.resume_scheduler "$OUTPUT_ROOT" "$SCHEDULER_RESUME_INVENTORY" \
@@ -43,10 +44,10 @@ export CSX_POSTINGS_CACHE_GIB="${CSX_POSTINGS_CACHE_GIB:-192}"
 family="${1:-setting-a}"
 shift || true
 if [[ "$#" -eq 0 ]]; then
-    echo "Usage: sbatch train-cpu.sbatch FAMILY STAGE [STAGE ...]" >&2
+    echo "Usage: sbatch evaluate-gpu.sbatch setting-a evaluate" >&2
     exit 2
 fi
-echo "CPU stages on $(hostname): $*"
+echo "GPU evaluation on $(hostname): $*; GPUs=$NGPU; query group=$CSX_GPU_QUERY_BATCH"
 training_pid=""
 wait_interrupted=0
 request_stop() {
@@ -57,7 +58,7 @@ request_stop() {
 }
 trap request_stop USR1 TERM INT
 python -m src --config "${CONFIG:-configs/research.yaml}" --output-root "$OUTPUT_ROOT" \
-    launch --family "$family" --gpus 0 --workers "${CPU_WORKERS:-$OMP_NUM_THREADS}" --cpus "$OMP_NUM_THREADS" --stages "$@" &
+    launch --family "$family" --gpus "$NGPU" --workers "${WORKERS:-$NGPU}" --cpus "$OMP_NUM_THREADS" --stages "$@" &
 training_pid=$!
 while :; do
     wait_interrupted=0

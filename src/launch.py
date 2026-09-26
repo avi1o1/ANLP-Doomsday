@@ -33,7 +33,12 @@ def run_stage(stage, config_path, directory, devices, workers, cpus, stop):
     """Bound concurrency, isolate CUDA devices and propagate checkpoint requests."""
     jobs = list(jsonl(stage["tasks"]))
     gpu = stage["gpus"]
-    slots = min(workers, len(devices) // gpu, cpus, len(jobs)) if gpu else 1
+    # Only evaluation tasks have independent writable artifact directories.
+    # Keep shared-corpus indexing and other CPU stages serial.
+    slots = (min(workers, len(devices) // gpu, cpus, len(jobs)) if gpu else
+             min(workers, cpus, len(jobs)) if stage["name"] == "evaluate" else 1)
+    if not jobs:
+        return 0
     if slots < 1:
         raise ValueError(f"Stage {stage['name']} requires {gpu} GPUs per task")
     directory = Path(directory)
@@ -56,6 +61,7 @@ def run_stage(stage, config_path, directory, devices, workers, cpus, stop):
                     # The saved task config already includes the parent's resolved paths.
                     # Do not let inherited defaults undo explicit CLI overrides.
                     environment.pop("OUTPUT_ROOT", None)
+                    environment["CSX_EVALUATION_SLOTS"] = str(slots)
                     selected = devices[slot * gpu:(slot + 1) * gpu] if gpu else []
                     environment["CUDA_VISIBLE_DEVICES"] = ",".join(selected)
                     for name in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
@@ -64,7 +70,8 @@ def run_stage(stage, config_path, directory, devices, workers, cpus, stop):
                     log_path = directory / f"{cursor:05d}.log"
                     handle = log_path.open("w")
                     record = {"task": cursor, "argv": jobs[cursor]["argv"], "devices": selected,
-                              "log": str(log_path), "status": "running"}
+                              "log": str(log_path), "status": "running",
+                              "worker_slots": slots, "threads_per_worker": max(1, cpus // slots)}
                     try:
                         process = subprocess.Popen(command, env=environment, stdout=handle, stderr=subprocess.STDOUT)
                     except BaseException:
@@ -117,6 +124,10 @@ def launch(config, family, gpus, workers, cpus, stop, stages=None):
     records, failure = [], 0
     print(f"Run manifest and task logs: {directory}", flush=True)
     for stage in manifest["stages"]:
+        if stage["name"] == "evaluate" and os.environ.get("CSX_EVALUATION_BACKEND") == "cuda":
+            if gpus < 1:
+                raise ValueError("CUDA evaluation requires at least one allocated GPU")
+            stage["gpus"] = 1
         if stop.requested or failure == 99:
             break
         if failure and stage["name"] != "report":

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import multiprocessing
+import os
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -242,6 +245,67 @@ def cluster_intervals(records, samples=2000, seed=0):
             "sign_accuracy_ci95": np.quantile(signs, [0.025, 0.975]).tolist() if signs else None}
 
 
+def _single_thread_worker():
+    from threadpoolctl import threadpool_limits
+    # Keep the controller alive for the lifetime of this worker.
+    global _thread_limit
+    _thread_limit = threadpool_limits(limits=1)
+
+
+def parallel_map(function, jobs):
+    """Deterministic ordered results, no nested BLAS oversubscription."""
+    jobs = list(jobs)
+    requested = int(os.environ.get("CSX_ANALYSIS_WORKERS", "1"))
+    allocated = int(os.environ.get("SLURM_CPUS_PER_TASK", str(os.cpu_count() or 1)))
+    if requested < 1:
+        raise ValueError("CSX_ANALYSIS_WORKERS must be positive")
+    workers = min(requested, allocated, len(jobs))
+    if workers <= 1:
+        yield from map(function, jobs)
+    else:
+        names = ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMEXPR_NUM_THREADS")
+        previous = {name: os.environ.get(name) for name in names}
+        try:
+            # Spawned interpreters must import NumPy with one thread, not merely
+            # reduce an already-created large thread pool in the initializer.
+            os.environ.update({name: "1" for name in names})
+            with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context("spawn"),
+                                     initializer=_single_thread_worker) as pool:
+                yield from pool.map(function, jobs)
+        finally:
+            for name, value in previous.items():
+                if value is None:
+                    os.environ.pop(name, None)
+                else:
+                    os.environ[name] = value
+
+
+def ablation_task(job):
+    filename, row_id, samples = job
+    outcomes = np.load(filename)
+    ablations = []
+    for bit, component in enumerate(("idf", "saturation", "length")):
+        off = [i for i in range(8) if f"{i:03b}"[bit] == "0"]
+        on = [i for i in range(8) if f"{i:03b}"[bit] == "1"]
+        baseline = outcomes[:, off].mean(axis=1)
+        comparison = np.repeat(baseline[:, None], 8, axis=1)
+        comparison[:, -1] = outcomes[:, on].mean(axis=1)
+        effect = paired_effect(comparison, samples)
+        ablations.append({"row_id": row_id, "component": component,
+            "comparison_family": f"factorial_main_effect_{component}",
+            "definition": "mean on-minus-off over the four settings of the other two switches",
+            **{k: effect[k] for k in ("raw_delta", "raw_ci95", "p_value")}})
+    return ablations
+
+
+def validation_task(job):
+    rows, axis, features, weighted, name, samples, seed = job
+    result = grouped_validation(rows, axis, features, weighted)
+    result["model"] = name
+    result["uncertainty"] = cluster_intervals(result["predictions"], samples, seed)
+    return result
+
+
 def fit_predictors(rows, directory, samples=2000, seed=0):
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
@@ -250,21 +314,14 @@ def fit_predictors(rows, directory, samples=2000, seed=0):
                and not r.get("external", False) and not r.get("control", False)]
     if len(primary) < 4:
         raise ValueError("Need at least four defined primary rows to fit a predictor")
-    results = []
-    for features, name in ((PRIMARY_FEATURES, "primary"), (ALL_FEATURES, "six_features")):
-        for weighted in (False, True):
-            for axis in ("family", "corpus_id", "indic"):
-                result = grouped_validation(primary, axis, features, weighted)
-                result["model"] = name
-                result["uncertainty"] = cluster_intervals(result["predictions"], samples, seed)
-                results.append(result)
+    jobs = [(primary, axis, features, weighted, name, samples, seed)
+            for features, name in ((PRIMARY_FEATURES, "primary"), (ALL_FEATURES, "six_features"))
+            for weighted in (False, True) for axis in ("family", "corpus_id", "indic")]
     repeated = [r for r in rows if r.get("margin") is not None and not r.get("external") and not r.get("control")]
     if len(repeated) > len(primary):
-        for axis in ("family", "corpus_id", "indic"):
-            result = grouped_validation(repeated, axis, PRIMARY_FEATURES)
-            result["model"] = "repeated_measurements_sensitivity"
-            result["uncertainty"] = cluster_intervals(result["predictions"], samples, seed)
-            results.append(result)
+        jobs.extend((repeated, axis, PRIMARY_FEATURES, False, "repeated_measurements_sensitivity", samples, seed)
+                    for axis in ("family", "corpus_id", "indic"))
+    results = list(parallel_map(validation_task, jobs))
     reference = next(r for r in results if r["model"] == "primary" and not r["weighted"] and r["axis"] == "corpus_id")
     residual = reference["summary"].get("rmse")
     if residual is None:

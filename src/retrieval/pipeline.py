@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import resource
 import time
 from itertools import islice
@@ -11,8 +12,8 @@ from pathlib import Path
 import numpy as np
 from scipy import sparse
 
-from src.analysis import fit_predictors, holm, paired_effect
-from src.artifacts import Artifact, atomic_json, jsonl, read_json, write_jsonl
+from src.analysis import ablation_task, fit_predictors, holm, paired_effect, parallel_map
+from src.artifacts import Artifact, atomic_json, file_hash, jsonl, provenance, read_json, write_jsonl
 from src.config import digest, named, root
 from src.diagnostics import collection_diagnostics
 from src.retrieval.bases import Basis
@@ -25,6 +26,7 @@ from src.retrieval.index import (
     reference_metrics,
     standard_metrics,
 )
+from src.retrieval.postings_cache import PostingsCache
 from src.scoring import CollectionStats, configurations, sparsify
 
 
@@ -319,8 +321,56 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
         shards = read_json(index / "shards.json")
         outputs, outcomes, summaries = [], np.zeros((len(query_ids), 8)), {}
         metric_fn = reference_metrics if config.get("fixture", False) else standard_metrics
+        cache_root = os.environ.get("CSX_POSTINGS_CACHE")
+        cache_identity = read_json(index / "manifest.json")
+        gpu_scoring = os.environ.get("CSX_EVALUATION_BACKEND", "cpu") == "cuda"
+        if gpu_scoring:
+            from src.retrieval.gpu_scoring import BatchedScorer
+            document_ids = np.concatenate([np.asarray(read_json(s["ids"]), dtype=str) for s in shards])
+            checkpoint_size = config.get("evaluation_batch_size", 32)
+            gpu_queries = int(os.environ.get("CSX_GPU_QUERY_BATCH", "512"))
+            if gpu_queries < checkpoint_size:
+                raise ValueError("GPU query batch must cover at least one checkpoint batch")
         for column, switches in enumerate(configurations(k1, b)):
+            cache = (PostingsCache(cache_root, cache_identity, stats, switches,
+                                  int(float(os.environ.get("CSX_POSTINGS_CACHE_GIB", "192")) * 2**30))
+                     if cache_root else None)
             all_records = []
+            if gpu_scoring:
+                pending = [start for start in range(0, len(query_ids), checkpoint_size)
+                           if not (directory / f"{switches.key}/{start:08d}.json").exists()]
+                for group_start in range(0, len(pending), gpu_queries // checkpoint_size):
+                    group = pending[group_start:group_start + gpu_queries // checkpoint_size]
+                    rows = [row for start in group for row in range(start, min(len(query_ids), start + checkpoint_size))]
+                    stop.check()
+                    tick = time.perf_counter()
+                    scorer = BatchedScorer(query_matrix[rows], document_ids,
+                        excluded=[query_ids[row] for row in rows] if spec.get("exclude_identical_ids", False) else None)
+                    offset = 0
+                    for shard in shards:
+                        stop.check()
+                        postings = (cache.get(shard) if cache else
+                                    InvertedIndex(sparse.load_npz(shard["vectors"]), read_json(shard["ids"]), stats, switches))
+                        scorer.add(postings, offset)
+                        offset += len(postings.doc_ids)
+                    rankings, visits = scorer.finish()
+                    elapsed = time.perf_counter() - tick
+                    records = []
+                    for i, row in enumerate(rows):
+                        qid = query_ids[row]
+                        values = (metric_fn(rankings[i], judgments[qid]) if config.get("fixture", False)
+                                  else metric_fn(qid, rankings[i], judgments[qid]))
+                        records.append({"query_id": qid, "ranking": rankings[i], "metrics": values,
+                            "posting_visits": int(visits[i]), "query_nonzeros": int(query_matrix[row].nnz),
+                            "amortized_search_seconds": elapsed / len(rows),
+                            "execution": {"backend": "cuda_ordered_fp32", "query_group_size": len(rows),
+                                "postings_cache": bool(cache), "worker_slots": int(os.environ.get("CSX_EVALUATION_SLOTS", "1"))}})
+                    position = 0
+                    for start in group:
+                        count = min(checkpoint_size, len(query_ids) - start)
+                        atomic_json(directory / f"{switches.key}/{start:08d}.json", records[position:position+count])
+                        position += count
+                    del scorer
             for start in range(0, len(query_ids), config.get("evaluation_batch_size", 32)):
                 stop.check()
                 end = min(len(query_ids), start + config.get("evaluation_batch_size", 32))
@@ -332,8 +382,9 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
                     tick = time.perf_counter()
                     for shard in shards:
                         stop.check()
-                        postings = InvertedIndex(sparse.load_npz(shard["vectors"]),
-                                                 read_json(shard["ids"]), stats, switches)
+                        postings = (cache.get(shard) if cache else
+                                    InvertedIndex(sparse.load_npz(shard["vectors"]),
+                                                  read_json(shard["ids"]), stats, switches))
                         for i, row in enumerate(range(start, end)):
                             ranking, count = postings.search(query_matrix[row], 1000,
                                 query_ids[row] if spec.get("exclude_identical_ids", False) else None)
@@ -346,7 +397,9 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
                                   else metric_fn(qid, rankings[i], judgments[qid]))
                         records.append({"query_id": qid, "ranking": rankings[i], "metrics": values,
                                         "posting_visits": int(visits[i]), "query_nonzeros": int(query_matrix[start+i].nnz),
-                                        "amortized_search_seconds": elapsed / (end - start)})
+                                        "amortized_search_seconds": elapsed / (end - start),
+                                        "execution": {"postings_cache": bool(cache),
+                                            "worker_slots": int(os.environ.get("CSX_EVALUATION_SLOTS", "1"))}})
                     atomic_json(path, records)
                 records = read_json(path)
                 all_records.extend(records)
@@ -403,32 +456,54 @@ def collect_results(config):
 
 def diagnose(config):
     rows = collect_results(config)
-    atomic_json(root(config) / "analysis" / "rows.json", rows)
-    ablations = []
+    jobs, inputs = [], []
+    samples = config.get("analysis", {}).get("bootstrap_samples", 2000)
     for path in sorted((root(config) / "evaluations").glob("*/*/*/*/result.json")):
         result = read_json(path)
         if not (result["seed"] == 0 and result["primary_budget"] and result["primary_parameters"] and not result["control"]):
             continue
         if read_json(path.parent / "manifest.json")["status"] != "complete":
             continue
-        outcomes = np.load(path.parent / "outcomes.npy")
-        for bit, component in enumerate(("idf", "saturation", "length")):
-            off = [i for i in range(8) if f"{i:03b}"[bit] == "0"]
-            on = [i for i in range(8) if f"{i:03b}"[bit] == "1"]
-            baseline = outcomes[:, off].mean(axis=1)
-            comparison = np.repeat(baseline[:, None], 8, axis=1)
-            comparison[:, -1] = outcomes[:, on].mean(axis=1)
-            effect = paired_effect(comparison, config.get("analysis", {}).get("bootstrap_samples", 2000))
-            ablations.append({"row_id": result["row_id"], "component": component,
-                "comparison_family": f"factorial_main_effect_{component}",
-                "definition": "mean on-minus-off over the four settings of the other two switches",
-                **{k: effect[k] for k in ("raw_delta", "raw_ci95", "p_value")}})
-    for component in ("idf", "saturation", "length"):
-        group = [r for r in ablations if r["component"] == component and r["p_value"] is not None]
-        for record, p in zip(group, holm([r["p_value"] for r in group])):
-            record["holm_p"] = p
-    atomic_json(root(config) / "analysis" / "component_ablations.json", ablations)
+        outcomes = path.parent / "outcomes.npy"
+        inputs.append({"path": str(outcomes), "sha256": file_hash(outcomes), "row_id": result["row_id"]})
+        jobs.append((str(outcomes), result["row_id"], samples))
+    identity = {"rows_hash": digest(rows), "outcomes": inputs, "analysis": config.get("analysis", {})}
+    directory = root(config) / "analysis" / "diagnostics" / digest({"identity": identity, "code": provenance()})
+    with Artifact(directory, identity) as work:
+        if work.reused:
+            _publish_diagnostics(directory, root(config) / "analysis")
+            return read_json(directory / "rows.json")
+        missing, filenames = [], []
+        for job in jobs:
+            filename = f"ablation_rows/{job[1]}.json"
+            filenames.append(filename)
+            path = directory / filename
+            if path.exists():
+                if read_json(path)["fingerprint"] != work.fingerprint:
+                    raise ValueError(f"Analysis checkpoint identity changed: {path}")
+            else:
+                missing.append(job)
+        for job, effects in zip(missing, parallel_map(ablation_task, missing)):
+            atomic_json(directory / f"ablation_rows/{job[1]}.json",
+                        {"fingerprint": work.fingerprint, "effects": effects})
+        ablations = [effect for filename in filenames for effect in read_json(directory / filename)["effects"]]
+        for component in ("idf", "saturation", "length"):
+            group = [r for r in ablations if r["component"] == component and r["p_value"] is not None]
+            for record, p in zip(group, holm([r["p_value"] for r in group])):
+                record["holm_p"] = p
+        atomic_json(directory / "rows.json", rows)
+        atomic_json(directory / "component_ablations.json", ablations)
+        work.complete(filenames + ["rows.json", "component_ablations.json"],
+                      execution={"workers": int(os.environ.get("CSX_ANALYSIS_WORKERS", "1"))})
+    _publish_diagnostics(directory, root(config) / "analysis")
     return rows
+
+
+def _publish_diagnostics(directory, destination):
+    for name in ("rows.json", "component_ablations.json"):
+        source, target = directory / name, destination / name
+        if not target.exists() or file_hash(source) != file_hash(target):
+            atomic_json(target, read_json(source))
 
 
 def fit_predictor(config):
