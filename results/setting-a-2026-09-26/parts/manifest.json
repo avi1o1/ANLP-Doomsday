@@ -1,0 +1,89 @@
+{
+  "source": "/ssd_scratch/anirudh.sankar/output/research-v5",
+  "parts": [
+    {
+      "part": "01-analysis.tar.gz",
+      "bytes": 838658,
+      "files": 203,
+      "sha256": "6c61895dcfeb99e82701b34dcc3bfb33b3a745daabb82f38f718b0239f2e1c2f"
+    },
+    {
+      "part": "02-arguana.tar.gz",
+      "bytes": 409740,
+      "files": 60,
+      "sha256": "08853dba4892d3af97e46e8f4ee5e6a7a5c7bc12be41cf3bc4ccd8ad41c06307"
+    },
+    {
+      "part": "02-fiqa.tar.gz",
+      "bytes": 229481,
+      "files": 60,
+      "sha256": "2521536e272ffa8807264ef9078d552614b94c7677bb40977d1e34a7872ab500"
+    },
+    {
+      "part": "02-limit.tar.gz",
+      "bytes": 266549,
+      "files": 60,
+      "sha256": "6838c0a7cfb263989c749251a3a3eab7001e2644a4322778203bf4e6f5e9a064"
+    },
+    {
+      "part": "02-miracl_bn.tar.gz",
+      "bytes": 173154,
+      "files": 60,
+      "sha256": "787799b49fcc2139e3f00f2af11a9e44a5549be5ae4f874ad12420d958fcedb1"
+    },
+    {
+      "part": "02-miracl_hi.tar.gz",
+      "bytes": 152797,
+      "files": 60,
+      "sha256": "2c4fb1dc1d12eb2341ffa5c24b2ac3c30b37b6274387c69bd9f5d1aaaab7b085"
+    },
+    {
+      "part": "02-miracl_te.tar.gz",
+      "bytes": 260123,
+      "files": 60,
+      "sha256": "cd9f5613943a56648d4039747ba32b744d90fb06abdeb47f07a92104d7cff74d"
+    },
+    {
+      "part": "02-msmarco_dev.tar.gz",
+      "bytes": 1771056,
+      "files": 60,
+      "sha256": "3e48b455a075601b7ffd7728f3b2d8cad65c1330a0ebe788c0b6c622af9cd9f2"
+    },
+    {
+      "part": "02-nfcorpus.tar.gz",
+      "bytes": 185145,
+      "files": 60,
+      "sha256": "008929c2e5bfcb32d8fafe595eb661b04b65f7d02921a7d46cc8b03f2a157e28"
+    },
+    {
+      "part": "02-scidocs.tar.gz",
+      "bytes": 619524,
+      "files": 60,
+      "sha256": "af23a51f400d2e5c9c88568ac1644e64af2470c325fcb71e309135705d7a2c6b"
+    },
+    {
+      "part": "02-scifact.tar.gz",
+      "bytes": 124538,
+      "files": 60,
+      "sha256": "04b512b9675ed4628aa8efec43e56656557b480ac8c5c69faf3b7799a8122e01"
+    },
+    {
+      "part": "02-trec_covid.tar.gz",
+      "bytes": 53447,
+      "files": 60,
+      "sha256": "7e75bed5b68b2ddc697bfc9da80d47048683b3197fd52e0dbe753d9c1aa26216"
+    },
+    {
+      "part": "02-trec_dl_2019.tar.gz",
+      "bytes": 50781,
+      "files": 60,
+      "sha256": "0e7e5642ca688ef8c1ee7329207aaf2387101a38a2b1de0b6a0bbdc8874b7159"
+    },
+    {
+      "part": "02-trec_dl_2020.tar.gz",
+      "bytes": 54711,
+      "files": 60,
+      "sha256": "b018b0674dfb5196f25354359df6a4a9db2c4a7301c4cb155cbed46ccdb783b6"
+    }
+  ]
+}

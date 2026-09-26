@@ -1,0 +1,53 @@
+{
+  "config": {
+    "analysis": {
+      "bootstrap_samples": 2000,
+      "seed": 0
+    },
+    "rows_hash": "abbfda0259fe8148a12bec35007dd318e80d05a2e0112fe1c6bdb9d752b3ebc1"
+  },
+  "config_hash": "a03dabfb9b81156aa82e07ec4985168fc616b83e36d37a3b2f42dfe07a7fe328",
+  "elapsed_seconds": 2.547116756439209,
+  "error": null,
+  "fingerprint": "2224c0abf44de3298286af128150a4df0a392a5a2e20eb9d808ee4e8bebaed5b",
+  "metadata": {},
+  "outputs": [
+    {
+      "bytes": 10720,
+      "path": "english_predictor.json",
+      "sha256": "444c2ec7d07fb025dbb7840bbf55ba21195a893a9221906a0cd3428e42f8d4a6"
+    },
+    {
+      "bytes": 14099,
+      "path": "predictor.json",
+      "sha256": "ff95b4f61f8702b1ce9c117b91d181302860fe44493a2da8feb9c2ee9c038fc2"
+    },
+    {
+      "bytes": 18474710,
+      "path": "validation.json",
+      "sha256": "f9fb5e7c8c1a9a68d0c9c4d469e972af5c1a54ef2aa963f7d8720ec5a12bbc25"
+    }
+  ],
+  "parents": [],
+  "provenance": {
+    "code_revision": "bc9887b93812485185d85c4b5b53349d5cf5baef",
+    "source_hash": "08d64f63a49c42bb4bf5206ca01ea851dcb955a8d029d9ee05813ba451f54a07",
+    "versions": {
+      "accelerate": "1.6.0",
+      "bm25s": "0.3.11",
+      "datasets": "3.5.0",
+      "faiss-gpu": "1.15.1",
+      "huggingface-hub": "0.36.2",
+      "ir-measures": "0.3.7",
+      "ir_datasets": "0.5.11",
+      "numba": "0.67.0",
+      "numpy": "1.26.4",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.13.1",
+      "torch": "2.8.0",
+      "transformers": "4.51.3"
+    }
+  },
+  "schema_version": 1,
+  "status": "complete"
+}
