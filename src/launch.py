@@ -14,9 +14,17 @@ from src.artifacts import atomic_json, jsonl
 from src.experiments import write_manifest
 
 
-def allocated_devices(count):
-    if not 0 <= count <= 4:
-        raise ValueError("Request between zero and four allocated GPUs")
+def allocated_devices(count, tasks_per_gpu=1):
+    """Device slots for GPU tasks: each allocated GPU appears tasks_per_gpu times.
+
+    More than one task per GPU keeps a small-batch encoder busy while another task
+    tokenizes, aggregates and writes its shard on the CPU. Slots are interleaved so
+    that on several GPUs consecutive tasks land on different devices.
+    """
+    if not 0 <= count <= 8:
+        raise ValueError("Request between zero and eight allocated GPUs")
+    if tasks_per_gpu < 1:
+        raise ValueError("Tasks per GPU must be positive")
     if count == 0:
         return []
     import torch
@@ -26,7 +34,7 @@ def allocated_devices(count):
         raise ValueError(f"Requested {count} GPUs, but only {available} CUDA devices are visible")
     visible = os.environ.get("CUDA_VISIBLE_DEVICES")
     devices = visible.split(",") if visible is not None else [str(i) for i in range(available)]
-    return devices[:count]
+    return devices[:count] * tasks_per_gpu
 
 
 def run_stage(stage, config_path, directory, devices, workers, cpus, stop):
@@ -110,7 +118,7 @@ def run_stage(stage, config_path, directory, devices, workers, cpus, stop):
 def launch(config, family, gpus, workers, cpus, stop, stages=None):
     if workers < 1 or cpus < 1:
         raise ValueError("Worker and CPU counts must be positive")
-    devices = allocated_devices(gpus)
+    devices = allocated_devices(gpus, int(os.environ.get("CSX_TASKS_PER_GPU", "1")))
     job = os.environ.get("SLURM_JOB_ID", "local") + "-" + uuid.uuid4().hex[:8]
     directory = Path(config["output_root"]).resolve() / "jobs" / family / job
     manifest = write_manifest(config, directory, family)

@@ -85,7 +85,7 @@ def test_timeout_signal_reaches_active_workers(tmp_path, monkeypatch):
 def test_launch_reports_failure_without_running_dependents(tmp_path, monkeypatch):
     config = load_config("configs/fixture.yaml")
     config["output_root"] = str(tmp_path)
-    monkeypatch.setattr("src.launch.allocated_devices", lambda _: ["0"])
+    monkeypatch.setattr("src.launch.allocated_devices", lambda *_: ["0"])
     executed = []
 
     def stage_runner(stage, *_):
@@ -105,6 +105,10 @@ def test_cuda_visibility_validation(monkeypatch):
     monkeypatch.setattr("torch.cuda.device_count", lambda: 4)
     monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "GPU-a,GPU-b,GPU-c,GPU-d")
     assert allocated_devices(2) == ["GPU-a", "GPU-b"]
+    # Two tasks per GPU interleave, so consecutive slots use different devices.
+    assert allocated_devices(2, 2) == ["GPU-a", "GPU-b", "GPU-a", "GPU-b"]
+    with pytest.raises(ValueError, match="positive"):
+        allocated_devices(1, 0)
     monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
     with pytest.raises(ValueError, match="only 1 CUDA"):
         allocated_devices(4)
@@ -284,7 +288,7 @@ def test_gpu_evaluation_isolation(tmp_path, monkeypatch):
     config = load_config('configs/fixture.yaml')
     config['output_root'] = str(tmp_path)
     monkeypatch.setenv('CSX_EVALUATION_BACKEND', 'cuda')
-    monkeypatch.setattr('src.launch.allocated_devices', lambda _: ['GPU-test'])
+    monkeypatch.setattr('src.launch.allocated_devices', lambda *_: ['GPU-test'])
     observed = []
     monkeypatch.setattr('src.launch.run_stage', lambda stage, *_: observed.append(stage['gpus']) or 0)
     assert launch(config, 'setting-a', 1, 1, 4, SimpleNamespace(requested=False), ['evaluate']) == 0
