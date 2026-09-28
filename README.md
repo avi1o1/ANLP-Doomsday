@@ -29,7 +29,7 @@ code-mixed retrieval, where the distributions it depends on are known to shift.
 | ---------------- | ----------- | --------------------------- |
 | Interim proposal | 14 Aug 2026 | `ANLPDoomsday-Interim.pdf`  |
 | Final proposal   | 28 Aug 2026 | `ANLPDoomsday-Proposal.pdf` |
-| Mid submission   | 30 Sep 2026 | `ANLPDoomsday-Mid.zip`      |
+| Mid submission   | 2 Oct 2026  | `ANLPDoomsday-Mid.zip`      |
 | Final submission | 31 Oct 2026 | `ANLPDoomsday-Final.zip`    |
 
 Each member submits every deliverable separately.
