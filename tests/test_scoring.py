@@ -74,3 +74,29 @@ def test_trec_metric_reference():
     actual, expected = standard_metrics("q", ranking, qrels), reference_metrics(ranking, qrels)
     for metric in actual:
         assert actual[metric] == pytest.approx(expected[metric])
+
+
+def test_sparsify_matches_the_per_row_lexsort_reference():
+    """The fast path must agree with a direct (-value, feature id) sort per row."""
+    def reference(values, budget):
+        x = sparse.csr_matrix(values, dtype=np.float32)
+        rows, columns, weights = [], [], []
+        for row in range(x.shape[0]):
+            a, b = x.indptr[row:row + 2]
+            ids, data = x.indices[a:b], x.data[a:b]
+            for position in np.lexsort((ids, -data))[:budget]:
+                rows.append(row)
+                columns.append(ids[position])
+                weights.append(data[position])
+        out = sparse.csr_matrix((weights, (rows, columns)), shape=x.shape, dtype=np.float32)
+        out.sort_indices()
+        return out
+
+    rng = np.random.default_rng(11)
+    for density, budget in ((0.9, 3), (0.3, 5), (1.0, 1), (0.5, 40)):
+        values = rng.integers(0, 4, (24, 40)).astype(np.float32)  # Ties are the hard case.
+        values[rng.random(values.shape) > density] = 0
+        got, want = sparsify(values, budget), reference(values, budget)
+        assert (got != want).nnz == 0
+        assert (np.diff(got.indptr) <= budget).all()
+    assert sparsify(sparse.csr_matrix((0, 5), dtype=np.float32), 2).shape == (0, 5)

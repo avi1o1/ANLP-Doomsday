@@ -65,3 +65,17 @@ def test_frozen_predictor_roundtrip_and_weighted_effects(tmp_path):
     values = np.array([np.arange(8), 2*np.arange(8)])
     effect = paired_effect(values, samples=10, weights=[1, 3])
     assert effect["raw_delta"] == 12.25
+
+
+def test_responsive_switches_counts_only_switches_that_move_the_outcome():
+    from src.analysis import responsive_switches
+
+    keys = [f"{i:03b}" for i in range(8)]
+    assert responsive_switches({k: float(i) for i, k in enumerate(keys)}) == 3
+    # A fixed-length, unit-valued basis: length and saturation cannot change a ranking,
+    # so only the IDF bit moves quality and the margin collapses to exactly +-2.
+    idf_only = {k: (1.0 if k[0] == "1" else 0.5) for k in keys}
+    assert responsive_switches(idf_only) == 1
+    assert responsive_switches({k: 1.0 for k in keys}) == 0
+    outcomes = np.repeat([[0.5, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0]], 8, axis=0)
+    assert abs(paired_effect(outcomes, 16)["margin"] - 2.0) < 1e-9

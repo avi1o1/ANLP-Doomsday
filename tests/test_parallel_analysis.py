@@ -38,13 +38,17 @@ def test_parallel_ablations_preserve_bootstrap_stream_and_order(tmp_path, monkey
         path = tmp_path / f'{i}.npy'
         values = rng.random((32, 8)) if i else np.ones((32, 8))
         np.save(path, values)
-        jobs.append((str(path), str(i), 30))
+        jobs.append((str(path), str(i), 30, True))
     serial = list(parallel_map(ablation_task, jobs))
     monkeypatch.setenv('CSX_ANALYSIS_WORKERS', '2')
     assert serial == list(parallel_map(ablation_task, jobs))
-    for job, result in zip(jobs, serial):
+    for job, payload in zip(jobs, serial):
         values = np.load(job[0])
-        for bit, effect in enumerate(result):
+        # The row effect comes from the same outcomes, at the same sample count.
+        row_reference = paired_effect(values, 30)
+        assert all(payload['effect'][k] == row_reference[k]
+                   for k in ('raw_delta', 'margin', 'raw_ci95', 'p_value'))
+        for bit, effect in enumerate(payload['ablations']):
             off = [i for i in range(8) if f'{i:03b}'[bit] == '0']
             on = [i for i in range(8) if f'{i:03b}'[bit] == '1']
             comparison = np.repeat(values[:, off].mean(axis=1)[:, None], 8, axis=1)

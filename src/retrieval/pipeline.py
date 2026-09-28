@@ -264,28 +264,50 @@ def build_index(config, dataset, name, granularity, seed, budget_name, stop):
     budget = named(config["budgets"], budget_name)
     encoded = encoded_path(config, dataset, name, granularity, seed, "documents")
     directory = index_path(config, dataset, name, granularity, seed, budget_name)
+    # Encoded shards are regrouped into larger index shards. Retrieval takes the top
+    # k of every shard and folds the results together, so the number of shards drives
+    # the merge cost without changing any ranking; tests/test_scoring.py pins that
+    # invariance. The grouping is deliberately outside the artifact identity, because
+    # it changes the file layout alone and each index states its own layout below.
+    target = max(1, int(config.get("index_shard_documents", 65536)))
     with Artifact(directory, {"budget": budget}, [encoded]) as work:
         if work.reused:
             return directory
-        stats, shards, outputs = None, [], []
-        for number, record in enumerate(read_json(encoded / "shards.json")):
+        stats, shards, outputs, vectors = None, [], [], []
+        pending, pending_ids, number = [], [], 0
+
+        def flush():
+            nonlocal number
+            filename, ids_name = f"{number:06d}.npz", f"{number:06d}_ids.json"
+            sparse.save_npz(directory / filename, sparse.vstack(pending, format="csr"))
+            atomic_json(directory / ids_name, pending_ids)
+            outputs.extend([filename, ids_name])
+            vectors.append(filename)
+            shards.append({"vectors": str(directory / filename), "ids": str(directory / ids_name)})
+            pending.clear()
+            pending_ids.clear()
+            number += 1
+
+        for record in read_json(encoded / "shards.json"):
             stop.check()
             values = sparsify(sparse.load_npz(Path(record["path"]) / "vectors.npz"), budget["document"])
             if stats is None:
                 stats = CollectionStats.empty(values.shape[1])
             stats.update(values)
-            filename = f"{number:06d}.npz"
-            sparse.save_npz(directory / filename, values)
-            outputs.append(filename)
-            shards.append({"vectors": str(directory / filename), "ids": str(Path(record["path"]) / "ids.json")})
+            pending.append(values)
+            pending_ids.extend(read_json(Path(record["path"]) / "ids.json"))
+            if len(pending_ids) >= target:
+                flush()
+        if pending_ids:
+            flush()
         if stats is None:
             raise ValueError("Empty document corpus")
         atomic_json(directory / "statistics.json", stats.to_dict())
         atomic_json(directory / "diagnostics.json", collection_diagnostics(stats))
         atomic_json(directory / "shards.json", shards)
         work.complete(outputs + ["statistics.json", "diagnostics.json", "shards.json"],
-                      document_count=stats.n_items, nonzeros=stats.nnz_sum,
-                      index_bytes=sum((directory / p).stat().st_size for p in outputs))
+                      document_count=stats.n_items, nonzeros=stats.nnz_sum, index_shards=len(shards),
+                      index_bytes=sum((directory / p).stat().st_size for p in vectors))
     return directory
 
 
@@ -304,11 +326,18 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
         if work.reused:
             return directory
         stats = CollectionStats.from_dict(read_json(index / "statistics.json"))
-        if control not in (None, "shuffled_idf"):
+        if control not in (None, "shuffled_idf", "uniform_frequency"):
             raise ValueError("Unsupported retrieval control")
         if control == "shuffled_idf":
             # Permuting df permutes IDF, without changing feature values, lengths, or support.
             stats.df = np.random.default_rng(seed).permutation(stats.df)
+        elif control == "uniform_frequency":
+            # One document frequency across the live vocabulary makes IDF a single
+            # constant factor, which no ranking can see, so the IDF switch becomes
+            # inert. Dead features keep a zero count, leaving the support unchanged.
+            live = stats.df > 0
+            if live.any():
+                stats.df = np.where(live, int(round(float(stats.df[live].mean()))), 0).astype(np.int64)
         judgments = qrels_mapping(jsonl(collection / "qrels.jsonl"))
         query_ids, matrices = [], []
         for shard in read_json(queries / "shards.json"):
@@ -345,7 +374,8 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
                     stop.check()
                     tick = time.perf_counter()
                     scorer = BatchedScorer(query_matrix[rows], document_ids,
-                        excluded=[query_ids[row] for row in rows] if spec.get("exclude_identical_ids", False) else None)
+                        excluded=[query_ids[row] for row in rows] if spec.get("exclude_identical_ids", False) else None,
+                        block=int(os.environ.get("CSX_GPU_DOCUMENT_BLOCK", "4096")))
                     offset = 0
                     for shard in shards:
                         stop.check()
@@ -454,20 +484,35 @@ def collect_results(config):
     return rows
 
 
+def significance_samples(config):
+    """Bootstrap draws for the reported effects, held outside the evaluation identity.
+
+    Holm within a family of m comparisons cannot fall below m/(samples+1), so the
+    sample count sets a floor on what any correction can report. It lives in its own
+    configuration block because evaluations are keyed on the analysis block, and a
+    change there would discard every completed evaluation.
+    """
+    fallback = config.get("analysis", {}).get("bootstrap_samples", 2000)
+    return int(config.get("significance", {}).get("bootstrap_samples", fallback))
+
+
 def diagnose(config):
     rows = collect_results(config)
     jobs, inputs = [], []
-    samples = config.get("analysis", {}).get("bootstrap_samples", 2000)
+    samples = significance_samples(config)
     for path in sorted((root(config) / "evaluations").glob("*/*/*/*/result.json")):
         result = read_json(path)
-        if not (result["seed"] == 0 and result["primary_budget"] and result["primary_parameters"] and not result["control"]):
-            continue
         if read_json(path.parent / "manifest.json")["status"] != "complete":
             continue
         outcomes = path.parent / "outcomes.npy"
+        # Ablations stay on the pre-registered primary family; every completed row
+        # has its own effect recomputed, so one sample count covers the whole report.
+        primary = (result["seed"] == 0 and result["primary_budget"]
+                   and result["primary_parameters"] and not result["control"])
         inputs.append({"path": str(outcomes), "sha256": file_hash(outcomes), "row_id": result["row_id"]})
-        jobs.append((str(outcomes), result["row_id"], samples))
-    identity = {"rows_hash": digest(rows), "outcomes": inputs, "analysis": config.get("analysis", {})}
+        jobs.append((str(outcomes), result["row_id"], samples, primary))
+    identity = {"rows_hash": digest(rows), "outcomes": inputs, "analysis": config.get("analysis", {}),
+                "significance": {"bootstrap_samples": samples}}
     directory = root(config) / "analysis" / "diagnostics" / digest({"identity": identity, "code": provenance()})
     with Artifact(directory, identity) as work:
         if work.reused:
@@ -483,10 +528,25 @@ def diagnose(config):
                     raise ValueError(f"Analysis checkpoint identity changed: {path}")
             else:
                 missing.append(job)
-        for job, effects in zip(missing, parallel_map(ablation_task, missing)):
+        for job, payload in zip(missing, parallel_map(ablation_task, missing)):
             atomic_json(directory / f"ablation_rows/{job[1]}.json",
-                        {"fingerprint": work.fingerprint, "effects": effects})
-        ablations = [effect for filename in filenames for effect in read_json(directory / filename)["effects"]]
+                        {"fingerprint": work.fingerprint, **payload})
+        loaded = [read_json(directory / filename) for filename in filenames]
+        ablations = [record for payload in loaded for record in payload["ablations"]]
+        effects = {payload["row_id"]: payload["effect"] for payload in loaded}
+        carried = ("raw_delta", "spread", "margin", "raw_ci95", "margin_ci95", "margin_variance",
+                   "bootstrap_valid_margins", "p_value", "bootstrap_samples", "p_value_floor",
+                   "responsive_switches", "undefined_reason")
+        for row in rows:
+            effect = effects.get(row["row_id"])
+            if effect is not None:
+                row.update({key: effect[key] for key in carried})
+        # The stored p-values came from the evaluation-time sample count, so the
+        # primary family is corrected again against the recomputed ones.
+        primary = [r for r in rows if r.get("comparison_family") == "primary_all_on_vs_all_off"
+                   and r.get("p_value") is not None]
+        for record, p in zip(primary, holm([r["p_value"] for r in primary])):
+            record["holm_p"] = p
         for component in ("idf", "saturation", "length"):
             group = [r for r in ablations if r["component"] == component and r["p_value"] is not None]
             for record, p in zip(group, holm([r["p_value"] for r in group])):
@@ -494,7 +554,8 @@ def diagnose(config):
         atomic_json(directory / "rows.json", rows)
         atomic_json(directory / "component_ablations.json", ablations)
         work.complete(filenames + ["rows.json", "component_ablations.json"],
-                      execution={"workers": int(os.environ.get("CSX_ANALYSIS_WORKERS", "1"))})
+                      execution={"workers": int(os.environ.get("CSX_ANALYSIS_WORKERS", "1")),
+                                 "significance_samples": samples})
     _publish_diagnostics(directory, root(config) / "analysis")
     return rows
 
@@ -509,9 +570,11 @@ def _publish_diagnostics(directory, destination):
 def fit_predictor(config):
     rows = [r for r in diagnose(config) if r["primary_parameters"] and not r["control"]]
     directory = root(config) / "predictor"
-    with Artifact(directory, {"rows_hash": digest(rows), "analysis": config.get("analysis", {})}) as work:
+    samples = significance_samples(config)
+    with Artifact(directory, {"rows_hash": digest(rows), "analysis": config.get("analysis", {}),
+                              "significance": {"bootstrap_samples": samples}}) as work:
         if not work.reused:
-            fit_predictors(rows, directory, config.get("analysis", {}).get("bootstrap_samples", 2000))
+            fit_predictors(rows, directory, samples)
             work.complete([p.name for p in directory.glob("*.json") if p.name != "manifest.json"])
     return directory
 
@@ -523,7 +586,9 @@ def run_retrieval(config, stop):
         if basis.get("secondary"):
             continue
         for granularity in config.get("granularities", ["pooled", "token"]):
-            for seed in config.get("seeds", [0]):
+            # Seed 0 only, matching the manifest path. Repeated seeds are the
+            # robustness family and are enumerated in src/experiments.py.
+            for seed in (0,):
                 fit_basis(config, basis["name"], granularity, seed, stop)
                 for dataset, spec in config["datasets"].items():
                     if spec["role"] != "evaluate" or not spec.get("enabled", True):

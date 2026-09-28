@@ -21,7 +21,6 @@ bases:
   - {name: rq, kind: rq, stages: 2, codes: 4, backend: sklearn}
   - {name: sae, kind: sae, features: 16, active: 4, epochs: 2, batch_size: 8, micro_batch_size: 4, checkpoint_steps: 1}
 granularities: [pooled, token]
-seeds: [0]
 budgets: [{name: small, query: 4, document: 8, primary: true}]
 shard_size: 7
 evaluation_batch_size: 2

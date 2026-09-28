@@ -11,9 +11,14 @@ from src.scoring import nonnegative_csr
 
 
 class BatchedScorer:
-    def __init__(self, query_matrix, document_ids, k=1000, excluded=None, device='cuda'):
+    def __init__(self, query_matrix, document_ids, k=1000, excluded=None, device='cuda', block=4096):
         import torch
         self.torch, self.device = torch, device
+        if block < 1:
+            raise ValueError('Document block must be positive')
+        # The scoring buffer is vocabulary by documents, so this bounds device memory
+        # independently of how many documents an index shard holds.
+        self.block = block
         self.queries = nonnegative_csr(query_matrix)
         self.names = np.asarray(document_ids, dtype=str)
         if len(np.unique(self.names)) != len(self.names):
@@ -43,13 +48,25 @@ class BatchedScorer:
         self.excluded_gpu = torch.as_tensor(self.excluded, device=device)
 
     def add(self, postings, offset):
-        torch = self.torch
-        x = postings.postings
-        size = x.shape[0]
-        if not np.array_equal(postings.doc_ids, self.names[offset:offset+size]):
+        matrix = postings.postings
+        size = matrix.shape[0]
+        if not np.array_equal(postings.doc_ids, self.names[offset:offset + size]):
             raise ValueError('Shard document order changed')
-        if x.shape[1] != self.queries.shape[1]:
+        if matrix.shape[1] != self.queries.shape[1]:
             raise ValueError('Query and document vocabulary mismatch')
+        # Folding a block into the running top-k uses the same total order as folding
+        # a whole shard, so the block size changes memory and never a ranking.
+        rows = matrix.tocsr()
+        for start in range(0, size, self.block):
+            self._merge(rows[start:min(size, start + self.block)].tocsc(), offset + start)
+        counts = np.diff(matrix.indptr)
+        owners = np.repeat(np.arange(self.queries.shape[0]), np.diff(self.queries.indptr))
+        self.visits += np.bincount(owners, weights=counts[self.queries.indices],
+                                   minlength=self.queries.shape[0]).astype(np.int64)
+
+    def _merge(self, x, offset):
+        torch = self.torch
+        size = x.shape[0]
         with torch.inference_mode():
             dense = torch.zeros((x.shape[1], size), dtype=torch.float32, device=self.device)
             feature_ids = np.repeat(np.arange(x.shape[1], dtype=np.int64), np.diff(x.indptr))
@@ -70,10 +87,6 @@ class BatchedScorer:
             scores, ids = scores.gather(1, by_id), ids.gather(1, by_id)
             by_score = torch.argsort(scores, dim=1, descending=True, stable=True)[:, :self.k]
             self.scores, self.ids = scores.gather(1, by_score), ids.gather(1, by_score)
-        counts = np.diff(x.indptr)
-        owners = np.repeat(np.arange(self.queries.shape[0]), np.diff(self.queries.indptr))
-        self.visits += np.bincount(owners, weights=counts[self.queries.indices],
-                                   minlength=self.queries.shape[0]).astype(np.int64)
 
     def finish(self):
         scores, ids = self.scores.cpu().numpy(), self.ids.cpu().numpy()

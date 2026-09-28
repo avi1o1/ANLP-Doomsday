@@ -25,16 +25,28 @@ def sparsify(values, budget: int | None) -> sparse.csr_matrix:
         return x
     if budget <= 0:
         raise ValueError("Feature budget must be positive")
-    rows, columns, weights = [], [], []
+    counts = np.diff(x.indptr)
+    if not counts.size or counts.max() <= budget:
+        return x
+    keep = np.empty(int(np.minimum(counts, budget).sum()), dtype=np.int64)
+    cursor = 0
     for row in range(x.shape[0]):
-        a, b = x.indptr[row:row + 2]
-        ids, data = x.indices[a:b], x.data[a:b]
-        # Feature ID is the deterministic secondary key at the cutoff.
-        order = np.lexsort((ids, -data))[:budget]
-        rows.extend([row] * len(order))
-        columns.extend(ids[order])
-        weights.extend(data[order])
-    result = sparse.csr_matrix((weights, (rows, columns)), shape=x.shape, dtype=np.float32)
+        a, b = x.indptr[row], x.indptr[row + 1]
+        if b - a <= budget:
+            keep[cursor:cursor + b - a] = np.arange(a, b)
+            cursor += b - a
+            continue
+        data = x.data[a:b]
+        # Partition to the cutoff value, then order only the entries tied with it.
+        # Feature ID is the deterministic secondary key inside that band.
+        threshold = data[np.argpartition(-data, budget - 1)[:budget]].min()
+        above = np.flatnonzero(data > threshold)
+        band = np.flatnonzero(data == threshold)
+        band = band[np.argsort(x.indices[a:b][band], kind="stable")[:budget - len(above)]]
+        keep[cursor:cursor + budget] = a + np.concatenate((above, band))
+        cursor += budget
+    rows = np.repeat(np.arange(x.shape[0]), np.minimum(counts, budget))
+    result = sparse.csr_matrix((x.data[keep], (rows, x.indices[keep])), shape=x.shape, dtype=np.float32)
     result.sort_indices()
     return result
 

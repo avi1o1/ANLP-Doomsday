@@ -51,7 +51,7 @@ def parser():
         if stage == "evaluate":
             p.add_argument("--k1", type=float, default=1.2)
             p.add_argument("--b", type=float, default=0.75)
-            p.add_argument("--control", choices=["shuffled_idf"])
+            p.add_argument("--control", choices=["shuffled_idf", "uniform_frequency"])
         if stage == "baseline":
             p.add_argument("--method", choices=["bm25", "dense", "splade"], required=True)
     for stage in ("diagnose", "fit-predictor", "run-retrieval", "validate-datasets", "controls", "external-status"):

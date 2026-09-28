@@ -34,8 +34,16 @@ class PostingsCache:
         code = Path(__file__).resolve()
         implementation = {p.name: file_hash(p) for p in
                           (code, code.with_name('index.py'), code.parents[1] / 'scoring.py')}
+        # k1 only reaches transform_documents when saturation is on, and b only when
+        # length is on. Dropping the inert parameter lets one entry serve every k1/b
+        # cell of the parameter sweep instead of rebuilding identical postings.
+        effective = asdict(switches)
+        if not switches.saturation:
+            effective.pop('k1')
+        if not switches.length:
+            effective.pop('b')
         self.prefix = digest({'identity': identity, 'statistics': stats.to_dict(),
-                              'switches': asdict(switches), 'implementation': implementation})
+                              'switches': effective, 'implementation': implementation})
         self.db_path = self.directory / 'entries.sqlite'
         with self.connect() as db:
             db.execute('CREATE TABLE IF NOT EXISTS entries (key TEXT PRIMARY KEY, bytes INTEGER, used REAL)')

@@ -33,10 +33,12 @@ def run_stage(stage, config_path, directory, devices, workers, cpus, stop):
     """Bound concurrency, isolate CUDA devices and propagate checkpoint requests."""
     jobs = list(jsonl(stage["tasks"]))
     gpu = stage["gpus"]
-    # Only evaluation tasks have independent writable artifact directories.
-    # Keep shared-corpus indexing and other CPU stages serial.
+    # Evaluation and indexing write to their own artifact directories, one per task.
+    # Collections over a shared corpus resolve to one index directory, where the
+    # artifact lock serialises the duplicates and the later task reuses the result.
+    # Other CPU stages stay serial.
     slots = (min(workers, len(devices) // gpu, cpus, len(jobs)) if gpu else
-             min(workers, cpus, len(jobs)) if stage["name"] == "evaluate" else 1)
+             min(workers, cpus, len(jobs)) if stage["name"] in {"evaluate", "index"} else 1)
     if not jobs:
         return 0
     if slots < 1:

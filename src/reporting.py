@@ -17,9 +17,13 @@ from src.retrieval.pipeline import collect_results
 def report(config, output=None):
     directory = Path(output) if output else root(config) / "report"
     directory.mkdir(parents=True, exist_ok=True)
-    rows = collect_results(config)
+    # The analysis stage republishes every row with its effect recomputed at the
+    # significance sample count, so prefer that over the evaluation-time values.
+    published = root(config) / "analysis" / "rows.json"
+    rows = read_json(published) if published.exists() else collect_results(config)
     columns = ["row_id", "collection", "corpus_id", "language", "basis", "granularity", "seed", "budget",
-               "k1", "b", "control", "ndcg_off", "ndcg_on", "raw_delta", "margin", "holm_p", "fixture"]
+               "k1", "b", "control", "ndcg_off", "ndcg_on", "raw_delta", "margin", "responsive_switches",
+               "p_value", "holm_p", "bootstrap_samples", "fixture"]
     with (directory / "retrieval.csv").open("w") as handle:
         writer = csv.DictWriter(handle, fieldnames=columns)
         writer.writeheader()
@@ -82,11 +86,23 @@ def report(config, output=None):
         manifest = read_json(path)
         if "status" in manifest and manifest["status"] != "complete":
             statuses.append({"path": str(path), "status": manifest["status"], "error": manifest.get("error")})
+    keys = ("collection", "basis", "granularity", "seed", "budget", "k1", "b", "control")
     planned = experiment_rows(config, "all")
     completed = {(r["collection"], r["basis"], r["granularity"], r["seed"], r["budget"], r["k1"], r["b"],
                   None if r["control"] == "shared_dictionary" else r["control"]) for r in rows}
-    missing = [r for r in planned if tuple(r[k] for k in ("collection", "basis", "granularity", "seed", "budget", "k1", "b", "control")) not in completed]
+    missing = [r for r in planned if tuple(r[k] for k in keys) not in completed]
+    # Per-family coverage, so a finished family is not read as a fraction of the
+    # union of every family. Only one family is submitted per job.
+    families = {}
+    for name in ("primary", "sparsity", "parameters", "robustness", "controls", "shared_sae"):
+        expected = experiment_rows(config, name)
+        done = sum(1 for r in expected if tuple(r[k] for k in keys) in completed)
+        families[name] = {"planned": len(expected), "completed": done,
+                          "complete": bool(expected) and done == len(expected)}
+    excluded = root(config) / "predictor" / "excluded_rows.json"
     inventory = {"completed_retrieval_rows": len(rows), "planned_retrieval_rows": len(planned),
+                 "families": families,
+                 "degenerate_rows_excluded_from_predictor": len(read_json(excluded)) if excluded.exists() else None,
                  "completed_transfer_rows": {setting: sum(r["setting"] == setting for r in transfer_rows)
                                              for setting in ("attention", "routing")},
                  "missing_rows": missing, "incomplete_artifacts": statuses,
@@ -97,10 +113,16 @@ def report(config, output=None):
         inventory["latent_terms"] = read_json(status)
     atomic_json(directory / "inventory.json", inventory)
     lines = ["# Experiment report", "", "Engineering fixture; no research conclusions." if config.get("fixture") else "Generated from completed artifacts only.",
-             "", f"Completed retrieval rows: {len(rows)}. Planned rows in the current expanded manifest: {len(planned)}.",
-             f"Incomplete or failed artifacts: {len(statuses)}. Unrun retrieval rows: {len(missing)}.", "",
-             "| Collection | Basis | Granularity | Budget | Seed | nDCG off | nDCG on | Margin |",
-             "|---|---|---|---|---:|---:|---:|---:|"]
+             "", f"Completed retrieval rows: {len(rows)}. Planned rows across every family: {len(planned)}.",
+             f"Incomplete or failed artifacts: {len(statuses)}. Unrun retrieval rows: {len(missing)}.",
+             "", "One family is submitted per job, so read coverage per family.", "",
+             "| Family | Completed | Planned | Complete |", "|---|---:|---:|---|"]
+    for name, record in families.items():
+        lines.append(f"| {name} | {record['completed']} | {record['planned']} | "
+                     f"{'yes' if record['complete'] else 'no'} |")
+    lines.extend(["",
+                  "| Collection | Basis | Granularity | Budget | Seed | nDCG off | nDCG on | Margin |",
+                  "|---|---|---|---|---:|---:|---:|---:|"])
     for row in rows:
         margin = "undefined" if row["margin"] is None else f"{row['margin']:.3f}"
         lines.append(f"| {row['collection']} | {row['basis']} | {row['granularity']} | {row['budget']} | {row['seed']} | "

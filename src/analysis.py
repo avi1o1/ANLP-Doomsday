@@ -53,7 +53,24 @@ def paired_effect(outcomes, samples=2000, seed=0, weights=None):
             "margin_ci95": np.quantile(standardized, [0.025, 0.975]).tolist() if standardized else None,
             "margin_variance": float(np.var(standardized, ddof=1)) if len(standardized) > 1 else None,
             "bootstrap_valid_margins": len(standardized), "p_value": p,
+            "bootstrap_samples": samples, "p_value_floor": 1 / (samples + 1) if samples else None,
             "undefined_reason": "zero_configuration_spread" if margin is None else None}
+
+
+def responsive_switches(quality):
+    """How many of the three switches move the outcome for this representation.
+
+    A switch that never changes quality turns the all-on minus all-off contrast into
+    a contrast over the switches that remain, and pins the margin at exactly +-2 when
+    only one switch responds. Such a row states nothing about effect size.
+    """
+    values = np.asarray([quality[key] for key in SWITCH_KEYS], dtype=np.float64)
+    count = 0
+    for bit in range(3):
+        mask = 1 << (2 - bit)
+        if any(values[i] != values[i | mask] for i in range(8) if not i & mask):
+            count += 1
+    return count
 
 
 def holm(p_values):
@@ -281,21 +298,29 @@ def parallel_map(function, jobs):
 
 
 def ablation_task(job):
-    filename, row_id, samples = job
+    """Recompute one row's effect, and its component ablations when it is primary.
+
+    Both come from the stored per-query outcomes, so the significance sample count
+    can change without re-running any evaluation.
+    """
+    filename, row_id, samples, with_ablations = job
     outcomes = np.load(filename)
+    effect = paired_effect(outcomes, samples)
+    effect["responsive_switches"] = responsive_switches(effect["quality"])
     ablations = []
-    for bit, component in enumerate(("idf", "saturation", "length")):
-        off = [i for i in range(8) if f"{i:03b}"[bit] == "0"]
-        on = [i for i in range(8) if f"{i:03b}"[bit] == "1"]
-        baseline = outcomes[:, off].mean(axis=1)
-        comparison = np.repeat(baseline[:, None], 8, axis=1)
-        comparison[:, -1] = outcomes[:, on].mean(axis=1)
-        effect = paired_effect(comparison, samples)
-        ablations.append({"row_id": row_id, "component": component,
-            "comparison_family": f"factorial_main_effect_{component}",
-            "definition": "mean on-minus-off over the four settings of the other two switches",
-            **{k: effect[k] for k in ("raw_delta", "raw_ci95", "p_value")}})
-    return ablations
+    if with_ablations:
+        for bit, component in enumerate(("idf", "saturation", "length")):
+            off = [i for i in range(8) if f"{i:03b}"[bit] == "0"]
+            on = [i for i in range(8) if f"{i:03b}"[bit] == "1"]
+            baseline = outcomes[:, off].mean(axis=1)
+            comparison = np.repeat(baseline[:, None], 8, axis=1)
+            comparison[:, -1] = outcomes[:, on].mean(axis=1)
+            component_effect = paired_effect(comparison, samples)
+            ablations.append({"row_id": row_id, "component": component,
+                "comparison_family": f"factorial_main_effect_{component}",
+                "definition": "mean on-minus-off over the four settings of the other two switches",
+                **{k: component_effect[k] for k in ("raw_delta", "raw_ci95", "p_value")}})
+    return {"row_id": row_id, "effect": effect, "ablations": ablations}
 
 
 def validation_task(job):
@@ -310,14 +335,25 @@ def fit_predictors(rows, directory, samples=2000, seed=0):
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     # Repeated seeds are robustness experiments, not extra primary observations.
-    primary = [r for r in rows if r.get("seed", 0) == 0 and r.get("primary_budget", True) and r.get("margin") is not None
-               and not r.get("external", False) and not r.get("control", False)]
+    eligible = [r for r in rows if r.get("seed", 0) == 0 and r.get("primary_budget", True)
+                and r.get("margin") is not None
+                and not r.get("external", False) and not r.get("control", False)]
+    # A row whose outcome answers to fewer than two switches has a degenerate margin
+    # denominator, so it states a sign and no effect size. Those rows stay in the
+    # descriptive tables and are held out of the regression.
+    primary = [r for r in eligible if r.get("responsive_switches", 3) >= 2]
+    degenerate = [r for r in eligible if r.get("responsive_switches", 3) < 2]
     if len(primary) < 4:
         raise ValueError("Need at least four defined primary rows to fit a predictor")
+    atomic_json(directory / "excluded_rows.json",
+                [{"row_id": r["row_id"], "collection": r["collection"],
+                  "representation_id": r["representation_id"], "margin": r["margin"],
+                  "responsive_switches": r.get("responsive_switches")} for r in degenerate])
     jobs = [(primary, axis, features, weighted, name, samples, seed)
             for features, name in ((PRIMARY_FEATURES, "primary"), (ALL_FEATURES, "six_features"))
             for weighted in (False, True) for axis in ("family", "corpus_id", "indic")]
-    repeated = [r for r in rows if r.get("margin") is not None and not r.get("external") and not r.get("control")]
+    repeated = [r for r in rows if r.get("margin") is not None and not r.get("external")
+                and not r.get("control") and r.get("responsive_switches", 3) >= 2]
     if len(repeated) > len(primary):
         jobs.extend((repeated, axis, PRIMARY_FEATURES, False, "repeated_measurements_sensitivity", samples, seed)
                     for axis in ("family", "corpus_id", "indic"))
@@ -330,7 +366,10 @@ def fit_predictors(rows, directory, samples=2000, seed=0):
     frozen = train_model(primary, PRIMARY_FEATURES, alpha)
     frozen.metadata.update(retrieval_oof_rmse=residual, training_manifest_hash=digest(primary),
                            transfer_sign_threshold=0.70, transfer_mae_multiplier=1.5,
-                           acceptance_protocol="per-setting-no-refit-v1")
+                           acceptance_protocol="per-setting-no-refit-v1",
+                           minimum_responsive_switches=2,
+                           degenerate_rows_excluded=len(degenerate),
+                           significance_samples=samples)
     frozen.save(directory / "predictor.json")
     english = [r for r in primary if r["language"] not in INDIC_LANGUAGES]
     if len(english) >= 3:

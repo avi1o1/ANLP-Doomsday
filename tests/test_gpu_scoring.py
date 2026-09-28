@@ -7,9 +7,10 @@ from src.retrieval.index import InvertedIndex, merge_rankings
 from src.scoring import CollectionStats, configurations
 
 
+@pytest.mark.parametrize('block', [3, 4096])
 @pytest.mark.parametrize('device', ['cpu', 'cuda'])
 @pytest.mark.parametrize('switches', configurations())
-def test_batched_ordered_scoring_exact_sharded_parity(device, switches):
+def test_batched_ordered_scoring_exact_sharded_parity(device, switches, block):
     import torch
     if device == 'cuda' and not torch.cuda.is_available():
         pytest.skip('CUDA unavailable')
@@ -24,7 +25,8 @@ def test_batched_ordered_scoring_exact_sharded_parity(device, switches):
     stats = CollectionStats.empty(17)
     stats.update(documents)
     excluded = ['2'] + [None] * (queries.shape[0] - 1)
-    scorer = BatchedScorer(queries, names, 12, excluded, device)
+    # A block smaller than a shard must fold into the same ranking as one block.
+    scorer = BatchedScorer(queries, names, 12, excluded, device, block)
     reference = [[] for _ in range(queries.shape[0])]
     visits = np.zeros(queries.shape[0], dtype=np.int64)
     for start, end in ((0, 11), (11, 21), (21, 33)):

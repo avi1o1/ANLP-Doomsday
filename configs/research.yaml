@@ -41,7 +41,6 @@ bases:
     dictionary_granularity: token
     secondary: true
 granularities: [pooled, token]
-seeds: [0]
 budgets:
   - {name: q32_d128, query: 32, document: 128, primary: true}
   - {name: q16_d64, query: 16, document: 64}
@@ -53,6 +52,10 @@ dense_search: {backend: gpu, query_batch_size: 256, candidate_buffer: 128, gpu_i
 bm25: {implementation: bm25s, version: 0.3.11, method: lucene, k1: 1.2, b: 0.75, backend: numba,
        csc_backend: numpy, mmap: true, threads: 36, candidate_buffer: 4096}
 analysis: {bootstrap_samples: 2000, seed: 0}
+# Holm over m comparisons cannot report below m/(samples+1). Kept out of the
+# analysis block above, which evaluations are keyed on.
+significance: {bootstrap_samples: 10000}
+index_shard_documents: 65536
 experiments:
   robustness_seeds: [1, 2]
   robustness_collections: [scifact, fiqa, miracl_hi, miracl_bn, miracl_te]
@@ -60,7 +63,10 @@ experiments:
   parameter_collections: [scifact, fiqa, miracl_hi, miracl_bn, miracl_te]
   k1: [0.6, 1.2, 2.4]
   b: [0.0, 0.5, 0.75]
-  controls: [shuffled_idf, constant_length, uniform_frequency]
+  # constant_length is covered algebraically in src/retrieval/controls.py; as a
+  # retrieval control it would have to rescale documents at index time, which is
+  # a different index rather than a statistics override.
+  controls: [shuffled_idf, uniform_frequency]
   control_collections: [scifact, nfcorpus, arguana]
 datasets:
   msmarco_train:

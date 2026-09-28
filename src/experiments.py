@@ -58,14 +58,16 @@ def experiment_rows(config, family="primary"):
                             continue
                         k_values = spec.get("k1", [0.6, 1.2, 2.4]) if family == "parameters" else [1.2]
                         b_values = spec.get("b", [0, 0.5, 0.75]) if family == "parameters" else [0.75]
+                        controls = spec.get("controls", ["shuffled_idf"]) if family == "controls" else [None]
                         for k1 in k_values:
                             for b in b_values:
-                                row = {"collection": collection, "corpus_id": dataset["corpus_id"],
-                                       "basis": basis["name"], "granularity": granularity, "seed": seed,
-                                       "budget": budget["name"], "k1": k1, "b": b,
-                                       "control": "shuffled_idf" if family == "controls" else None}
-                                row["row_id"] = digest(row)
-                                rows.append(row)
+                                for control in controls:
+                                    row = {"collection": collection, "corpus_id": dataset["corpus_id"],
+                                           "basis": basis["name"], "granularity": granularity, "seed": seed,
+                                           "budget": budget["name"], "k1": k1, "b": b,
+                                           "control": control}
+                                    row["row_id"] = digest(row)
+                                    rows.append(row)
     return rows
 
 
