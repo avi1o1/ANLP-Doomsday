@@ -325,10 +325,15 @@ def main(argv=None):
         return register(args)
     if args.plan is None:
         parser.error("a plan is required unless --register is given")
-    plan = json.loads(args.plan.read_text())
-    names = [entry.get("name", f"step{i}") for i, entry in enumerate(plan)]
-    if len(set(names)) != len(names):
-        raise SystemExit("Plan entries need unique names")
+    def read_plan():
+        entries = json.loads(args.plan.read_text())
+        labels = [entry.get("name", f"step{i}") for i, entry in enumerate(entries)]
+        if len(set(labels)) != len(labels):
+            raise ValueError("Plan entries need unique names")
+        return entries, labels
+
+    plan, names = read_plan()
+    plan_stamp = args.plan.stat().st_mtime
 
     state = json.loads(args.state_file.read_text()) if args.state_file.exists() else {}
     state.setdefault("completed", [])
@@ -348,6 +353,16 @@ def main(argv=None):
     process, running, clear_since, yielded = None, None, None, False
     try:
         while not stop["requested"]:
+            # The plan file may be edited while the guard runs, to reorder or add steps.
+            # The running step continues; the next choice uses the new plan. A plan
+            # that fails to parse is ignored until it is fixed.
+            if args.plan.stat().st_mtime != plan_stamp:
+                plan_stamp = args.plan.stat().st_mtime
+                try:
+                    plan, names = read_plan()
+                    log(handle, f"plan reloaded: {names}")
+                except (ValueError, json.JSONDecodeError) as error:
+                    log(handle, f"plan file unreadable, keeping the previous plan: {error}")
             pending = [e for e, n in zip(plan, names) if n not in state["completed"]]
             if not pending and process is None:
                 log(handle, "plan complete")
