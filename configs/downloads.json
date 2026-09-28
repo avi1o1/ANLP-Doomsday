@@ -1,0 +1,180 @@
+[
+  {
+    "dataset": "beir/scifact",
+    "target": "beir/scifact/source.zip",
+    "url": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip",
+    "size_hint": 2816079,
+    "expected_md5": "5f7d1de60b170fc8027bb7898e2efca1"
+  },
+  {
+    "dataset": "beir/nfcorpus",
+    "target": "beir/nfcorpus/source.zip",
+    "url": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/nfcorpus.zip",
+    "size_hint": 2448432,
+    "expected_md5": "a89dba18a62ef92f7d323ec890a0d38d"
+  },
+  {
+    "dataset": "beir/fiqa",
+    "target": "beir/fiqa/source.zip",
+    "url": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/fiqa.zip",
+    "size_hint": 17948027,
+    "expected_md5": "17918ed23cd04fb15047f73e6c3bd9d9"
+  },
+  {
+    "dataset": "beir/trec-covid",
+    "target": "beir/trec-covid/source.zip",
+    "url": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/trec-covid.zip",
+    "size_hint": 73876720,
+    "expected_md5": "ce62140cb23feb9becf6270d0d1fe6d1"
+  },
+  {
+    "dataset": "beir/arguana",
+    "target": "beir/arguana/source.zip",
+    "url": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/arguana.zip",
+    "size_hint": 3773617,
+    "expected_md5": "8ad3e3c2a5867cdced806d6503f29b99"
+  },
+  {
+    "dataset": "beir/scidocs",
+    "target": "beir/scidocs/source.zip",
+    "url": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scidocs.zip",
+    "size_hint": 142471588,
+    "expected_md5": "38121350fc3a4d2f48850f6aff52e4a9"
+  },
+  {
+    "dataset": "miracl/v1.0/bn/dev/topics",
+    "target": "miracl/v1.0/bn/dev/topics.tsv",
+    "url": "https://huggingface.co/datasets/macavaney/miracl-noauth/resolve/main/miracl-v1.0-bn/topics/topics.miracl-v1.0-bn-dev.tsv",
+    "size_hint": 95063,
+    "expected_md5": "17ff030d33d678547626c66fb9f52b4c"
+  },
+  {
+    "dataset": "miracl/v1.0/hi/dev/topics",
+    "target": "miracl/v1.0/hi/dev/topics.tsv",
+    "url": "https://huggingface.co/datasets/macavaney/miracl-noauth/resolve/main/miracl-v1.0-hi/topics/topics.miracl-v1.0-hi-dev.tsv",
+    "size_hint": 525158,
+    "expected_md5": "69aafc100baf5617d7d7e63b47c4d86a"
+  },
+  {
+    "dataset": "miracl/v1.0/te/dev/topics",
+    "target": "miracl/v1.0/te/dev/topics.tsv",
+    "url": "https://huggingface.co/datasets/macavaney/miracl-noauth/resolve/main/miracl-v1.0-te/topics/topics.miracl-v1.0-te-dev.tsv",
+    "size_hint": 33832,
+    "expected_md5": "6382282438291981c2b65ae3c8f3dd71"
+  },
+  {
+    "dataset": "miracl/v1.0/bn/dev/qrels",
+    "target": "miracl/v1.0/bn/dev/qrels.tsv",
+    "url": "https://huggingface.co/datasets/macavaney/miracl-noauth/resolve/main/miracl-v1.0-bn/qrels/qrels.miracl-v1.0-bn-dev.tsv",
+    "size_hint": 255921,
+    "expected_md5": "42158a39e400a5a6ebef97b9e91e54b1"
+  },
+  {
+    "dataset": "miracl/v1.0/hi/dev/qrels",
+    "target": "miracl/v1.0/hi/dev/qrels.tsv",
+    "url": "https://huggingface.co/datasets/macavaney/miracl-noauth/resolve/main/miracl-v1.0-hi/qrels/qrels.miracl-v1.0-hi-dev.tsv",
+    "size_hint": 334413,
+    "expected_md5": "0b97e26e09bdf24a21325b74016d3047"
+  },
+  {
+    "dataset": "miracl/v1.0/te/dev/qrels",
+    "target": "miracl/v1.0/te/dev/qrels.tsv",
+    "url": "https://huggingface.co/datasets/macavaney/miracl-noauth/resolve/main/miracl-v1.0-te/qrels/qrels.miracl-v1.0-te-dev.tsv",
+    "size_hint": 5983,
+    "expected_md5": "2f7c45f44bc8842633a8eb14dbb99f19"
+  },
+  {
+    "dataset": "miracl/v1.0/bn/corpus/0",
+    "target": "miracl/v1.0/bn/docs/docs-0.jsonl.gz",
+    "url": "https://huggingface.co/datasets/miracl/miracl-corpus/resolve/main/miracl-corpus-v1.0-bn/docs-0.jsonl.gz",
+    "size_hint": 59713182,
+    "expected_md5": "1e30b159bc3634e068bcf8f1fbff68ef"
+  },
+  {
+    "dataset": "miracl/v1.0/hi/corpus/0",
+    "target": "miracl/v1.0/hi/docs/docs-0.jsonl.gz",
+    "url": "https://huggingface.co/datasets/miracl/miracl-corpus/resolve/main/miracl-corpus-v1.0-hi/docs-0.jsonl.gz",
+    "size_hint": 95650487,
+    "expected_md5": "ffefe282e6be09f06a69d2945f402bda"
+  },
+  {
+    "dataset": "miracl/v1.0/hi/corpus/1",
+    "target": "miracl/v1.0/hi/docs/docs-1.jsonl.gz",
+    "url": "https://huggingface.co/datasets/miracl/miracl-corpus/resolve/main/miracl-corpus-v1.0-hi/docs-1.jsonl.gz",
+    "size_hint": 1161610,
+    "expected_md5": "3fe3f9f265b2f52a25b4a49b80c82cf5"
+  },
+  {
+    "dataset": "miracl/v1.0/te/corpus/0",
+    "target": "miracl/v1.0/te/docs/docs-0.jsonl.gz",
+    "url": "https://huggingface.co/datasets/miracl/miracl-corpus/resolve/main/miracl-corpus-v1.0-te/docs-0.jsonl.gz",
+    "size_hint": 68858140,
+    "expected_md5": "7b1067004a12a018eb4ca9e7e7655600"
+  },
+  {
+    "dataset": "miracl/v1.0/te/corpus/1",
+    "target": "miracl/v1.0/te/docs/docs-1.jsonl.gz",
+    "url": "https://huggingface.co/datasets/miracl/miracl-corpus/resolve/main/miracl-corpus-v1.0-te/docs-1.jsonl.gz",
+    "size_hint": 3454223,
+    "expected_md5": "703a0ac0d66c6fa6b684df9d7d6afd20"
+  },
+  {
+    "dataset": "msmarco-passage/collectionandqueries",
+    "target": "msmarco-passage/collectionandqueries.tar.gz",
+    "url": "https://msmarco.z22.web.core.windows.net/msmarcoranking/collectionandqueries.tar.gz",
+    "size_hint": 1057717952,
+    "expected_md5": "31644046b18952c1386cd4564ba2ae69",
+    "download_args": {
+      "headers": {
+        "X-Ms-Version": "2019-12-12"
+      }
+    }
+  },
+  {
+    "dataset": "msmarco-passage/train/qrels",
+    "target": "msmarco-passage/train/qrels",
+    "url": "https://msmarco.z22.web.core.windows.net/msmarcoranking/qrels.train.tsv",
+    "size_hint": 10589532,
+    "expected_md5": "733fb9fe12d93e497f7289409316eccf"
+  },
+  {
+    "dataset": "msmarco-passage/dev/qrels",
+    "target": "msmarco-passage/dev/qrels",
+    "url": "https://msmarco.z22.web.core.windows.net/msmarcoranking/qrels.dev.tsv",
+    "size_hint": 1201626,
+    "expected_md5": "9157ccaeaa8227f91722ba5770787b16"
+  },
+  {
+    "dataset": "msmarco-passage/trec-dl-2019/qrels",
+    "target": "msmarco-passage/trec-dl-2019/qrels",
+    "url": "https://trec.nist.gov/data/deep/2019qrels-pass.txt",
+    "size_hint": 187092,
+    "expected_md5": "2f4be390198da108f6845c822e5ada14"
+  },
+  {
+    "dataset": "msmarco-passage/trec-dl-2020/qrels",
+    "target": "msmarco-passage/trec-dl-2020/qrels",
+    "url": "https://trec.nist.gov/data/deep/2020qrels-pass.txt",
+    "size_hint": 218617,
+    "expected_md5": "0355ccee7509ac0463e8278186cdd8d1"
+  },
+  {
+    "dataset": "msmarco-passage/trec-dl-2020/queries",
+    "target": "msmarco-passage/trec-dl-2020/queries.tsv.gz",
+    "url": "https://msmarco.z22.web.core.windows.net/msmarcoranking/msmarco-test2020-queries.tsv.gz",
+    "size_hint": 4131,
+    "expected_md5": "00a406fb0d14ed3752d70d1e4eb98600"
+  },
+  {
+    "dataset": "msmarco-passage/queries",
+    "target": "msmarco-passage/queries.fast.tar.gz",
+    "url": "https://msmarco.z22.web.core.windows.net/msmarcoranking/queries.tar.gz",
+    "size_hint": 18882551,
+    "expected_md5": "c177b2795d5f2dcc524cf00fcd973be1",
+    "download_args": {
+      "headers": {
+        "X-Ms-Version": "2019-12-12"
+      }
+    }
+  }
+]
