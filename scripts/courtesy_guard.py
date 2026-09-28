@@ -417,7 +417,8 @@ def main(argv=None):
             time.sleep(args.poll)
         log(handle, "guard asked to exit; checkpointing the running step")
         if process is not None:
-            stop_child(process, args, handle)
+            code = stop_child(process, args, handle)
+            log(handle, f"{running} checkpointed with exit {code}; guard exiting")
             process = None
         return CHECKPOINT_EXIT
     except BaseException as error:
