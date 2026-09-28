@@ -19,10 +19,33 @@ def digest(value: Any) -> str:
     return hashlib.sha256(canonical(value).encode()).hexdigest()
 
 
-def load_config(path: str | Path) -> dict:
-    path = Path(path).resolve()
+def merged(base: dict, override: dict) -> dict:
+    """Mappings merge key by key; any other value, lists included, replaces the base."""
+    result = dict(base)
+    for key, value in override.items():
+        result[key] = merged(result[key], value) if isinstance(value, dict) and isinstance(result.get(key), dict) else value
+    return result
+
+
+def _read(path: Path, seen=()) -> dict:
+    """One configuration file, with an optional `extends:` base resolved beside it.
+
+    A machine configuration can then state only what differs from the scientific
+    defaults, and the scientific settings stay in one place.
+    """
+    if path in seen:
+        raise ValueError(f"Configuration extends itself: {path}")
     with path.open() as handle:
         config = yaml.safe_load(handle)
+    if isinstance(config, dict) and "extends" in config:
+        base = _read((path.parent / config.pop("extends")).resolve(), (*seen, path))
+        config = merged(base, config)
+    return config
+
+
+def load_config(path: str | Path) -> dict:
+    path = Path(path).resolve()
+    config = _read(path)
     if not isinstance(config, dict) or config.get("schema_version") != 1:
         raise ValueError("Configuration must be a mapping with schema_version: 1")
     for key in ("datasets", "bases", "encoder", "fitting", "budgets"):
