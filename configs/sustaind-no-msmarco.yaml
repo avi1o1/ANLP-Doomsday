@@ -1,0 +1,11 @@
+schema_version: 1
+extends: sustaind.yaml
+# The three collections over the MS MARCO corpus cannot be encoded on this machine
+# inside a day: 8.8M documents at 14 representations and up to 256 stored features
+# each exceed both the single GPU's throughput and the free disk. Bases are still
+# fitted on MS MARCO training passages exactly as in research.yaml; only the
+# evaluation collections over that corpus are left out.
+datasets:
+  msmarco_dev: {enabled: false, unavailable_reason: "MS MARCO corpus not encoded on the SERC workstation run"}
+  trec_dl_2019: {enabled: false, unavailable_reason: "MS MARCO corpus not encoded on the SERC workstation run"}
+  trec_dl_2020: {enabled: false, unavailable_reason: "MS MARCO corpus not encoded on the SERC workstation run"}
