@@ -12,7 +12,14 @@ def test_merged_replaces_lists_and_merges_mappings():
 def test_machine_config_changes_execution_only(tmp_path):
     research, machine = load_config("configs/research.yaml"), load_config("configs/sustaind.yaml")
     changed = {k for k in set(research) | set(machine) if research.get(k) != machine.get(k)}
-    assert changed <= {"shared_encoding", "bm25", "_config_path", "datasets"}
+    assert changed <= {"shared_encoding", "bm25", "_config_path", "datasets", "encoder",
+                       "external", "attention", "routing"}
+    # Pinning a revision is the only permitted change to the encoder.
+    assert {k: v for k, v in machine["encoder"].items() if k != "revision"} == \
+        {k: v for k, v in research["encoder"].items() if k != "revision"}
+    for name, spec in research["datasets"].items():
+        assert {k: v for k, v in machine["datasets"][name].items() if k not in {"revision", "enabled",
+                "unavailable_reason"}} == {k: v for k, v in spec.items() if k != "revision"}
     assert machine["shared_encoding"]["batch_size"] == research["shared_encoding"]["batch_size"]
     for key in ("k1", "b", "method", "implementation", "version"):
         assert machine["bm25"][key] == research["bm25"][key]

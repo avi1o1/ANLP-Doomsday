@@ -7,3 +7,20 @@ extends: research.yaml
 shared_encoding: {shards_per_corpus: 2}
 # BM25S threads match this machine's 16 hardware threads instead of the cluster's 36.
 bm25: {threads: 16}
+# Revisions pinned to the cluster run's frozen configuration
+# (research-shared-cluster.yaml), so encodings, datasets and any imported bases
+# refer to exactly the same models and data.
+encoder: {revision: d128750597153bb5987e10b1c3493a34e5a4502a}
+datasets:
+  limit: {revision: 215834026c13176e520b3bc9d0a055099537ef99}
+external:
+  splade: {revision: fdfeceb91d7b9de7985b38addd3ba9f53a59a355}
+attention:
+  model: Qwen/Qwen2.5-1.5B-Instruct
+  requested_model: meta-llama/Llama-3.2-1B-Instruct
+  revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+routing:
+  revision: 6d84c48581ece794365f2b8e9cfb043c68ade9c5
+  dataset_revisions: {wikitext: b08601e04326c79dfdd32d625aee71d232d685c3,
+                      mmlu: c30699e8356da336a370243923dbaf21066bb9fe,
+                      gsm8k: 740312add88f781978c0658806c59bc2815b9866}
