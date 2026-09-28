@@ -360,10 +360,25 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
             gpu_queries = int(os.environ.get("CSX_GPU_QUERY_BATCH", "512"))
             if gpu_queries < checkpoint_size:
                 raise ValueError("GPU query batch must cover at least one checkpoint batch")
+        # Transformed postings depend on the configuration alone, never on the query
+        # batch. Without the disk cache every batch rebuilt every shard, so an index
+        # that fits the memory budget is built once per configuration and reused.
+        memory_budget = float(os.environ.get("CSX_POSTINGS_MEMORY_GIB", "2")) * 2**30
         for column, switches in enumerate(configurations(k1, b)):
             cache = (PostingsCache(cache_root, cache_identity, stats, switches,
                                   int(float(os.environ.get("CSX_POSTINGS_CACHE_GIB", "192")) * 2**30))
                      if cache_root else None)
+            memo = {} if stats.nnz_sum * 12 <= memory_budget else None
+
+            def postings_for(number, shard, cache=cache, switches=switches, memo=memo):
+                if memo is not None and number in memo:
+                    return memo[number]
+                built = (cache.get(shard) if cache else
+                         InvertedIndex(sparse.load_npz(shard["vectors"]), read_json(shard["ids"]), stats, switches))
+                if memo is not None:
+                    memo[number] = built
+                return built
+
             all_records = []
             if gpu_scoring:
                 pending = [start for start in range(0, len(query_ids), checkpoint_size)
@@ -377,10 +392,9 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
                         excluded=[query_ids[row] for row in rows] if spec.get("exclude_identical_ids", False) else None,
                         block=int(os.environ.get("CSX_GPU_DOCUMENT_BLOCK", "4096")))
                     offset = 0
-                    for shard in shards:
+                    for number, shard in enumerate(shards):
                         stop.check()
-                        postings = (cache.get(shard) if cache else
-                                    InvertedIndex(sparse.load_npz(shard["vectors"]), read_json(shard["ids"]), stats, switches))
+                        postings = postings_for(number, shard)
                         scorer.add(postings, offset)
                         offset += len(postings.doc_ids)
                     rankings, visits = scorer.finish()
@@ -410,11 +424,9 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
                     rankings = [[] for _ in range(end - start)]
                     visits = np.zeros(end - start, dtype=np.int64)
                     tick = time.perf_counter()
-                    for shard in shards:
+                    for number, shard in enumerate(shards):
                         stop.check()
-                        postings = (cache.get(shard) if cache else
-                                    InvertedIndex(sparse.load_npz(shard["vectors"]),
-                                                  read_json(shard["ids"]), stats, switches))
+                        postings = postings_for(number, shard)
                         for i, row in enumerate(range(start, end)):
                             ranking, count = postings.search(query_matrix[row], 1000,
                                 query_ids[row] if spec.get("exclude_identical_ids", False) else None)
