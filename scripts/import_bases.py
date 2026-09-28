@@ -43,7 +43,8 @@ def main(argv=None):
     parser.add_argument("source", type=Path, help="the earlier run's bases directory")
     parser.add_argument("--config", required=True)
     parser.add_argument("--output-root", required=True)
-    parser.add_argument("--source-sample", type=Path, help="the earlier run's sample/sample.json")
+    parser.add_argument("--source-sample", type=Path,
+                        help="the earlier run's sample/sample.json, or its sample/manifest.json")
     args = parser.parse_args(argv)
     config = load_config(args.config)
     config["output_root"] = args.output_root
@@ -53,6 +54,9 @@ def main(argv=None):
     local = read_json(sample / "sample.json")
     if args.source_sample:
         earlier = read_json(args.source_sample)
+        # An archived run may keep only the sample's manifest, whose metadata holds
+        # the same record that sample.json does.
+        earlier = earlier.get("metadata", earlier) if "sample_ids_hash" not in earlier else earlier
         for key in ("sample_ids_hash", "model_revision"):
             if earlier[key] != local[key]:
                 raise SystemExit(f"Fitting sample differs from the earlier run in {key}: "
