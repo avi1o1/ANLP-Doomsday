@@ -54,10 +54,14 @@ CHECKPOINT_EXIT = 99  # src.launch and every stage exit 99 after a cooperative s
 
 
 def log(handle, message):
+    """Log file first; a vanished console must never stop the guard from checkpointing."""
     line = f"{time.strftime('%Y-%m-%d %H:%M:%S')} {message}"
-    print(line, flush=True)
     handle.write(line + "\n")
     handle.flush()
+    try:
+        print(line, flush=True)
+    except OSError:
+        pass
 
 
 def _uid_min():
@@ -399,7 +403,15 @@ def main(argv=None):
         log(handle, "guard asked to exit; checkpointing the running step")
         if process is not None:
             stop_child(process, args, handle)
+            process = None
         return CHECKPOINT_EXIT
+    except BaseException as error:
+        # Whatever went wrong here, the running step is checkpointed rather than
+        # orphaned; it runs in its own session and would otherwise keep going.
+        log(handle, f"guard failed ({type(error).__name__}: {error}); checkpointing the running step")
+        if process is not None and process.poll() is None:
+            stop_child(process, args, handle)
+        raise
     finally:
         handle.close()
 
