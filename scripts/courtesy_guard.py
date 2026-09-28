@@ -1,21 +1,38 @@
 """Run experiment stages on a shared machine, stepping aside whenever someone else uses it.
 
-The guard runs each planned launcher invocation as a child process. While another
-user is logged in, owns a GPU process, or is using more CPU than a small threshold,
-the child is asked to checkpoint with SIGUSR1, the same request Slurm sends before a
-time limit. The launcher forwards it to every worker, each worker saves at its next
-safe boundary and exits, and every GPU and CPU is released. Once nobody else has
-been present for a grace period the invocation is started again on the same output
-root: completed artifacts are reused and partial evaluations resume from their last
-saved query batch.
+The machine may be one account shared by many people, so presence is decided by
+session and by process, not by account name. Ours is the guard's own process tree,
+plus any session that connects from an IP listed as ours. Someone else is:
+
+- an SSH connection from any other IP;
+- a login at the machine itself (a console or desktop session);
+- a GPU process outside our tree;
+- more than a small amount of CPU used by processes outside our tree;
+- the pause file, which anyone can create;
+- less free disk than --min-free-gb, so the run never fills a shared disk.
+
+Presence has to last --debounce seconds before it counts, so a quick scp or status
+check does not cost a checkpoint. The pause file counts at once.
+
+On presence the launcher gets SIGUSR1, the same checkpoint request Slurm sends. It
+forwards it to every worker, each worker saves at its next safe boundary and exits
+99, and every GPU and CPU is released. Once nobody else has been present for
+--grace seconds the step starts again on the same output root: completed artifacts
+are reused and partial evaluations resume from their last saved query batch.
 
 Nothing here hides the work. Processes keep their ordinary names, the state file
-records every pause, and anyone can ask the guard to yield by creating the pause file.
+records every pause, and the log says why each one happened.
+
+Add your IP from inside your own SSH session with
+
+    python3 scripts/courtesy_guard.py --register --output-root OUTPUT_ROOT
+
+which appends it to OUTPUT_ROOT/our_ips; the file is re-read on every poll.
 
 Example plan (JSON list, run in order):
 
     [{"name": "controls", "family": "controls", "stages": ["index", "evaluate"],
-      "gpus": 4, "workers": 4, "cpus": 32, "env": {"CSX_EVALUATION_BACKEND": "cuda"}}]
+      "gpus": 1, "workers": 1, "cpus": 16, "env": {"CSX_EVALUATION_BACKEND": "cuda"}}]
 
 An entry may give "argv" instead of family/stages to run any other resumable command.
 """
@@ -23,10 +40,10 @@ An entry may give "argv" instead of family/stages to run any other resumable com
 from __future__ import annotations
 
 import argparse
-import getpass
 import json
 import os
 import pwd
+import shutil
 import signal
 import subprocess
 import sys
@@ -43,101 +60,99 @@ def log(handle, message):
     handle.flush()
 
 
-def owner(pid):
-    try:
-        return pwd.getpwuid(os.stat(f"/proc/{pid}").st_uid).pw_name
-    except (OSError, KeyError):
-        return None
-
-
-def logged_in_users():
-    """Accounts with a login: utmp entries, plus every SSH session.
-
-    A command run over SSH without a terminal leaves no utmp record, so sshd's
-    per-session process titles ("sshd: alice@pts/0", "sshd-session: alice@notty") are read
-    as well. Listener and pre-authentication titles are skipped.
-    """
-    users = set()
-    try:
-        output = subprocess.run(["who"], capture_output=True, text=True, timeout=10).stdout
-        users |= {line.split()[0] for line in output.splitlines() if line.strip()}
-    except (OSError, subprocess.TimeoutExpired):
-        pass
-    for entry in os.scandir("/proc"):
-        if not entry.name.isdigit():
-            continue
-        try:
-            title = Path(entry.path, "cmdline").read_bytes().split(b"\0")[0].decode(errors="ignore")
-        except OSError:
-            continue
-        # OpenSSH 9.8 renamed the per-session process from sshd to sshd-session.
-        for prefix in ("sshd: ", "sshd-session: "):
-            if title.startswith(prefix) and "[" not in title and "@" in title:
-                users.add(title[len(prefix):].split("@")[0].strip())
-    return users
-
-
-def gpu_users():
-    try:
-        output = subprocess.run(["nvidia-smi", "--query-compute-apps=pid", "--format=csv,noheader"],
-                                capture_output=True, text=True, timeout=20).stdout
-    except (OSError, subprocess.TimeoutExpired):
-        return set()
-    users = set()
-    for line in output.splitlines():
-        if line.strip().isdigit():
-            name = owner(int(line.strip()))
-            # A process in another PID namespace has no /proc entry here; count it
-            # as someone else, since it is not one of ours.
-            users.add(name or "<unknown gpu process>")
-    return users
-
-
-class CpuSampler:
-    """Per-user CPU use over the last poll interval, in cores, from /proc."""
-
-    def __init__(self):
-        self.previous = self._read()
-        self.stamp = time.monotonic()
-
-    @staticmethod
-    def _read():
-        ticks = {}
-        for entry in os.scandir("/proc"):
-            if not entry.name.isdigit():
-                continue
-            try:
-                stat = Path(entry.path, "stat").read_text()
-                uid = os.stat(entry.path).st_uid
-            except OSError:
-                continue
-            fields = stat[stat.rindex(")") + 2:].split()
-            ticks[int(entry.name)] = (uid, int(fields[11]) + int(fields[12]))
-        return ticks
-
-    def sample(self):
-        current, now = self._read(), time.monotonic()
-        elapsed = max(now - self.stamp, 1e-3) * os.sysconf("SC_CLK_TCK")
-        cores = {}
-        for pid, (uid, total) in current.items():
-            before = self.previous.get(pid)
-            used = total - before[1] if before and before[0] == uid else 0
-            cores[uid] = cores.get(uid, 0.0) + max(used, 0) / elapsed
-        self.previous, self.stamp = current, now
-        return cores
-
-
-def human_uids(ours):
-    """Accounts that belong to people, excluding ours; system daemons are ignored."""
-    minimum = 1000
+def _uid_min():
     try:
         for line in Path("/etc/login.defs").read_text().splitlines():
             parts = line.split()
             if len(parts) == 2 and parts[0] == "UID_MIN":
-                minimum = int(parts[1])
+                return int(parts[1])
     except OSError:
         pass
-    return lambda uid: uid >= minimum and uid != 65534 and _name(uid) not in ours
+    return 1000
+
+
+UID_MIN = _uid_min()
+
+
+def _client_ip(address):
+    """'10.1.38.157', '[::ffff:10.1.38.157]:22' or '10.1.38.157:22' -> '10.1.38.157'."""
+    host = address.rsplit(":", 1)[0] if address.count(":") == 1 or address.startswith("[") else address
+    host = host.strip("[]")
+    return host[len("::ffff:"):] if host.startswith("::ffff:") else host
+
+
+def process_table():
+    """pid -> (ppid, uid, cpu ticks, SSH client IP or None), read from /proc."""
+    table = {}
+    for entry in os.scandir("/proc"):
+        if not entry.name.isdigit():
+            continue
+        try:
+            stat = Path(entry.path, "stat").read_text()
+            uid = os.stat(entry.path).st_uid
+        except OSError:
+            continue
+        fields = stat[stat.rindex(")") + 2:].split()
+        client = None
+        try:
+            # Readable for processes of this account, which is the shared case.
+            for item in Path(entry.path, "environ").read_bytes().split(b"\0"):
+                if item.startswith(b"SSH_CONNECTION="):
+                    client = _client_ip(item.split(b"=", 1)[1].split()[0].decode())
+                    break
+        except OSError:
+            pass
+        table[int(entry.name)] = (int(fields[1]), uid, int(fields[11]) + int(fields[12]), client)
+    return table
+
+
+def our_processes(table, root_pid, our_ips, our_accounts):
+    """Our tree, sessions from our IPs, and whole accounts listed as ours, with descendants."""
+    children = {}
+    for pid, (ppid, *_rest) in table.items():
+        children.setdefault(ppid, []).append(pid)
+    seeds = {root_pid} | {pid for pid, (_, uid, _t, ip) in table.items()
+                          if (ip and ip in our_ips) or _name(uid) in our_accounts}
+    ours, stack = set(), list(seeds)
+    while stack:
+        pid = stack.pop()
+        if pid in ours:
+            continue
+        ours.add(pid)
+        stack.extend(children.get(pid, ()))
+    return ours
+
+
+def ssh_peers():
+    try:
+        output = subprocess.run(["ss", "-Htn", "state", "established", "( sport = :22 )"],
+                                capture_output=True, text=True, timeout=10).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return []
+    return [_client_ip(line.split()[-1]) for line in output.splitlines() if line.split()]
+
+
+def console_logins():
+    """Sessions at the machine itself: utmp entries with no remote host, or an X display."""
+    try:
+        output = subprocess.run(["who"], capture_output=True, text=True, timeout=10).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return []
+    found = []
+    for line in output.splitlines():
+        host = line[line.index("(") + 1:line.rindex(")")] if "(" in line and ")" in line else ""
+        if not host or host.startswith(":"):
+            found.append(" ".join(line.split()[:2]))
+    return found
+
+
+def gpu_pids():
+    try:
+        output = subprocess.run(["nvidia-smi", "--query-compute-apps=pid", "--format=csv,noheader"],
+                                capture_output=True, text=True, timeout=20).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return []
+    return [int(line) for line in (x.strip() for x in output.splitlines()) if line.isdigit()]
 
 
 def _name(uid):
@@ -147,21 +162,87 @@ def _name(uid):
         return str(uid)
 
 
-def others_present(args, sampler, is_other):
-    reasons = []
-    if args.pause_file.exists():
-        reasons.append(f"pause file {args.pause_file}")
-    logins = sorted(u for u in logged_in_users() if u not in args.ours)
-    if logins:
-        reasons.append("logged in: " + ", ".join(logins))
-    if not args.ignore_gpu:
-        gpu = sorted(u for u in gpu_users() if u not in args.ours)
-        if gpu:
-            reasons.append("GPU in use by: " + ", ".join(gpu))
-    busy = {uid: c for uid, c in sampler.sample().items() if is_other(uid) and c >= args.cpu_threshold}
-    if busy:
-        reasons.append("CPU in use by: " + ", ".join(f"{_name(u)} ({c:.1f} cores)" for u, c in busy.items()))
-    return reasons
+class Presence:
+    """Decides whether someone else is using the machine, with a debounce."""
+
+    def __init__(self, args):
+        self.args = args
+        self.previous = process_table()
+        self.stamp = time.monotonic()
+        self.since = None
+
+    def our_ips(self):
+        ips = set(self.args.our_ips)
+        try:
+            ips |= {line.strip() for line in self.args.ips_file.read_text().splitlines()
+                    if line.strip() and not line.startswith("#")}
+        except OSError:
+            pass
+        return ips
+
+    def raw_reasons(self):
+        table, now = process_table(), time.monotonic()
+        ips = self.our_ips()
+        ours = our_processes(table, os.getpid(), ips, self.args.ours)
+        reasons = []
+        others = sorted({ip for ip in ssh_peers() if ip not in ips})
+        if others:
+            reasons.append("SSH from " + ", ".join(others))
+        consoles = console_logins()
+        if consoles:
+            reasons.append("console login: " + ", ".join(consoles))
+        if not self.args.ignore_gpu:
+            foreign = [pid for pid in gpu_pids() if pid not in ours]
+            if foreign:
+                reasons.append("GPU processes not ours: " + ", ".join(map(str, foreign)))
+        # A sample taken moments after the last one turns a single clock tick into
+        # several apparent cores; skip the CPU test until a real interval has passed.
+        interval = now - self.stamp
+        elapsed = max(interval, 1e-3) * os.sysconf("SC_CLK_TCK")
+        cores = 0.0 if interval >= 0.5 else float("nan")
+        for pid, (_, uid, ticks, _ip) in table.items():
+            before = self.previous.get(pid)
+            if pid in ours or uid < UID_MIN or uid == 65534 or not before or before[1] != uid:
+                continue
+            if interval >= 0.5:
+                cores += max(ticks - before[2], 0) / elapsed
+        if interval >= 0.5 and cores >= self.args.cpu_threshold:
+            reasons.append(f"{cores:.1f} cores in use outside our processes")
+        self.previous, self.stamp = table, now
+        return reasons
+
+    def reasons(self):
+        """(lasting, current): presence past the debounce, and presence right now.
+
+        The guard yields on lasting presence but will not start a step while anyone
+        is present at all. The pause file and a nearly full disk count at once.
+        """
+        found = self.raw_reasons()
+        if not found:
+            self.since = None
+        elif self.since is None:
+            self.since = time.monotonic()
+        lasting = found if found and time.monotonic() - self.since >= self.args.debounce else []
+        immediate = []
+        if self.args.pause_file.exists():
+            immediate.append(f"pause file {self.args.pause_file}")
+        free = shutil.disk_usage(self.args.output_root).free / 2**30
+        if free < self.args.min_free_gb:
+            immediate.append(f"only {free:.0f} GiB free on the output disk (floor {self.args.min_free_gb:.0f})")
+        return immediate + lasting, immediate + found
+
+
+def register(args):
+    connection = os.environ.get("SSH_CONNECTION")
+    if not connection:
+        raise SystemExit("Run --register inside the SSH session you want treated as ours")
+    ip = _client_ip(connection.split()[0])
+    existing = args.ips_file.read_text().split() if args.ips_file.exists() else []
+    if ip not in existing:
+        with args.ips_file.open("a") as handle:
+            handle.write(ip + "\n")
+    print(f"{ip} is ours; recorded in {args.ips_file}")
+    return 0
 
 
 def command_for(entry, args):
@@ -205,27 +286,41 @@ def save_state(args, state):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("plan", type=Path, help="JSON list of launcher invocations, run in order")
+    parser.add_argument("plan", type=Path, nargs="?", help="JSON list of launcher invocations, run in order")
     parser.add_argument("--config", type=Path, default=Path("configs/research.yaml"))
     parser.add_argument("--output-root", type=Path, default=Path(os.environ.get("OUTPUT_ROOT", "output")))
-    parser.add_argument("--ours", default=getpass.getuser(),
-                        help="comma-separated accounts that do not trigger a pause (default: this user)")
+    parser.add_argument("--our-ips", default="",
+                        help="comma-separated client IPs whose sessions are ours")
+    parser.add_argument("--ours", default="",
+                        help="comma-separated accounts used only by us; leave empty on a shared account")
+    parser.add_argument("--register", action="store_true",
+                        help="record this SSH session's client IP as ours, then exit")
+    parser.add_argument("--debounce", type=float, default=60,
+                        help="seconds presence must last before the guard yields")
     parser.add_argument("--poll", type=float, default=15, help="seconds between checks")
     parser.add_argument("--grace", type=float, default=600,
                         help="seconds with nobody else present before resuming")
     parser.add_argument("--cpu-threshold", type=float, default=1.0,
-                        help="cores another user must be using to count as present")
+                        help="cores used outside our processes that count as someone present")
     parser.add_argument("--stop-timeout", type=float, default=900,
                         help="seconds to wait for a checkpoint before escalating")
-    parser.add_argument("--ignore-gpu", action="store_true", help="do not treat others' GPU processes as presence")
+    parser.add_argument("--ignore-gpu", action="store_true", help="do not treat foreign GPU processes as presence")
+    parser.add_argument("--min-free-gb", type=float, default=40,
+                        help="yield when the output disk has less free space than this, so it never fills")
     parser.add_argument("--pause-file", type=Path, help="create this file to make the guard yield")
     parser.add_argument("--state-file", type=Path, help="progress and pause record")
     args = parser.parse_args(argv)
     args.ours = {name.strip() for name in args.ours.split(",") if name.strip()}
+    args.our_ips = {ip.strip() for ip in args.our_ips.split(",") if ip.strip()}
     args.output_root = args.output_root.resolve()
     args.output_root.mkdir(parents=True, exist_ok=True)
     args.pause_file = args.pause_file or args.output_root / "PAUSE"
     args.state_file = args.state_file or args.output_root / "guard_state.json"
+    args.ips_file = args.output_root / "our_ips"
+    if args.register:
+        return register(args)
+    if args.plan is None:
+        parser.error("a plan is required unless --register is given")
     plan = json.loads(args.plan.read_text())
     names = [entry.get("name", f"step{i}") for i, entry in enumerate(plan)]
     if len(set(names)) != len(names):
@@ -234,8 +329,7 @@ def main(argv=None):
     state = json.loads(args.state_file.read_text()) if args.state_file.exists() else {}
     state.setdefault("completed", [])
     state.setdefault("pauses", [])
-    is_other = human_uids(args.ours)
-    sampler = CpuSampler()
+    presence = Presence(args)
     handle = (args.output_root / "guard.log").open("a")
     stop = {"requested": False}
 
@@ -245,7 +339,7 @@ def main(argv=None):
     for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
         signal.signal(sig, request_exit)
 
-    log(handle, f"guard started; ours={sorted(args.ours)}; plan={names}")
+    log(handle, f"guard started; our IPs={sorted(presence.our_ips())}; accounts={sorted(args.ours)}; plan={names}")
     # Grace applies only after a yield; step-to-step transitions start at once.
     process, running, clear_since, yielded = None, None, None, False
     try:
@@ -254,7 +348,7 @@ def main(argv=None):
             if not pending and process is None:
                 log(handle, "plan complete")
                 return 0
-            reasons = others_present(args, sampler, is_other)
+            reasons, present = presence.reasons()
             if process is not None:
                 code = process.poll()
                 if code is not None:
@@ -283,7 +377,7 @@ def main(argv=None):
                     process, clear_since, yielded = None, None, True
             pending = [e for e, n in zip(plan, names) if n not in state["completed"]]
             if process is None and pending:
-                if reasons:
+                if present:
                     clear_since = None
                 elif clear_since is None:
                     clear_since = time.monotonic()
