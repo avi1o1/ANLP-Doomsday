@@ -3,7 +3,7 @@
 Generated from completed artifacts only.
 
 Completed retrieval rows: 1226. Planned rows across every family: 1226.
-Incomplete or failed artifacts: 4. Unrun retrieval rows: 0.
+Incomplete or failed artifacts: 0. Unrun retrieval rows: 0.
 
 One family is submitted per job, so read coverage per family.
 

@@ -134,6 +134,28 @@
     }
   },
   {
+    "collection": "miracl_bn",
+    "corpus_id": "miracl/bn",
+    "dense_search": {
+      "backend": "gpu",
+      "candidate_buffer": 128,
+      "gpu_id": 0,
+      "query_batch_size": 256
+    },
+    "examples": 411,
+    "external": false,
+    "fixture": false,
+    "implementation": null,
+    "index_bytes": null,
+    "method": "dense",
+    "metrics": {
+      "mrr@10": 0.729345769126791,
+      "ndcg@10": 0.7009712395755827,
+      "recall@100": 0.9658498435870699,
+      "recall@1000": 0.994647201946472
+    }
+  },
+  {
     "collection": "miracl_hi",
     "corpus_id": "miracl/hi",
     "dense_search": null,
@@ -148,6 +170,28 @@
       "ndcg@10": 0.35691704991560624,
       "recall@100": 0.7366870748299319,
       "recall@1000": 0.8890136054421769
+    }
+  },
+  {
+    "collection": "miracl_hi",
+    "corpus_id": "miracl/hi",
+    "dense_search": {
+      "backend": "gpu",
+      "candidate_buffer": 128,
+      "gpu_id": 0,
+      "query_batch_size": 256
+    },
+    "examples": 350,
+    "external": false,
+    "fixture": false,
+    "implementation": null,
+    "index_bytes": null,
+    "method": "dense",
+    "metrics": {
+      "mrr@10": 0.6088446712018141,
+      "ndcg@10": 0.5829500172386194,
+      "recall@100": 0.9254285714285714,
+      "recall@1000": 0.9930612244897958
     }
   },
   {
@@ -168,6 +212,28 @@
     }
   },
   {
+    "collection": "miracl_te",
+    "corpus_id": "miracl/te",
+    "dense_search": {
+      "backend": "gpu",
+      "candidate_buffer": 128,
+      "gpu_id": 0,
+      "query_batch_size": 256
+    },
+    "examples": 828,
+    "external": false,
+    "fixture": false,
+    "implementation": null,
+    "index_bytes": null,
+    "method": "dense",
+    "metrics": {
+      "mrr@10": 0.7033907484088643,
+      "ndcg@10": 0.7509442358428549,
+      "recall@100": 0.9796698872785828,
+      "recall@1000": 0.9981884057971014
+    }
+  },
+  {
     "collection": "nfcorpus",
     "corpus_id": "beir/nfcorpus",
     "dense_search": null,
@@ -182,6 +248,28 @@
       "ndcg@10": 0.30694483905086023,
       "recall@100": 0.2368943890515512,
       "recall@1000": 0.44060929469021587
+    }
+  },
+  {
+    "collection": "nfcorpus",
+    "corpus_id": "beir/nfcorpus",
+    "dense_search": {
+      "backend": "gpu",
+      "candidate_buffer": 128,
+      "gpu_id": 0,
+      "query_batch_size": 256
+    },
+    "examples": 323,
+    "external": false,
+    "fixture": false,
+    "implementation": null,
+    "index_bytes": null,
+    "method": "dense",
+    "metrics": {
+      "mrr@10": 0.5178497714875424,
+      "ndcg@10": 0.3251748855189002,
+      "recall@100": 0.2851137999481552,
+      "recall@1000": 0.5998718682325953
     }
   },
   {
@@ -202,6 +290,28 @@
     }
   },
   {
+    "collection": "scidocs",
+    "corpus_id": "beir/scidocs",
+    "dense_search": {
+      "backend": "gpu",
+      "candidate_buffer": 128,
+      "gpu_id": 0,
+      "query_batch_size": 256
+    },
+    "examples": 1000,
+    "external": false,
+    "fixture": false,
+    "implementation": null,
+    "index_bytes": null,
+    "method": "dense",
+    "metrics": {
+      "mrr@10": 0.31064404761904757,
+      "ndcg@10": 0.1717498533152525,
+      "recall@100": 0.3981333333333334,
+      "recall@1000": 0.6685333333333334
+    }
+  },
+  {
     "collection": "scifact",
     "corpus_id": "beir/scifact",
     "dense_search": null,
@@ -219,6 +329,28 @@
     }
   },
   {
+    "collection": "scifact",
+    "corpus_id": "beir/scifact",
+    "dense_search": {
+      "backend": "gpu",
+      "candidate_buffer": 128,
+      "gpu_id": 0,
+      "query_batch_size": 256
+    },
+    "examples": 300,
+    "external": false,
+    "fixture": false,
+    "implementation": null,
+    "index_bytes": null,
+    "method": "dense",
+    "metrics": {
+      "mrr@10": 0.6656322751322751,
+      "ndcg@10": 0.6939973369742015,
+      "recall@100": 0.9393333333333334,
+      "recall@1000": 0.9933333333333333
+    }
+  },
+  {
     "collection": "trec_covid",
     "corpus_id": "beir/trec-covid",
     "dense_search": null,
@@ -233,6 +365,28 @@
       "ndcg@10": 0.5818767825508627,
       "recall@100": 0.09729903209094841,
       "recall@1000": 0.35981964871091365
+    }
+  },
+  {
+    "collection": "trec_covid",
+    "corpus_id": "beir/trec-covid",
+    "dense_search": {
+      "backend": "gpu",
+      "candidate_buffer": 128,
+      "gpu_id": 0,
+      "query_batch_size": 256
+    },
+    "examples": 50,
+    "external": false,
+    "fixture": false,
+    "implementation": null,
+    "index_bytes": null,
+    "method": "dense",
+    "metrics": {
+      "mrr@10": 0.8616666666666666,
+      "ndcg@10": 0.6949966017061953,
+      "recall@100": 0.1261135746609569,
+      "recall@1000": 0.45293931620523087
     }
   }
 ]

@@ -58,16 +58,20 @@ Holm-corrected comparisons significant at 0.05, out of 140 primary rows:
 
 Mean main effects on nDCG@10: saturation +0.065, length +0.032, IDF +0.013.
 
-The predictor remains weak. On the primary rows (n = 118 after exclusions) its sign
+The pre-registered predictor remains weak. On the primary rows (n = 118 after exclusions) its sign
 accuracy equals the majority-sign baseline, 0.924, and its held-out R² is −0.11 across
-basis families and 0.14 across corpora. See `report/predictor.csv`.
+basis families and 0.14 across corpora. See `report/predictor.csv`. The exploratory
+analysis in `exploratory/README.md` attributes the gain to each switch and builds a
+label-free predictor that does better.
+
+The dense encoder baselines, at the same encoder revision as the cluster run, are in
+`report/baselines.json` for all ten collections. The final report lists no incomplete
+or failed artifacts.
 
 ## Not included
 
 - The three MS MARCO collections. Their q32_d128 rows are in the cluster run. Their
   q16_d64 and q64_d256 rows were being built on the cluster when every cluster job was
   cancelled for maintenance; see `context/msmarco-sweep-2026-09-29/`.
-- Dense baselines: the cluster's are identical (same encoder revision and data) and are
-  in its snapshot. They were being recomputed here as the last step when this was curated.
 
 Per-query records, encodings and indexes remain on the workstation and are not included.
