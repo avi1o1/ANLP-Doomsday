@@ -12,7 +12,7 @@ Feature tiers, each adding to the one before; none reads relevance labels:
 - rankings: how much each switch changes the top 10, and score-shape statistics
   (scripts/ranking_features.py);
 - pseudo-labels: the same targets computed against the top 10 of a reference retriever
-  (text BM25 by default, or the dense encoder) in place of relevance labels.
+  (text BM25 by default, the dense encoder, or the two fused) in place of relevance labels.
 
 The pseudo-label targets are also reported unfitted, as direct estimates. Models are
 ridge regression (alpha by inner leave-one-group-out) and gradient-boosted trees with
@@ -148,13 +148,30 @@ def decision(rows, prediction, samples=2000):
             "gain_over_always_on_ci95": [round(float(v), 5) for v in np.percentile(gains, [2.5, 97.5])]}
 
 
+def configuration_agreement(rows, rankings, reference):
+    """Within-row Spearman between true and pseudo-label nDCG@10 over the eight configurations."""
+    by_collection = {}
+    for r in rows:
+        f = rankings.get(ranking_key(r))
+        if f is None or f"pseudo_{reference}_000" not in f:
+            continue
+        true = [r["quality"][c] for c in CONFIGURATIONS]
+        pseudo = [f[f"pseudo_{reference}_{c}"] for c in CONFIGURATIONS]
+        if np.std(true) > 0 and np.std(pseudo) > 0:
+            by_collection.setdefault(r["collection"], []).append(spearmanr(true, pseudo).statistic)
+    every = [v for values in by_collection.values() for v in values]
+    summary = {"rows": len(every), "median": round(float(np.median(every)), 4)}
+    summary["by_collection"] = {c: round(float(np.median(v)), 4) for c, v in sorted(by_collection.items())}
+    return summary
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("rows", type=Path)
     parser.add_argument("diagnostics", type=Path)
     parser.add_argument("ranking_features", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--reference", default="bm25", choices=["bm25", "dense"])
+    parser.add_argument("--reference", default="bm25", choices=["bm25", "dense", "fused"])
     args = parser.parse_args()
     warnings.filterwarnings("ignore", category=RuntimeWarning)
     rows = json.loads(args.rows.read_text())
@@ -173,7 +190,10 @@ def main():
     held = {"other budgets": [(r, f) for r, f in default if r["seed"] == 0],
             "other seeds": [(r, f) for r, f in default if r["seed"] != 0],
             "other parameters": [(r, f) for r, f in usable if (r["k1"], r["b"]) != (1.2, 0.75)]}
-    report = {"reference": args.reference, "rows": {"primary": len(primary), **{k: len(v) for k, v in held.items()}}, "targets": {}}
+    report = {"reference": args.reference, "rows": {"primary": len(primary), **{k: len(v) for k, v in held.items()}},
+              "configuration_agreement": configuration_agreement(
+                  [r for r in rows if not r.get("control")], rankings, args.reference),
+              "targets": {}}
     for target in TARGETS:
         y = np.array([targets(r["quality"])[target] for r, _ in primary])
         entry = {"unfitted pseudo-label estimate": {}}
@@ -203,7 +223,7 @@ def main():
                 entry[f"{tier} / {kind}"] = result
         report["targets"][target] = entry
     args.output.write_text(json.dumps(report, indent=2) + "\n")
-    print(json.dumps(report["rows"]))
+    print(json.dumps(report["rows"]), json.dumps(report["configuration_agreement"]))
     for target, entry in report["targets"].items():
         print(target)
         for name, result in entry.items():

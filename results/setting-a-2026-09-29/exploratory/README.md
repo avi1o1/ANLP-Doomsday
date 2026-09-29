@@ -124,6 +124,29 @@ agreement with the true sign does not follow BM25's own quality. BM25 reaches nD
 0.94 on LIMIT and 0.15 on SCIDOCS, where the rule agrees with the true sign in 55% and
 98% of rows.
 
+### Choice of reference
+
+The tables above use text BM25 as the reference. `predictor_study_dense.json` and
+`predictor_study_fused.json` repeat the study with the dense encoder, and with BM25 and
+the dense encoder fused by reciprocal rank.
+
+| Reference | Within-row agreement | Collection gain R², unseen family / corpus | Rule headroom recovered, primary / budgets / seeds / parameters |
+|---|---:|---|---|
+| text BM25 | 0.98 | 0.38 / 0.52 | 61% / 67% / 22% / 65% |
+| dense encoder | 0.98 | 0.51 / 0.66 | 45% / 65% / 49% / 75% |
+| fused | 0.98 | 0.50 / 0.61 | 53% / 70% / 23% / 64% |
+
+Within-row agreement is the median Spearman correlation, over the eight configurations
+of a row, between true and pseudo-label nDCG@10 (1112 rows with variation in both). The
+rule's interval excludes zero in every column except seeds for BM25 and the fused
+reference, and primary for the dense encoder. The two references carry different
+biases. The sparse representations are built from the same multilingual E5 encoder as the
+dense reference, so agreement with it partly measures how much of the source embedding
+a configuration keeps. BM25 is independent of the encoder, but lexical systems
+contributed to the pools from which several collections' judgements were drawn. The prediction holds
+with either reference, so it does not rest on one of these biases. Agreement is lowest
+on LIMIT (0.65-0.69) and TREC-COVID (0.74-0.81) for every reference.
+
 This section is exploratory. The features were chosen after the confirmatory tests were
 fixed, and none of it was pre-registered.
 
@@ -155,15 +178,14 @@ length normalisation exactly (H5), and its contribution grows with b (H6).
 combinations of the eight nDCG@10 values of a row. If a reference retriever's top 10
 agrees with the relevance judgements better than chance, nDCG against that top 10 moves
 with the true nDCG from configuration to configuration, and so do the linear
-combinations. Text BM25 is built from the collection's words and does not depend on the
+combinations. The measured agreement is close to this ideal (median within-row Spearman
+0.98). Text BM25 is built from the collection's words and does not depend on the
 representation under test, so it supplies the missing relevance information without
 labels. Its cost is one lexical retrieval run over the queries.
 
-**Limitations.** The judgements of several of these collections were built from pools
-that include lexical systems, which may favour agreement with BM25. The dense encoder
-is a second, non-lexical reference; its results will be added when its baseline run
-is complete. The rule needs queries, and so cannot be applied before any query is
-seen.
+**Limitations.** Each reference carries a bias (see the choice of reference), and the
+result holds with both. The rule needs queries, and so cannot be applied
+before any query is seen. All of it is on ten collections from one encoder.
 
 ## Earlier exploration
 
@@ -210,10 +232,11 @@ follows the dispersion of the stored values, as the mechanism predicts, and the 
 alone predicts it. Collection statistics account for a stable 38-39% of the gain and
 carry real information, but whether they help a given row is not a property of the
 index, since it depends on relevance. A label-free proxy for relevance, agreement with
-text BM25, predicts it. Choosing by that proxy recovers 61-67% of the gap between always
-using collection statistics and an oracle on the primary rows and at other budgets and
-parameters, and 22% at other seeds, where the interval reaches zero. IDF alone, the statistic this line
-of work centres on, accounts for about a tenth of the gain.
+text BM25 or with the dense encoder, predicts it. Choosing by the BM25 proxy recovers
+61-67% of the gap between always using collection statistics and an oracle on the
+primary rows and at other budgets and parameters, and 22% at other seeds, where the
+interval reaches zero. IDF alone, the statistic this line of work centres on, accounts
+for about a tenth of the gain.
 
 ## Reproducing
 
@@ -223,7 +246,7 @@ python -m scripts.mechanism_diagnostics OUT.json --config configs/workstation-no
 python -m scripts.ranking_features OUTPUT_ROOT RANKING_DIR
 python -m scripts.saturation_predictor ROWS DIAGNOSTICS OUT.json
 python -m scripts.test_hypotheses ROWS DIAGNOSTICS OUT.json
-python -m scripts.predictor_study ROWS DIAGNOSTICS RANKING_DIR.json OUT.json
+python -m scripts.predictor_study ROWS DIAGNOSTICS RANKING_DIR.json OUT.json [--reference dense|fused]
 ```
 
 The diagnostics and ranking features need the built indexes and stored evaluation

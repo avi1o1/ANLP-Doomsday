@@ -6,8 +6,8 @@ The stored evaluation records hold, for every row, configuration and query, the 
 - disruption_<switch>: mean over the four configuration pairs that differ only in that
   switch of 1 - |A ∩ B| / 10, where A and B are the two top-10 lists;
 - pseudo_<reference>_<configuration>: nDCG@10 against pseudo-labels, the top 10 of a
-  reference retriever (text BM25, and the dense encoder where its run exists), scored
-  as binary relevance;
+  reference retriever (text BM25; the dense encoder where its run exists; and the two
+  fused by reciprocal rank, k = 60, over their top 100), scored as binary relevance;
 - nqc_<configuration> and gap_<configuration>: score-shape statistics used in query
   performance prediction, the coefficient of variation of the top-100 scores and
   (s1 - s10) / |s1|.
@@ -33,7 +33,9 @@ import numpy as np
 
 CONFIGURATIONS = [f"{i:03b}" for i in range(8)]
 SWITCHES = {"idf": 0, "saturation": 1, "length": 2}
-REFERENCES = ("bm25", "dense")
+REFERENCES = ("bm25", "dense", "fused")
+FUSION_DEPTH = 100
+RRF_K = 60
 DEPTH = 10
 IDEAL = sum(1 / math.log2(i + 2) for i in range(DEPTH))
 
@@ -47,11 +49,30 @@ def read_rankings(directory: Path, pattern: str):
 
 
 @lru_cache(maxsize=8)
-def reference(root: str, collection: str, name: str):
+def baseline(root: str, collection: str, name: str):
     directory = Path(root) / "baseline_evaluations" / collection / name
     if not (directory / "result.json").exists():
         return None
-    return {q: {d for d, _ in r[:DEPTH]} for q, r in read_rankings(directory, "batch-*.json").items()}
+    return {q: [d for d, _ in r[:FUSION_DEPTH]] for q, r in read_rankings(directory, "batch-*.json").items()}
+
+
+@lru_cache(maxsize=8)
+def reference(root: str, collection: str, name: str):
+    """Top-10 sets of a reference; "fused" combines BM25 and dense by reciprocal rank."""
+    if name != "fused":
+        rankings = baseline(root, collection, name)
+        return None if rankings is None else {q: set(r[:DEPTH]) for q, r in rankings.items()}
+    lexical, dense = baseline(root, collection, "bm25"), baseline(root, collection, "dense")
+    if lexical is None or dense is None:
+        return None
+    fused = {}
+    for q in set(lexical) & set(dense):
+        score = {}
+        for ranking in (lexical[q], dense[q]):
+            for rank, d in enumerate(ranking):
+                score[d] = score.get(d, 0.0) + 1 / (RRF_K + rank + 1)
+        fused[q] = set(sorted(score, key=score.get, reverse=True)[:DEPTH])
+    return fused
 
 
 def pseudo_ndcg(ranking, relevant):
