@@ -54,8 +54,8 @@ on relevance, which it does not. Scoring each configuration
 against a reference ranking supplies that information without labels. It predicts the
 gain from collection statistics on unseen corpora with $R^2$ of $0.52$ to $0.66$, and
 using collection statistics only where it predicts a gain recovers $61\%$ of the gap
-to an oracle. Five pre-registered tests of the mechanism pass. Attention and routing are
-implemented and are next.
+to an oracle. All six pre-registered tests of the mechanism pass, five of them on data
+the exploration had not used. Attention and routing are implemented and are next.
 \end{abstract}
 
 \section{Problem Statement}
@@ -684,8 +684,8 @@ settings it was not fitted on.
 \subsection{Transfer settings}
 
 The adapters and their parity tests are complete (Section~\ref{sec:method}); no
-production run has been made. The predictor and the acceptance thresholds will be frozen
-before any corrected transfer outcome is seen.
+production run has been made. Both predictors and the acceptance thresholds will be
+frozen before any corrected transfer outcome is seen.
 
 \section{Remaining Plan}
 \label{sec:plan}
