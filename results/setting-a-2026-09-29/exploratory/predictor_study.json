@@ -1,0 +1,1455 @@
+{
+  "reference": "bm25",
+  "rows": {
+    "primary": 139,
+    "other budgets": 320,
+    "other seeds": 100,
+    "other parameters": 560
+  },
+  "targets": {
+    "saturation": {
+      "unfitted pseudo-label estimate": {
+        "primary": {
+          "r2": 0.4302,
+          "spearman": 0.9074,
+          "sign_accuracy": 0.9353
+        },
+        "other budgets": {
+          "r2": 0.4711,
+          "spearman": 0.9189,
+          "sign_accuracy": 0.9625
+        },
+        "other seeds": {
+          "r2": 0.3975,
+          "spearman": 0.9685,
+          "sign_accuracy": 0.95
+        },
+        "other parameters": {
+          "r2": 0.3183,
+          "spearman": 0.9648,
+          "sign_accuracy": 0.9768
+        }
+      },
+      "pre-registered / ridge": {
+        "family": {
+          "r2": -0.4562,
+          "spearman": 0.2285,
+          "sign_accuracy": 0.777
+        },
+        "corpus": {
+          "r2": 0.1377,
+          "spearman": 0.4535,
+          "sign_accuracy": 0.7626
+        },
+        "other budgets": {
+          "r2": 0.1595,
+          "spearman": 0.5165,
+          "sign_accuracy": 0.8094
+        },
+        "other seeds": {
+          "r2": 0.055,
+          "spearman": 0.4332,
+          "sign_accuracy": 0.75
+        },
+        "other parameters": {
+          "r2": 0.0202,
+          "spearman": 0.4146,
+          "sign_accuracy": 0.8339
+        }
+      },
+      "pre-registered / boosted": {
+        "family": {
+          "r2": -0.1113,
+          "spearman": 0.1174,
+          "sign_accuracy": 0.7194
+        },
+        "corpus": {
+          "r2": 0.2503,
+          "spearman": 0.5025,
+          "sign_accuracy": 0.741
+        },
+        "other budgets": {
+          "r2": 0.2908,
+          "spearman": 0.6816,
+          "sign_accuracy": 0.7844
+        },
+        "other seeds": {
+          "r2": 0.7412,
+          "spearman": 0.7135,
+          "sign_accuracy": 0.72
+        },
+        "other parameters": {
+          "r2": 0.773,
+          "spearman": 0.915,
+          "sign_accuracy": 0.8232
+        }
+      },
+      "index / ridge": {
+        "family": {
+          "r2": 0.4708,
+          "spearman": 0.7886,
+          "sign_accuracy": 0.7842
+        },
+        "corpus": {
+          "r2": 0.4229,
+          "spearman": 0.8056,
+          "sign_accuracy": 0.8058
+        },
+        "other budgets": {
+          "r2": 0.5516,
+          "spearman": 0.8616,
+          "sign_accuracy": 0.8187
+        },
+        "other seeds": {
+          "r2": 0.677,
+          "spearman": 0.907,
+          "sign_accuracy": 0.73
+        },
+        "other parameters": {
+          "r2": 0.4957,
+          "spearman": 0.8524,
+          "sign_accuracy": 0.8232
+        }
+      },
+      "index / boosted": {
+        "family": {
+          "r2": 0.371,
+          "spearman": 0.6997,
+          "sign_accuracy": 0.6978
+        },
+        "corpus": {
+          "r2": 0.3601,
+          "spearman": 0.7249,
+          "sign_accuracy": 0.7698
+        },
+        "other budgets": {
+          "r2": 0.5776,
+          "spearman": 0.8807,
+          "sign_accuracy": 0.7969
+        },
+        "other seeds": {
+          "r2": 0.9367,
+          "spearman": 0.9385,
+          "sign_accuracy": 0.73
+        },
+        "other parameters": {
+          "r2": 0.864,
+          "spearman": 0.9668,
+          "sign_accuracy": 0.8339
+        }
+      },
+      "rankings / ridge": {
+        "family": {
+          "r2": 0.5294,
+          "spearman": 0.7969,
+          "sign_accuracy": 0.7626
+        },
+        "corpus": {
+          "r2": 0.5206,
+          "spearman": 0.787,
+          "sign_accuracy": 0.7482
+        },
+        "other budgets": {
+          "r2": 0.5931,
+          "spearman": 0.8559,
+          "sign_accuracy": 0.8031
+        },
+        "other seeds": {
+          "r2": 0.7139,
+          "spearman": 0.9175,
+          "sign_accuracy": 0.72
+        },
+        "other parameters": {
+          "r2": 0.4908,
+          "spearman": 0.8566,
+          "sign_accuracy": 0.8125
+        }
+      },
+      "rankings / boosted": {
+        "family": {
+          "r2": 0.4725,
+          "spearman": 0.6535,
+          "sign_accuracy": 0.6547
+        },
+        "corpus": {
+          "r2": 0.4874,
+          "spearman": 0.7737,
+          "sign_accuracy": 0.7626
+        },
+        "other budgets": {
+          "r2": 0.7353,
+          "spearman": 0.8802,
+          "sign_accuracy": 0.7781
+        },
+        "other seeds": {
+          "r2": 0.9539,
+          "spearman": 0.9622,
+          "sign_accuracy": 0.74
+        },
+        "other parameters": {
+          "r2": 0.7055,
+          "spearman": 0.9205,
+          "sign_accuracy": 0.8054
+        }
+      },
+      "pseudo-labels / ridge": {
+        "family": {
+          "r2": 0.5627,
+          "spearman": 0.8806,
+          "sign_accuracy": 0.777
+        },
+        "corpus": {
+          "r2": 0.6158,
+          "spearman": 0.8463,
+          "sign_accuracy": 0.777
+        },
+        "other budgets": {
+          "r2": 0.7256,
+          "spearman": 0.91,
+          "sign_accuracy": 0.75
+        },
+        "other seeds": {
+          "r2": 0.8578,
+          "spearman": 0.9498,
+          "sign_accuracy": 0.73
+        },
+        "other parameters": {
+          "r2": 0.7594,
+          "spearman": 0.9472,
+          "sign_accuracy": 0.8089
+        }
+      },
+      "pseudo-labels / boosted": {
+        "family": {
+          "r2": 0.736,
+          "spearman": 0.8917,
+          "sign_accuracy": 0.7482
+        },
+        "corpus": {
+          "r2": 0.5822,
+          "spearman": 0.8335,
+          "sign_accuracy": 0.7626
+        },
+        "other budgets": {
+          "r2": 0.8036,
+          "spearman": 0.9315,
+          "sign_accuracy": 0.7812
+        },
+        "other seeds": {
+          "r2": 0.925,
+          "spearman": 0.9425,
+          "sign_accuracy": 0.7
+        },
+        "other parameters": {
+          "r2": 0.7794,
+          "spearman": 0.9641,
+          "sign_accuracy": 0.8286
+        }
+      }
+    },
+    "length": {
+      "unfitted pseudo-label estimate": {
+        "primary": {
+          "r2": 0.4303,
+          "spearman": 0.8218,
+          "sign_accuracy": 0.9209
+        },
+        "other budgets": {
+          "r2": 0.5703,
+          "spearman": 0.884,
+          "sign_accuracy": 0.9469
+        },
+        "other seeds": {
+          "r2": 0.4416,
+          "spearman": 0.7812,
+          "sign_accuracy": 0.87
+        },
+        "other parameters": {
+          "r2": 0.5089,
+          "spearman": 0.9442,
+          "sign_accuracy": 0.9821
+        }
+      },
+      "pre-registered / ridge": {
+        "family": {
+          "r2": -0.2991,
+          "spearman": -0.1005,
+          "sign_accuracy": 0.7122
+        },
+        "corpus": {
+          "r2": 0.1448,
+          "spearman": 0.4838,
+          "sign_accuracy": 0.7194
+        },
+        "other budgets": {
+          "r2": 0.2374,
+          "spearman": 0.636,
+          "sign_accuracy": 0.7375
+        },
+        "other seeds": {
+          "r2": 0.2179,
+          "spearman": 0.3514,
+          "sign_accuracy": 0.61
+        },
+        "other parameters": {
+          "r2": 0.0015,
+          "spearman": 0.3218,
+          "sign_accuracy": 0.4786
+        }
+      },
+      "pre-registered / boosted": {
+        "family": {
+          "r2": -0.4301,
+          "spearman": 0.0065,
+          "sign_accuracy": 0.6763
+        },
+        "corpus": {
+          "r2": 0.0317,
+          "spearman": 0.6704,
+          "sign_accuracy": 0.6835
+        },
+        "other budgets": {
+          "r2": 0.2126,
+          "spearman": 0.6844,
+          "sign_accuracy": 0.7031
+        },
+        "other seeds": {
+          "r2": 0.719,
+          "spearman": 0.8486,
+          "sign_accuracy": 0.6
+        },
+        "other parameters": {
+          "r2": -0.1316,
+          "spearman": 0.5003,
+          "sign_accuracy": 0.4661
+        }
+      },
+      "index / ridge": {
+        "family": {
+          "r2": -0.1581,
+          "spearman": 0.3712,
+          "sign_accuracy": 0.705
+        },
+        "corpus": {
+          "r2": 0.2515,
+          "spearman": 0.6773,
+          "sign_accuracy": 0.7338
+        },
+        "other budgets": {
+          "r2": 0.205,
+          "spearman": 0.5971,
+          "sign_accuracy": 0.6719
+        },
+        "other seeds": {
+          "r2": 0.4461,
+          "spearman": 0.696,
+          "sign_accuracy": 0.61
+        },
+        "other parameters": {
+          "r2": -0.0154,
+          "spearman": 0.4171,
+          "sign_accuracy": 0.4679
+        }
+      },
+      "index / boosted": {
+        "family": {
+          "r2": 0.003,
+          "spearman": 0.558,
+          "sign_accuracy": 0.6835
+        },
+        "corpus": {
+          "r2": 0.0996,
+          "spearman": 0.7242,
+          "sign_accuracy": 0.705
+        },
+        "other budgets": {
+          "r2": 0.4326,
+          "spearman": 0.8503,
+          "sign_accuracy": 0.725
+        },
+        "other seeds": {
+          "r2": 0.8726,
+          "spearman": 0.909,
+          "sign_accuracy": 0.63
+        },
+        "other parameters": {
+          "r2": -0.3994,
+          "spearman": 0.5139,
+          "sign_accuracy": 0.4661
+        }
+      },
+      "rankings / ridge": {
+        "family": {
+          "r2": -0.0564,
+          "spearman": 0.281,
+          "sign_accuracy": 0.705
+        },
+        "corpus": {
+          "r2": 0.1992,
+          "spearman": 0.6774,
+          "sign_accuracy": 0.6763
+        },
+        "other budgets": {
+          "r2": 0.3308,
+          "spearman": 0.6519,
+          "sign_accuracy": 0.6469
+        },
+        "other seeds": {
+          "r2": 0.5306,
+          "spearman": 0.7306,
+          "sign_accuracy": 0.59
+        },
+        "other parameters": {
+          "r2": 0.4741,
+          "spearman": 0.715,
+          "sign_accuracy": 0.4625
+        }
+      },
+      "rankings / boosted": {
+        "family": {
+          "r2": 0.2895,
+          "spearman": 0.5971,
+          "sign_accuracy": 0.6906
+        },
+        "corpus": {
+          "r2": 0.5114,
+          "spearman": 0.7399,
+          "sign_accuracy": 0.7194
+        },
+        "other budgets": {
+          "r2": 0.5105,
+          "spearman": 0.859,
+          "sign_accuracy": 0.7375
+        },
+        "other seeds": {
+          "r2": 0.8728,
+          "spearman": 0.9152,
+          "sign_accuracy": 0.67
+        },
+        "other parameters": {
+          "r2": 0.3915,
+          "spearman": 0.5818,
+          "sign_accuracy": 0.4679
+        }
+      },
+      "pseudo-labels / ridge": {
+        "family": {
+          "r2": 0.4918,
+          "spearman": 0.758,
+          "sign_accuracy": 0.6619
+        },
+        "corpus": {
+          "r2": 0.6996,
+          "spearman": 0.8272,
+          "sign_accuracy": 0.6906
+        },
+        "other budgets": {
+          "r2": 0.7327,
+          "spearman": 0.7908,
+          "sign_accuracy": 0.6344
+        },
+        "other seeds": {
+          "r2": 0.8324,
+          "spearman": 0.8131,
+          "sign_accuracy": 0.57
+        },
+        "other parameters": {
+          "r2": 0.7704,
+          "spearman": 0.7332,
+          "sign_accuracy": 0.4571
+        }
+      },
+      "pseudo-labels / boosted": {
+        "family": {
+          "r2": 0.5145,
+          "spearman": 0.7447,
+          "sign_accuracy": 0.705
+        },
+        "corpus": {
+          "r2": 0.6764,
+          "spearman": 0.7919,
+          "sign_accuracy": 0.705
+        },
+        "other budgets": {
+          "r2": 0.7299,
+          "spearman": 0.9161,
+          "sign_accuracy": 0.7281
+        },
+        "other seeds": {
+          "r2": 0.9395,
+          "spearman": 0.9277,
+          "sign_accuracy": 0.63
+        },
+        "other parameters": {
+          "r2": 0.8442,
+          "spearman": 0.7639,
+          "sign_accuracy": 0.4714
+        }
+      }
+    },
+    "idf": {
+      "unfitted pseudo-label estimate": {
+        "primary": {
+          "r2": 0.5966,
+          "spearman": 0.8267,
+          "sign_accuracy": 0.8417
+        },
+        "other budgets": {
+          "r2": 0.7231,
+          "spearman": 0.8814,
+          "sign_accuracy": 0.8719
+        },
+        "other seeds": {
+          "r2": 0.6206,
+          "spearman": 0.785,
+          "sign_accuracy": 0.82
+        },
+        "other parameters": {
+          "r2": 0.7156,
+          "spearman": 0.9164,
+          "sign_accuracy": 0.8696
+        }
+      },
+      "pre-registered / ridge": {
+        "family": {
+          "r2": -0.0098,
+          "spearman": 0.1585,
+          "sign_accuracy": 0.7554
+        },
+        "corpus": {
+          "r2": -0.0024,
+          "spearman": 0.2884,
+          "sign_accuracy": 0.7482
+        },
+        "other budgets": {
+          "r2": -0.0368,
+          "spearman": 0.2929,
+          "sign_accuracy": 0.7281
+        },
+        "other seeds": {
+          "r2": -0.1877,
+          "spearman": 0.2052,
+          "sign_accuracy": 0.7
+        },
+        "other parameters": {
+          "r2": 0.0213,
+          "spearman": 0.4611,
+          "sign_accuracy": 0.825
+        }
+      },
+      "pre-registered / boosted": {
+        "family": {
+          "r2": -0.2867,
+          "spearman": -0.0204,
+          "sign_accuracy": 0.518
+        },
+        "corpus": {
+          "r2": -0.4094,
+          "spearman": 0.2412,
+          "sign_accuracy": 0.6691
+        },
+        "other budgets": {
+          "r2": -0.1256,
+          "spearman": 0.2007,
+          "sign_accuracy": 0.6
+        },
+        "other seeds": {
+          "r2": 0.229,
+          "spearman": 0.6038,
+          "sign_accuracy": 0.77
+        },
+        "other parameters": {
+          "r2": 0.6938,
+          "spearman": 0.7865,
+          "sign_accuracy": 0.8857
+        }
+      },
+      "index / ridge": {
+        "family": {
+          "r2": 0.0166,
+          "spearman": 0.2,
+          "sign_accuracy": 0.7554
+        },
+        "corpus": {
+          "r2": 0.0152,
+          "spearman": 0.282,
+          "sign_accuracy": 0.7482
+        },
+        "other budgets": {
+          "r2": 0.0055,
+          "spearman": 0.3511,
+          "sign_accuracy": 0.7031
+        },
+        "other seeds": {
+          "r2": -0.2414,
+          "spearman": 0.2454,
+          "sign_accuracy": 0.7
+        },
+        "other parameters": {
+          "r2": 0.071,
+          "spearman": 0.4434,
+          "sign_accuracy": 0.8
+        }
+      },
+      "index / boosted": {
+        "family": {
+          "r2": -0.1397,
+          "spearman": 0.1782,
+          "sign_accuracy": 0.7194
+        },
+        "corpus": {
+          "r2": -0.2734,
+          "spearman": 0.2994,
+          "sign_accuracy": 0.6906
+        },
+        "other budgets": {
+          "r2": -0.1126,
+          "spearman": 0.3569,
+          "sign_accuracy": 0.7156
+        },
+        "other seeds": {
+          "r2": 0.2124,
+          "spearman": 0.6054,
+          "sign_accuracy": 0.76
+        },
+        "other parameters": {
+          "r2": 0.828,
+          "spearman": 0.8812,
+          "sign_accuracy": 0.9036
+        }
+      },
+      "rankings / ridge": {
+        "family": {
+          "r2": 0.0086,
+          "spearman": 0.2312,
+          "sign_accuracy": 0.6978
+        },
+        "corpus": {
+          "r2": 0.0342,
+          "spearman": 0.2344,
+          "sign_accuracy": 0.7626
+        },
+        "other budgets": {
+          "r2": 0.1337,
+          "spearman": 0.3957,
+          "sign_accuracy": 0.6813
+        },
+        "other seeds": {
+          "r2": -0.4682,
+          "spearman": 0.1576,
+          "sign_accuracy": 0.73
+        },
+        "other parameters": {
+          "r2": 0.1982,
+          "spearman": 0.5133,
+          "sign_accuracy": 0.8089
+        }
+      },
+      "rankings / boosted": {
+        "family": {
+          "r2": -0.1289,
+          "spearman": 0.3388,
+          "sign_accuracy": 0.6835
+        },
+        "corpus": {
+          "r2": 0.1351,
+          "spearman": 0.3584,
+          "sign_accuracy": 0.7122
+        },
+        "other budgets": {
+          "r2": 0.2814,
+          "spearman": 0.4472,
+          "sign_accuracy": 0.7594
+        },
+        "other seeds": {
+          "r2": 0.3098,
+          "spearman": 0.6295,
+          "sign_accuracy": 0.77
+        },
+        "other parameters": {
+          "r2": 0.7618,
+          "spearman": 0.8394,
+          "sign_accuracy": 0.8571
+        }
+      },
+      "pseudo-labels / ridge": {
+        "family": {
+          "r2": 0.397,
+          "spearman": 0.6033,
+          "sign_accuracy": 0.7266
+        },
+        "corpus": {
+          "r2": 0.2146,
+          "spearman": 0.7112,
+          "sign_accuracy": 0.7914
+        },
+        "other budgets": {
+          "r2": 0.7352,
+          "spearman": 0.8047,
+          "sign_accuracy": 0.8031
+        },
+        "other seeds": {
+          "r2": 0.3825,
+          "spearman": 0.5457,
+          "sign_accuracy": 0.75
+        },
+        "other parameters": {
+          "r2": 0.7349,
+          "spearman": 0.819,
+          "sign_accuracy": 0.8679
+        }
+      },
+      "pseudo-labels / boosted": {
+        "family": {
+          "r2": 0.2863,
+          "spearman": 0.6432,
+          "sign_accuracy": 0.777
+        },
+        "corpus": {
+          "r2": 0.3254,
+          "spearman": 0.6257,
+          "sign_accuracy": 0.7842
+        },
+        "other budgets": {
+          "r2": 0.5683,
+          "spearman": 0.7912,
+          "sign_accuracy": 0.8438
+        },
+        "other seeds": {
+          "r2": 0.6204,
+          "spearman": 0.8252,
+          "sign_accuracy": 0.86
+        },
+        "other parameters": {
+          "r2": 0.8527,
+          "spearman": 0.907,
+          "sign_accuracy": 0.9232
+        }
+      }
+    },
+    "collection_gain": {
+      "unfitted pseudo-label estimate": {
+        "primary": {
+          "r2": 0.445,
+          "spearman": 0.6588,
+          "sign_accuracy": 0.7986,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14784,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.6102,
+            "gain_over_always_on_ci95": [
+              0.00032,
+              0.01006
+            ]
+          }
+        },
+        "other budgets": {
+          "r2": 0.6693,
+          "spearman": 0.7792,
+          "sign_accuracy": 0.8063,
+          "decision": {
+            "always_on": 0.14806,
+            "never": 0.12187,
+            "predicted": 0.1537,
+            "oracle": 0.15644,
+            "headroom_recovered": 0.6726,
+            "gain_over_always_on_ci95": [
+              0.00026,
+              0.01218
+            ]
+          }
+        },
+        "other seeds": {
+          "r2": 0.2098,
+          "spearman": 0.5047,
+          "sign_accuracy": 0.76,
+          "decision": {
+            "always_on": 0.15563,
+            "never": 0.14402,
+            "predicted": 0.15713,
+            "oracle": 0.16235,
+            "headroom_recovered": 0.2234,
+            "gain_over_always_on_ci95": [
+              -2e-05,
+              0.00452
+            ]
+          }
+        },
+        "other parameters": {
+          "r2": 0.4988,
+          "spearman": 0.7068,
+          "sign_accuracy": 0.7732,
+          "decision": {
+            "always_on": 0.17024,
+            "never": 0.15353,
+            "predicted": 0.17548,
+            "oracle": 0.17833,
+            "headroom_recovered": 0.6478,
+            "gain_over_always_on_ci95": [
+              4e-05,
+              0.0153
+            ]
+          }
+        }
+      },
+      "pre-registered / ridge": {
+        "family": {
+          "r2": -0.0697,
+          "spearman": -0.1593,
+          "sign_accuracy": 0.6978,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14298,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.0068,
+            "gain_over_always_on_ci95": [
+              -3e-05,
+              0.00017
+            ]
+          }
+        },
+        "corpus": {
+          "r2": -0.0209,
+          "spearman": 0.1708,
+          "sign_accuracy": 0.6691,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14058,
+            "oracle": 0.15098,
+            "headroom_recovered": -0.292,
+            "gain_over_always_on_ci95": [
+              -0.00783,
+              0.00069
+            ]
+          }
+        },
+        "other budgets": {
+          "r2": 0.0496,
+          "spearman": 0.3591,
+          "sign_accuracy": 0.7031,
+          "decision": {
+            "always_on": 0.14806,
+            "never": 0.12187,
+            "predicted": 0.14607,
+            "oracle": 0.15644,
+            "headroom_recovered": -0.2375,
+            "gain_over_always_on_ci95": [
+              -0.00622,
+              0.0006
+            ]
+          }
+        },
+        "other seeds": {
+          "r2": 0.2358,
+          "spearman": 0.4027,
+          "sign_accuracy": 0.71,
+          "decision": {
+            "always_on": 0.15563,
+            "never": 0.14402,
+            "predicted": 0.15521,
+            "oracle": 0.16235,
+            "headroom_recovered": -0.0617,
+            "gain_over_always_on_ci95": [
+              -0.00093,
+              0.0
+            ]
+          }
+        },
+        "other parameters": {
+          "r2": 0.1574,
+          "spearman": 0.3805,
+          "sign_accuracy": 0.7339,
+          "decision": {
+            "always_on": 0.17024,
+            "never": 0.15353,
+            "predicted": 0.17048,
+            "oracle": 0.17833,
+            "headroom_recovered": 0.0297,
+            "gain_over_always_on_ci95": [
+              -0.00049,
+              0.00121
+            ]
+          }
+        }
+      },
+      "pre-registered / boosted": {
+        "family": {
+          "r2": -0.1335,
+          "spearman": -0.0707,
+          "sign_accuracy": 0.6331,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14345,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.0641,
+            "gain_over_always_on_ci95": [
+              -0.00184,
+              0.00276
+            ]
+          }
+        },
+        "corpus": {
+          "r2": -0.1346,
+          "spearman": 0.28,
+          "sign_accuracy": 0.6187,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14134,
+            "oracle": 0.15098,
+            "headroom_recovered": -0.197,
+            "gain_over_always_on_ci95": [
+              -0.00717,
+              0.00305
+            ]
+          }
+        },
+        "other budgets": {
+          "r2": 0.1825,
+          "spearman": 0.4703,
+          "sign_accuracy": 0.7063,
+          "decision": {
+            "always_on": 0.14806,
+            "never": 0.12187,
+            "predicted": 0.1479,
+            "oracle": 0.15644,
+            "headroom_recovered": -0.0193,
+            "gain_over_always_on_ci95": [
+              -0.00433,
+              0.00345
+            ]
+          }
+        },
+        "other seeds": {
+          "r2": 0.354,
+          "spearman": 0.6647,
+          "sign_accuracy": 0.82,
+          "decision": {
+            "always_on": 0.15563,
+            "never": 0.14402,
+            "predicted": 0.16007,
+            "oracle": 0.16235,
+            "headroom_recovered": 0.6616,
+            "gain_over_always_on_ci95": [
+              0.00038,
+              0.00983
+            ]
+          }
+        },
+        "other parameters": {
+          "r2": 0.5549,
+          "spearman": 0.7496,
+          "sign_accuracy": 0.8482,
+          "decision": {
+            "always_on": 0.17024,
+            "never": 0.15353,
+            "predicted": 0.17657,
+            "oracle": 0.17833,
+            "headroom_recovered": 0.7822,
+            "gain_over_always_on_ci95": [
+              0.00019,
+              0.01619
+            ]
+          }
+        }
+      },
+      "index / ridge": {
+        "family": {
+          "r2": -0.0452,
+          "spearman": -0.0016,
+          "sign_accuracy": 0.7122,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14382,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.1109,
+            "gain_over_always_on_ci95": [
+              -0.00219,
+              0.00515
+            ]
+          }
+        },
+        "corpus": {
+          "r2": -0.0866,
+          "spearman": 0.0574,
+          "sign_accuracy": 0.6115,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.13918,
+            "oracle": 0.15098,
+            "headroom_recovered": -0.4658,
+            "gain_over_always_on_ci95": [
+              -0.00895,
+              -0.00011
+            ]
+          }
+        },
+        "other budgets": {
+          "r2": 0.0739,
+          "spearman": 0.3677,
+          "sign_accuracy": 0.7219,
+          "decision": {
+            "always_on": 0.14806,
+            "never": 0.12187,
+            "predicted": 0.14727,
+            "oracle": 0.15644,
+            "headroom_recovered": -0.0944,
+            "gain_over_always_on_ci95": [
+              -0.00586,
+              0.00416
+            ]
+          }
+        },
+        "other seeds": {
+          "r2": 0.2462,
+          "spearman": 0.3792,
+          "sign_accuracy": 0.73,
+          "decision": {
+            "always_on": 0.15563,
+            "never": 0.14402,
+            "predicted": 0.1555,
+            "oracle": 0.16235,
+            "headroom_recovered": -0.0191,
+            "gain_over_always_on_ci95": [
+              -0.00047,
+              9e-05
+            ]
+          }
+        },
+        "other parameters": {
+          "r2": 0.1524,
+          "spearman": 0.3347,
+          "sign_accuracy": 0.7482,
+          "decision": {
+            "always_on": 0.17024,
+            "never": 0.15353,
+            "predicted": 0.17068,
+            "oracle": 0.17833,
+            "headroom_recovered": 0.0547,
+            "gain_over_always_on_ci95": [
+              0.0,
+              0.00125
+            ]
+          }
+        }
+      },
+      "index / boosted": {
+        "family": {
+          "r2": -0.0257,
+          "spearman": 0.2619,
+          "sign_accuracy": 0.6547,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14339,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.0575,
+            "gain_over_always_on_ci95": [
+              -0.0038,
+              0.00525
+            ]
+          }
+        },
+        "corpus": {
+          "r2": 0.0028,
+          "spearman": 0.3641,
+          "sign_accuracy": 0.6115,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.1431,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.0208,
+            "gain_over_always_on_ci95": [
+              -0.00718,
+              0.00637
+            ]
+          }
+        },
+        "other budgets": {
+          "r2": 0.3412,
+          "spearman": 0.6271,
+          "sign_accuracy": 0.7344,
+          "decision": {
+            "always_on": 0.14806,
+            "never": 0.12187,
+            "predicted": 0.15206,
+            "oracle": 0.15644,
+            "headroom_recovered": 0.4773,
+            "gain_over_always_on_ci95": [
+              0.00031,
+              0.00779
+            ]
+          }
+        },
+        "other seeds": {
+          "r2": 0.7101,
+          "spearman": 0.7454,
+          "sign_accuracy": 0.82,
+          "decision": {
+            "always_on": 0.15563,
+            "never": 0.14402,
+            "predicted": 0.16065,
+            "oracle": 0.16235,
+            "headroom_recovered": 0.7467,
+            "gain_over_always_on_ci95": [
+              0.00117,
+              0.00965
+            ]
+          }
+        },
+        "other parameters": {
+          "r2": 0.5896,
+          "spearman": 0.7762,
+          "sign_accuracy": 0.8696,
+          "decision": {
+            "always_on": 0.17024,
+            "never": 0.15353,
+            "predicted": 0.17667,
+            "oracle": 0.17833,
+            "headroom_recovered": 0.7949,
+            "gain_over_always_on_ci95": [
+              0.00025,
+              0.01621
+            ]
+          }
+        }
+      },
+      "rankings / ridge": {
+        "family": {
+          "r2": -0.1427,
+          "spearman": -0.0723,
+          "sign_accuracy": 0.554,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14076,
+            "oracle": 0.15098,
+            "headroom_recovered": -0.2695,
+            "gain_over_always_on_ci95": [
+              -0.0077,
+              0.00289
+            ]
+          }
+        },
+        "corpus": {
+          "r2": -0.1686,
+          "spearman": 0.1186,
+          "sign_accuracy": 0.5827,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.13882,
+            "oracle": 0.15098,
+            "headroom_recovered": -0.5096,
+            "gain_over_always_on_ci95": [
+              -0.01195,
+              0.00095
+            ]
+          }
+        },
+        "other budgets": {
+          "r2": 0.1611,
+          "spearman": 0.3363,
+          "sign_accuracy": 0.6406,
+          "decision": {
+            "always_on": 0.14806,
+            "never": 0.12187,
+            "predicted": 0.14758,
+            "oracle": 0.15644,
+            "headroom_recovered": -0.0572,
+            "gain_over_always_on_ci95": [
+              -0.01115,
+              0.00822
+            ]
+          }
+        },
+        "other seeds": {
+          "r2": 0.2604,
+          "spearman": 0.3418,
+          "sign_accuracy": 0.66,
+          "decision": {
+            "always_on": 0.15563,
+            "never": 0.14402,
+            "predicted": 0.15472,
+            "oracle": 0.16235,
+            "headroom_recovered": -0.1354,
+            "gain_over_always_on_ci95": [
+              -0.00199,
+              -0.00012
+            ]
+          }
+        },
+        "other parameters": {
+          "r2": 0.1156,
+          "spearman": 0.3162,
+          "sign_accuracy": 0.6286,
+          "decision": {
+            "always_on": 0.17024,
+            "never": 0.15353,
+            "predicted": 0.17052,
+            "oracle": 0.17833,
+            "headroom_recovered": 0.0344,
+            "gain_over_always_on_ci95": [
+              -0.00684,
+              0.00977
+            ]
+          }
+        }
+      },
+      "rankings / boosted": {
+        "family": {
+          "r2": -0.1501,
+          "spearman": 0.2196,
+          "sign_accuracy": 0.6475,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.1434,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.0584,
+            "gain_over_always_on_ci95": [
+              -0.00088,
+              0.00205
+            ]
+          }
+        },
+        "corpus": {
+          "r2": -0.0939,
+          "spearman": 0.2771,
+          "sign_accuracy": 0.6403,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14321,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.0344,
+            "gain_over_always_on_ci95": [
+              -0.0053,
+              0.00583
+            ]
+          }
+        },
+        "other budgets": {
+          "r2": 0.4205,
+          "spearman": 0.6967,
+          "sign_accuracy": 0.7937,
+          "decision": {
+            "always_on": 0.14806,
+            "never": 0.12187,
+            "predicted": 0.15388,
+            "oracle": 0.15644,
+            "headroom_recovered": 0.6945,
+            "gain_over_always_on_ci95": [
+              4e-05,
+              0.01229
+            ]
+          }
+        },
+        "other seeds": {
+          "r2": 0.6431,
+          "spearman": 0.7139,
+          "sign_accuracy": 0.82,
+          "decision": {
+            "always_on": 0.15563,
+            "never": 0.14402,
+            "predicted": 0.15949,
+            "oracle": 0.16235,
+            "headroom_recovered": 0.5747,
+            "gain_over_always_on_ci95": [
+              -0.00248,
+              0.01054
+            ]
+          }
+        },
+        "other parameters": {
+          "r2": 0.5742,
+          "spearman": 0.7315,
+          "sign_accuracy": 0.8375,
+          "decision": {
+            "always_on": 0.17024,
+            "never": 0.15353,
+            "predicted": 0.17576,
+            "oracle": 0.17833,
+            "headroom_recovered": 0.683,
+            "gain_over_always_on_ci95": [
+              -0.00041,
+              0.01569
+            ]
+          }
+        }
+      },
+      "pseudo-labels / ridge": {
+        "family": {
+          "r2": 0.3792,
+          "spearman": 0.5848,
+          "sign_accuracy": 0.7482,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14764,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.5847,
+            "gain_over_always_on_ci95": [
+              -0.00045,
+              0.01079
+            ]
+          }
+        },
+        "corpus": {
+          "r2": 0.5154,
+          "spearman": 0.6282,
+          "sign_accuracy": 0.7122,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14672,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.4712,
+            "gain_over_always_on_ci95": [
+              -0.00115,
+              0.00955
+            ]
+          }
+        },
+        "other budgets": {
+          "r2": 0.7252,
+          "spearman": 0.726,
+          "sign_accuracy": 0.7875,
+          "decision": {
+            "always_on": 0.14806,
+            "never": 0.12187,
+            "predicted": 0.15379,
+            "oracle": 0.15644,
+            "headroom_recovered": 0.6833,
+            "gain_over_always_on_ci95": [
+              0.00047,
+              0.01119
+            ]
+          }
+        },
+        "other seeds": {
+          "r2": 0.5552,
+          "spearman": 0.7165,
+          "sign_accuracy": 0.8,
+          "decision": {
+            "always_on": 0.15563,
+            "never": 0.14402,
+            "predicted": 0.16052,
+            "oracle": 0.16235,
+            "headroom_recovered": 0.7284,
+            "gain_over_always_on_ci95": [
+              6e-05,
+              0.00973
+            ]
+          }
+        },
+        "other parameters": {
+          "r2": 0.6175,
+          "spearman": 0.5902,
+          "sign_accuracy": 0.7054,
+          "decision": {
+            "always_on": 0.17024,
+            "never": 0.15353,
+            "predicted": 0.17316,
+            "oracle": 0.17833,
+            "headroom_recovered": 0.3615,
+            "gain_over_always_on_ci95": [
+              -0.00399,
+              0.01241
+            ]
+          }
+        }
+      },
+      "pseudo-labels / boosted": {
+        "family": {
+          "r2": 0.1548,
+          "spearman": 0.4349,
+          "sign_accuracy": 0.7122,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14496,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.2522,
+            "gain_over_always_on_ci95": [
+              -0.00108,
+              0.00595
+            ]
+          }
+        },
+        "corpus": {
+          "r2": 0.3987,
+          "spearman": 0.5421,
+          "sign_accuracy": 0.6978,
+          "decision": {
+            "always_on": 0.14293,
+            "never": 0.12785,
+            "predicted": 0.14637,
+            "oracle": 0.15098,
+            "headroom_recovered": 0.4274,
+            "gain_over_always_on_ci95": [
+              -0.0021,
+              0.0097
+            ]
+          }
+        },
+        "other budgets": {
+          "r2": 0.6378,
+          "spearman": 0.8309,
+          "sign_accuracy": 0.8438,
+          "decision": {
+            "always_on": 0.14806,
+            "never": 0.12187,
+            "predicted": 0.15519,
+            "oracle": 0.15644,
+            "headroom_recovered": 0.8507,
+            "gain_over_always_on_ci95": [
+              0.00159,
+              0.01343
+            ]
+          }
+        },
+        "other seeds": {
+          "r2": 0.7979,
+          "spearman": 0.8494,
+          "sign_accuracy": 0.9,
+          "decision": {
+            "always_on": 0.15563,
+            "never": 0.14402,
+            "predicted": 0.16108,
+            "oracle": 0.16235,
+            "headroom_recovered": 0.8109,
+            "gain_over_always_on_ci95": [
+              0.00102,
+              0.00988
+            ]
+          }
+        },
+        "other parameters": {
+          "r2": 0.7701,
+          "spearman": 0.7753,
+          "sign_accuracy": 0.8286,
+          "decision": {
+            "always_on": 0.17024,
+            "never": 0.15353,
+            "predicted": 0.17572,
+            "oracle": 0.17833,
+            "headroom_recovered": 0.6775,
+            "gain_over_always_on_ci95": [
+              -0.00116,
+              0.01563
+            ]
+          }
+        }
+      }
+    }
+  }
+}
