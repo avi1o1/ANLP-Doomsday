@@ -1,0 +1,231 @@
+{
+  "training_rows": 140,
+  "held_rows": {
+    "other budgets": 322,
+    "other seeds": 100
+  },
+  "targets": {
+    "saturation": {
+      "pre-registered": {
+        "family": {
+          "r2": -0.791,
+          "spearman": 0.2204
+        },
+        "corpus": {
+          "r2": 0.1377,
+          "spearman": 0.4761
+        },
+        "other budgets": {
+          "r2": 0.1535,
+          "spearman": 0.5085
+        },
+        "other seeds": {
+          "r2": 0.0503,
+          "spearman": 0.4198
+        }
+      },
+      "value_cv": {
+        "family": {
+          "r2": 0.3194,
+          "spearman": 0.6014
+        },
+        "corpus": {
+          "r2": 0.3542,
+          "spearman": 0.7467
+        },
+        "other budgets": {
+          "r2": 0.4055,
+          "spearman": 0.8178
+        },
+        "other seeds": {
+          "r2": 0.663,
+          "spearman": 0.9323
+        }
+      },
+      "length_log_sd": {
+        "family": {
+          "r2": 0.347,
+          "spearman": 0.7844
+        },
+        "corpus": {
+          "r2": 0.2747,
+          "spearman": 0.7934
+        },
+        "other budgets": {
+          "r2": 0.319,
+          "spearman": 0.7769
+        },
+        "other seeds": {
+          "r2": 0.4539,
+          "spearman": 0.871
+        }
+      },
+      "three mechanism": {
+        "family": {
+          "r2": 0.4129,
+          "spearman": 0.7521
+        },
+        "corpus": {
+          "r2": 0.4408,
+          "spearman": 0.7647
+        },
+        "other budgets": {
+          "r2": 0.4912,
+          "spearman": 0.819
+        },
+        "other seeds": {
+          "r2": 0.6869,
+          "spearman": 0.9273
+        }
+      }
+    },
+    "length": {
+      "pre-registered": {
+        "family": {
+          "r2": -0.2738,
+          "spearman": -0.0797
+        },
+        "corpus": {
+          "r2": 0.1451,
+          "spearman": 0.4835
+        },
+        "other budgets": {
+          "r2": 0.2332,
+          "spearman": 0.6377
+        },
+        "other seeds": {
+          "r2": 0.2147,
+          "spearman": 0.3483
+        }
+      },
+      "value_cv": {
+        "family": {
+          "r2": -0.4796,
+          "spearman": -0.4984
+        },
+        "corpus": {
+          "r2": -0.0492,
+          "spearman": 0.0741
+        },
+        "other budgets": {
+          "r2": 0.0075,
+          "spearman": 0.4541
+        },
+        "other seeds": {
+          "r2": 0.041,
+          "spearman": 0.4362
+        }
+      },
+      "length_log_sd": {
+        "family": {
+          "r2": -0.3788,
+          "spearman": -0.3932
+        },
+        "corpus": {
+          "r2": -0.0703,
+          "spearman": 0.2427
+        },
+        "other budgets": {
+          "r2": 0.019,
+          "spearman": 0.5016
+        },
+        "other seeds": {
+          "r2": 0.0485,
+          "spearman": 0.3185
+        }
+      },
+      "three mechanism": {
+        "family": {
+          "r2": -0.501,
+          "spearman": -0.5209
+        },
+        "corpus": {
+          "r2": -0.1809,
+          "spearman": 0.2468
+        },
+        "other budgets": {
+          "r2": 0.0327,
+          "spearman": 0.5214
+        },
+        "other seeds": {
+          "r2": 0.0585,
+          "spearman": 0.3117
+        }
+      }
+    },
+    "idf": {
+      "pre-registered": {
+        "family": {
+          "r2": -0.009,
+          "spearman": 0.104
+        },
+        "corpus": {
+          "r2": -0.0019,
+          "spearman": 0.2895
+        },
+        "other budgets": {
+          "r2": -0.0318,
+          "spearman": 0.2988
+        },
+        "other seeds": {
+          "r2": -0.2009,
+          "spearman": 0.188
+        }
+      },
+      "value_cv": {
+        "family": {
+          "r2": 0.0042,
+          "spearman": 0.1247
+        },
+        "corpus": {
+          "r2": -0.0071,
+          "spearman": 0.12
+        },
+        "other budgets": {
+          "r2": 0.0138,
+          "spearman": 0.2656
+        },
+        "other seeds": {
+          "r2": -0.0958,
+          "spearman": 0.3423
+        }
+      },
+      "length_log_sd": {
+        "family": {
+          "r2": -0.0246,
+          "spearman": 0.1587
+        },
+        "corpus": {
+          "r2": -0.0054,
+          "spearman": 0.1866
+        },
+        "other budgets": {
+          "r2": 0.0318,
+          "spearman": 0.3785
+        },
+        "other seeds": {
+          "r2": -0.2802,
+          "spearman": 0.276
+        }
+      },
+      "three mechanism": {
+        "family": {
+          "r2": -0.0492,
+          "spearman": 0.0479
+        },
+        "corpus": {
+          "r2": 0.0058,
+          "spearman": 0.2076
+        },
+        "other budgets": {
+          "r2": -0.0386,
+          "spearman": 0.3312
+        },
+        "other seeds": {
+          "r2": 0.0017,
+          "spearman": 0.3858
+        }
+      }
+    }
+  }
+}

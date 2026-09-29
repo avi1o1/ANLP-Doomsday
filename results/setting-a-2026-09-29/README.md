@@ -1,7 +1,7 @@
-# Setting A results, SERC workstation, 29 September 2026
+# Setting A results, single-GPU workstation run, 29 September 2026
 
-Curated summaries of the second Setting A run, made on a single-GPU SERC workstation
-(one RTX 2000 Ada, eight cores, 30 GB) with `configs/sustaind-no-msmarco.yaml`. It covers
+Curated summaries of the second Setting A run, made on a single-GPU workstation
+(one RTX 2000 Ada, eight cores, 30 GB) with `configs/workstation-no-msmarco.yaml`. It covers
 every experiment family on the ten collections outside the MS MARCO corpus.
 
 ## What the run contains

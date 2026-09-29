@@ -1,0 +1,36 @@
+{
+  "label": "cluster",
+  "primary": {
+    "rows": 182,
+    "collections": 13,
+    "mean_shapley": {
+      "idf": 0.01244,
+      "saturation": 0.075182,
+      "length": 0.034237
+    },
+    "share_of_gain": {
+      "idf": 0.1021,
+      "saturation": 0.617,
+      "length": 0.281
+    },
+    "collection_statistics_share": 0.383,
+    "collection_statistics_share_ci95": [
+      0.3616,
+      0.407
+    ],
+    "collection_statistics_given_saturation": {
+      "mean": 0.020838,
+      "positive_fraction": 0.7143,
+      "share_of_gain": 0.171
+    },
+    "collection_statistics_share_by_basis": {
+      "gaussian": 0.706,
+      "identity": 0.6181,
+      "kmeans": 0.0985,
+      "pca": 0.3711,
+      "pq": 0.0987,
+      "rq": 0.2318,
+      "sae": 0.3602
+    }
+  }
+}

@@ -41,30 +41,30 @@
   "incomplete_artifacts": [
     {
       "error": "Interruption requested; completed shards/checkpoints are retained",
-      "path": "/home/sustaind/adr-doomsday/output/baselines/dense/6d265ad8b84ac95b/000054/manifest.json",
+      "path": "OUTPUT_ROOT/baselines/dense/6d265ad8b84ac95b/000054/manifest.json",
       "status": "interrupted"
     },
     {
       "error": "Interruption requested; completed shards/checkpoints are retained",
-      "path": "/home/sustaind/adr-doomsday/output/baselines/dense/6d265ad8b84ac95b/manifest.json",
+      "path": "OUTPUT_ROOT/baselines/dense/6d265ad8b84ac95b/manifest.json",
       "status": "interrupted"
     },
     {
       "error": "Interruption requested; completed shards/checkpoints are retained",
-      "path": "/home/sustaind/adr-doomsday/output/baselines/dense/bb730a359a50d0a7/000055/manifest.json",
+      "path": "OUTPUT_ROOT/baselines/dense/bb730a359a50d0a7/000055/manifest.json",
       "status": "interrupted"
     },
     {
       "error": "Interruption requested; completed shards/checkpoints are retained",
-      "path": "/home/sustaind/adr-doomsday/output/baselines/dense/bb730a359a50d0a7/manifest.json",
+      "path": "OUTPUT_ROOT/baselines/dense/bb730a359a50d0a7/manifest.json",
       "status": "interrupted"
     }
   ],
   "missing_rows": [],
   "planned_retrieval_rows": 1226,
   "unavailable_datasets": {
-    "msmarco_dev": "MS MARCO corpus not encoded on the SERC workstation run",
-    "trec_dl_2019": "MS MARCO corpus not encoded on the SERC workstation run",
-    "trec_dl_2020": "MS MARCO corpus not encoded on the SERC workstation run"
+    "msmarco_dev": "MS MARCO corpus not encoded in the single-GPU workstation run",
+    "trec_dl_2019": "MS MARCO corpus not encoded in the single-GPU workstation run",
+    "trec_dl_2020": "MS MARCO corpus not encoded in the single-GPU workstation run"
   }
 }

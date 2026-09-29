@@ -10,7 +10,7 @@ def test_merged_replaces_lists_and_merges_mappings():
 
 
 def test_machine_config_changes_execution_only(tmp_path):
-    research, machine = load_config("configs/research.yaml"), load_config("configs/sustaind.yaml")
+    research, machine = load_config("configs/research.yaml"), load_config("configs/workstation.yaml")
     changed = {k for k in set(research) | set(machine) if research.get(k) != machine.get(k)}
     assert changed <= {"shared_encoding", "bm25", "_config_path", "datasets", "encoder", "evaluation",
                        "external", "attention", "routing"}

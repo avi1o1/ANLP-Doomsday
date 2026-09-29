@@ -1,6 +1,6 @@
 schema_version: 1
 extends: research.yaml
-# SERC workstation: one RTX 2000 Ada (16 GB), Xeon w3-2435 (8 cores, 16 threads),
+# Single-GPU workstation: one RTX 2000 Ada (16 GB), Xeon w3-2435 (8 cores, 16 threads),
 # 30 GB RAM, one account shared by many people. Every scientific setting comes from
 # research.yaml unchanged; this file changes execution only. Run it under
 # scripts/courtesy_guard.py so the machine is handed back whenever someone else uses it.

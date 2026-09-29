@@ -1,0 +1,36 @@
+{
+  "label": "workstation",
+  "primary": {
+    "rows": 140,
+    "collections": 10,
+    "mean_shapley": {
+      "idf": 0.010827,
+      "saturation": 0.062654,
+      "length": 0.029826
+    },
+    "share_of_gain": {
+      "idf": 0.1048,
+      "saturation": 0.6065,
+      "length": 0.2887
+    },
+    "collection_statistics_share": 0.3935,
+    "collection_statistics_share_ci95": [
+      0.3595,
+      0.422
+    ],
+    "collection_statistics_given_saturation": {
+      "mean": 0.014972,
+      "positive_fraction": 0.6714,
+      "share_of_gain": 0.1449
+    },
+    "collection_statistics_share_by_basis": {
+      "gaussian": 0.6996,
+      "identity": 0.6364,
+      "kmeans": 0.1088,
+      "pca": 0.3989,
+      "pq": 0.0937,
+      "rq": 0.2073,
+      "sae": 0.3592
+    }
+  }
+}
