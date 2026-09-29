@@ -37,7 +37,8 @@ the sensitivity families here can be read against the cluster's primary rows.
 
 - Significance uses 10,000 bootstrap samples, in a separate `significance` block that
   evaluations are not keyed on. At 2,000 samples Holm correction across a family of 182
-  could not fall below 0.091; here the floor is 0.0182.
+  could not fall below 0.091. Here, with 140 comparisons per family, the floor is
+  140/10001 = 0.014.
 - Rows whose outcome responds to fewer than two of the three switches are held out of
   the predictor fit (19 primary rows, listed in `predictor/excluded_rows.json`); their
   margin is fixed at about 2 by construction.
