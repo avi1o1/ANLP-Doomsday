@@ -30,7 +30,7 @@ baselines to seven decimals. Only the seed-1 and seed-2 bases were fitted here.
 difference in all-on nDCG@10 is 0.0007 (maximum 0.0077), the median margin difference is
 0.011, and the margin sign agrees in 136 of 137 rows with defined margins; the one
 disagreement is a margin near zero in both runs. The differences are fp16 rounding on a
-different GPU. Rows from the two runs therefore describe the same representations, and
+different GPU. Rows from the two runs describe the same representations, and
 the sensitivity families here can be read against the cluster's primary rows.
 
 ## Differences from the cluster run
