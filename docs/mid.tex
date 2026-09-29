@@ -117,8 +117,7 @@ the top-$k$ among the pages that exist at that point, and the length is the norm
 page's concatenated key minima and maxima. For expert $e$ at a token, the value is the
 router probability $p_e$, the frequency is the share of calibration tokens routed to
 $e$, and the length is the norm of the router logits. The selected experts are combined
-with their original gate weights, so the correction changes which experts run and not
-how their outputs mix. In attention a row is a model, RULER task, context length and
+with their original gate weights, so the correction changes only which experts run. In attention a row is a model, RULER task, context length and
 token budget, with RULER accuracy as the metric; in routing it is a model and task, with
 negative token log-likelihood on WikiText and zero-shot MMLU accuracy. A predictor
 fitted in retrieval is applied there without refitting. It transfers if its predicted
@@ -203,7 +202,7 @@ penalised \citep{singhal1996pivoted}. BM25 combines the three
 \citep{robertson2009bm25}. Each part was motivated by word statistics, which is why
 it is open whether it helps features that are not words.
 
-\paragraph{Dense and learned sparse retrieval.} Dense retrievers score by the inner
+\paragraph{Retrieval scorers.} Dense retrievers score by the inner
 product of embeddings \citep{karpukhin2020dpr}; the encoder used here is multilingual
 E5 \citep{wang2024me5}. Learned sparse retrieval keeps the inverted index and learns
 term weights, through contextual exact match \citep{gao2021coil} or expansion over the
@@ -288,10 +287,10 @@ and nowhere else, namely split-rectified identity, Gaussian projection (768) and
 ($8 \times 256$), and a Top-$K$ SAE with $8{,}192$ features. Each is applied at pooled
 granularity, to the mean of the content token states, and at token granularity, to
 each state before summing, giving fourteen representations. A secondary SAE shares one
-dictionary across both granularities to separate aggregation from fitting. SPLADE,
-which has its own backbone, is an external comparison and not part of the grid.
+dictionary across both granularities to separate aggregation from fitting. SPLADE
+has its own backbone, so it is an external comparison outside the grid.
 
-\paragraph{Scoring and statistics.} Supports are capped before any statistic, at 32
+\paragraph{Corpus statistics.} Supports are capped before any statistic, at 32
 query and 128 document features in the primary budget. Document frequency, lengths and
 IDF are computed on each target corpus from the capped vectors, and retrieval is exact
 over the whole corpus. The primary grid uses $k_1 = 1.2$, $b = 0.75$ and seed zero.
@@ -300,8 +299,8 @@ over the whole corpus. The primary grid uses $k_1 = 1.2$, $b = 0.75$ and seed ze
 TREC-DL 2019 and 2020 over the same documents, six BEIR sets
 \citep{thakur2021beir}, LIMIT \citep{weller2025limit}, and the Hindi, Bengali and
 Telugu portions of MIRACL \citep{zhang2023miracl}, each evaluated within its language.
-LIMIT is built so that a query's top-$k$ set exceeds what a low-dimensional embedding
-can represent, which is the axis the bases span.
+LIMIT is built so that the top-$k$ sets its queries need exceed what a low-dimensional
+embedding can represent.
 
 \paragraph{Experiment families.} Table~\ref{tab:families} lists the families. The
 primary family was run twice, on a four-GPU cluster node for all thirteen
@@ -332,7 +331,7 @@ pending (Section~\ref{sec:plan}).}
 \label{tab:families}
 \end{table}
 
-\paragraph{Statistics.} Comparisons use a paired bootstrap over queries that recomputes
+\paragraph{Significance.} Comparisons use a paired bootstrap over queries that recomputes
 numerator and denominator, with Holm correction \citep{holm1979} within each
 pre-declared family, the all-on against all-off comparison and the three component main
 effects. The cluster run drew $2{,}000$ samples, which puts the smallest attainable Holm
@@ -366,7 +365,7 @@ a whole corpus, reported separately, since a new basis and a new corpus are diff
 claims. A fit on primary rows is also scored on the budget, seed and parameter rows,
 which share collections with it.
 
-\paragraph{Attention and routing.} The attention adapter implements Quest-style page
+\paragraph{Transfer adapters.} The attention adapter implements Quest-style page
 criticality over sixteen-token pages with dense prefill and sparse decode, counts how
 often each page enters the top-$k$ over causal prefill positions, and applies
 Eq.~\eqref{eq:scorer} with pages for documents; all-off calls the native selector, and
@@ -669,7 +668,7 @@ H6 confirm that the switches behave as their mechanisms predict when their stren
 varied, and that the value-dispersion predictor of saturation keeps its ranking at
 settings it was not fitted on.
 
-\subsection{Attention and routing}
+\subsection{Transfer settings}
 
 The adapters and their parity tests are complete (Section~\ref{sec:method}); no
 production run has been made. The predictor and the acceptance thresholds will be frozen
@@ -695,8 +694,8 @@ unseen languages. The sparse codes are far below the dense encoder they come fro
 which bounds how far the attribution speaks to strong learned sparse retrievers; the
 SPLADE comparison is meant to test that. The label-free predictor needs queries and a
 second retriever run, and its evidence is exploratory until the second pre-registered
-round. Each reference carries a bias, and the result holding with both makes a single bias an
-unlikely explanation without ruling one out. Routing is inference-time only, so nothing is claimed about training
+round. Each reference carries a bias. The result holding with both makes a single bias an
+unlikely explanation. Routing is inference-time only, so nothing is claimed about training
 dynamics.
 
 \bibliography{refs}
