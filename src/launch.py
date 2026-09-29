@@ -37,9 +37,32 @@ def allocated_devices(count, tasks_per_gpu=1):
     return devices[:count] * tasks_per_gpu
 
 
+def select_datasets(jobs):
+    """Tasks whose --dataset passes CSX_INCLUDE_DATASETS / CSX_EXCLUDE_DATASETS (comma lists).
+
+    Two launchers given complementary lists split one stage between devices, for
+    example the largest corpora on the GPU and the rest on CPU workers. Tasks
+    without a --dataset argument are always kept.
+    """
+    def names(variable):
+        value = os.environ.get(variable, "")
+        return {name.strip() for name in value.split(",") if name.strip()}
+
+    include, exclude = names("CSX_INCLUDE_DATASETS"), names("CSX_EXCLUDE_DATASETS")
+    if not include and not exclude:
+        return jobs
+    kept = []
+    for job in jobs:
+        argv = job["argv"]
+        dataset = argv[argv.index("--dataset") + 1] if "--dataset" in argv else None
+        if dataset is None or ((not include or dataset in include) and dataset not in exclude):
+            kept.append(job)
+    return kept
+
+
 def run_stage(stage, config_path, directory, devices, workers, cpus, stop):
     """Bound concurrency, isolate CUDA devices and propagate checkpoint requests."""
-    jobs = list(jsonl(stage["tasks"]))
+    jobs = select_datasets(list(jsonl(stage["tasks"])))
     gpu = stage["gpus"]
     # Evaluation and indexing write to their own artifact directories, one per task.
     # Collections over a shared corpus resolve to one index directory, where the

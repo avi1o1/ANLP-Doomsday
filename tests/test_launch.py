@@ -302,3 +302,18 @@ def test_full_directory_sync_is_disabled_by_default(tmp_path):
     result = subprocess.run(["bash", str(script)], env=environment, capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     assert not (project / "rsync.json").exists()
+
+
+def test_dataset_filters_split_a_stage(monkeypatch):
+    from src.launch import select_datasets
+
+    jobs = [{"argv": ["evaluate", "--dataset", name, "--basis", "sae"]} for name in ("miracl_hi", "fiqa", "scifact")]
+    jobs.append({"argv": ["diagnose"]})
+    assert select_datasets(jobs) == jobs
+    monkeypatch.setenv("CSX_INCLUDE_DATASETS", "miracl_hi, fiqa")
+    assert [j["argv"][-1] if "--dataset" not in j["argv"] else j["argv"][2] for j in select_datasets(jobs)] == \
+        ["miracl_hi", "fiqa", "diagnose"]
+    monkeypatch.delenv("CSX_INCLUDE_DATASETS")
+    monkeypatch.setenv("CSX_EXCLUDE_DATASETS", "miracl_hi,fiqa")
+    kept = select_datasets(jobs)
+    assert [j["argv"][2] for j in kept if "--dataset" in j["argv"]] == ["scifact"] and len(kept) == 2
