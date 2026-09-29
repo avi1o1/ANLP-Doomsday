@@ -6,7 +6,7 @@ include make/common.mk
 
 # Everything that goes into a submission zip alongside the write-up. Listed with
 # wildcard so the zip targets keep working as directories appear.
-CODE = $(wildcard src scripts configs analysis tests pyproject.toml uv.lock README.md)
+CODE = $(wildcard src scripts configs analysis tests results pyproject.toml uv.lock README.md)
 
 # Nothing generated, cached or private ever enters a zip. context/ is not listed
 # in CODE, so it cannot be picked up by accident.

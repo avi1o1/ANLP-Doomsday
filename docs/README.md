@@ -6,8 +6,10 @@ Sources for the written deliverables, ACL style.
 | -------------- | ---------------- | ----------- | ------------------------------- |
 | `interim.tex`  | Interim proposal | 14 Aug 2026 | 2 pages, references from page 3 |
 | `proposal.tex` | Final proposal   | 28 Aug 2026 | 3-4 pages excluding references  |
+| `mid.tex`      | Mid submission   | 2 Oct 2026  | 7-8 pages excluding references  |
 
-`refs.bib` is shared, 30 entries. `acl.sty` and `acl_natbib.bst` come from
+`refs.bib` is shared, 50 entries; the 20 added for the mid report are marked with the
+source each was checked against. `acl.sty` and `acl_natbib.bst` come from
 acl-org/acl-style-files and are bundled, so nothing external is needed beyond a TeX Live
 install with `natbib`, `times`, `microtype`, `booktabs`.
 

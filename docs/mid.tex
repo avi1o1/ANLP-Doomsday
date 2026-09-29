@@ -16,7 +16,9 @@
 \usepackage{microtype}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
+\usepackage{enumitem}
 
+\setlist{nosep,leftmargin=*}
 \newcommand{\idf}{\mathrm{idf}}
 \newcommand{\sfreq}{\mathrm{sf}}
 
@@ -34,55 +36,669 @@ From Retrieval to Attention and Expert Routing}
 \maketitle
 
 \begin{abstract}
-% Written last, from the results that exist by 2 October.
+Retrieval, long-context attention and mixture-of-experts routing each select a few
+items by an inner product against learned features and a hard top-$k$. Retrieval
+alone corrects that score with collection statistics, in BM25. We ask when the
+correction helps, and whether that can be predicted before running it. The retrieval
+setting is complete. Fourteen sparse representations built from one frozen encoder
+are scored under all eight combinations of IDF, saturation and length normalisation,
+in $182$ primary rows on thirteen collections and $1{,}226$ sensitivity rows on ten,
+from two runs that agree to a median $0.0007$ nDCG@10. The corrections help in $90\%$ of rows. A Shapley decomposition
+assigns $61\%$ of the gain to saturation, which needs no collection statistics, and
+$39\%$ to IDF and length together, with the same split on both runs. The
+pre-registered predictor, a ridge regression on three frequency diagnostics, does no
+better than the majority sign. The analysis explains why. Saturation depends on how
+unequal the stored values are, which the index shows, while the value of IDF and
+length depends on relevance, which it does not. Scoring each configuration against a
+reference ranking recovers that information without labels, predicts the gain from
+collection statistics on unseen corpora with $R^2$ between $0.52$ and $0.66$, and
+the pre-registered tests of the mechanism pass. Attention and routing are implemented
+and are next.
 \end{abstract}
 
 \section{Problem Statement}
 \label{sec:problem}
-% The refined, formal version of what the proposal stated informally: the three
-% selection mechanisms, the statistic none of them uses, and the quantity being
-% predicted (the margin at matched budget).
+
+\paragraph{Selection by inner product.} A learned sparse retriever scores a query $q$
+against a document $d$ as $\langle u_q, u_d\rangle$ over a vocabulary of $V$
+non-negative features and returns the top $k$. A block-sparse attention kernel scores
+KV page $i$ for query $q_t$ as $\langle q_t, c_i\rangle$ over page summaries and
+attends to the top-$k$ pages \citep{tang2024quest}. A mixture-of-experts router gates
+on $\langle h_t, w_e\rangle$ and sends the token to its top-$k$ experts
+\citep{shazeer2017moe,fedus2022switch}. The three are one computation.
+
+\paragraph{The correction.} For a representation with non-negative coordinates
+$x_{\cdot j}$ we score
+\begin{equation}
+S(q,d) = \sum_{j} x_{qj}\, w_j\, T(x_{dj}, \ell_d),
+\label{eq:scorer}
+\end{equation}
+where $w_j$ is one or the smoothed inverse document frequency
+$\idf_j = \ln(1 + (N - df_j + 0.5)/(df_j + 0.5))$, the length factor is
+$\ell_d = 1$ or $1 - b + b L_d/\overline{L}$ with $L_d = \sum_j x_{dj}$, and
+$T(f,\ell)$ is $f/\ell$ or the saturated $(k_1+1)f/(f + k_1\ell)$. Each of the three
+components is a switch, so a configuration is a bit string $c \in \{0,1\}^3$ in the
+order IDF, saturation, length. Configuration \texttt{000} is the plain inner product
+and \texttt{111} is BM25 \citep{robertson2009bm25}. IDF and length normalisation read
+collection statistics. Saturation reads only the document.
+
+\paragraph{The unit of observation.} Collection frequency belongs to a corpus, so one
+row of the analysis pairs a representation with a collection, at a support budget
+(query and document feature caps), BM25 parameters $(k_1, b)$ and a basis seed. Each
+row carries eight nDCG@10 values $Q_c$, one per configuration.
+
+\paragraph{What is predicted.} The pre-registered target is the margin
+$m = (Q_{111} - Q_{000})/\operatorname{sd}(Q_{000}, \ldots, Q_{111})$, a standardised
+effect that means the same in every setting. Section~\ref{sec:progress} shows that
+$m$ is poorly shaped for prediction, and we add three targets defined on the same
+eight values. The Shapley value $\phi_s$ of switch $s$ is its marginal effect
+averaged over every order in which the switches can be turned on
+\citep{shapley1953value}. Writing $Q_A$ for the configuration with the switches in $A$
+on,
+\begin{equation}
+\phi_s = \sum_{A \not\ni s}
+\tfrac{|A|!\,(2-|A|)!}{6}\bigl(Q_{A\cup\{s\}} - Q_{A}\bigr),
+\label{eq:shapley}
+\end{equation}
+and the three values sum exactly to $Q_{111} - Q_{000}$. The collection gain
+$G = Q_{111} - Q_{010}$ is the value of IDF and length normalisation once saturation
+is applied. Its sign is the decision the project is about, whether to use collection
+statistics for a given representation and collection. A predictor is a function of
+label-free quantities that returns $m$, $\phi_s$ or $G$ for a row. It is scored by
+sign accuracy against the majority sign, held-out $R^2$ and Spearman correlation, and,
+for $G$, by the nDCG@10 obtained when collection statistics are used only where the
+prediction is positive.
+
+\paragraph{Transfer.} Eq.~\eqref{eq:scorer} applies to any selection with a
+non-negative score and a selection count. For KV page $i$ at decode step $t$, the
+feature value is the softplus of the Quest criticality $r_{t,i}$, the collection
+frequency is $\sfreq_i$, the fraction of calibration queries for which page $i$ enters
+the top-$k$ among the pages that exist at that point, and the length is the norm of the
+page's concatenated key minima and maxima. For expert $e$ at a token, the value is the
+router probability $p_e$, the frequency is the share of calibration tokens routed to
+$e$, and the length is the norm of the router logits. The selected experts are combined
+with their original gate weights, so the correction changes which experts run and not
+how their outputs mix. In attention a row is a model, RULER task, context length and
+token budget, with RULER accuracy as the metric; in routing it is a model and task, with
+negative token log-likelihood on WikiText and zero-shot MMLU accuracy. A predictor
+fitted in retrieval is applied there without refitting. It transfers if its predicted
+sign is correct on at least $70\%$ of rows and its mean absolute error is at most $1.5$
+times its held-out error in retrieval.
 
 \section{Motivation and Research Gap}
 \label{sec:motivation}
-% The shortcomings of existing work that suggest this direction. Required in the
-% proposal and carried here because the same reader has to be convinced again.
+
+None of the three selection mechanisms accounts for how often a feature is selected
+across the collection. Classical retrieval does, with three parts that arrived
+separately, inverse document frequency \citep{sparckjones1972idf}, term-frequency
+saturation \citep{robertson1994poisson} and document length normalisation
+\citep{singhal1996pivoted}, combined in BM25 \citep{robertson2009bm25}. Fragments have
+been reinvented inside the transformer. Loss-free load balancing adds a per-expert
+bias driven by recent load \citep{wang2024lossfree}, an additive frequency discount
+with no saturation or length term, and streaming inference keeps the most-attended
+early keys as an exception \citep{xiao2024streamingllm}.
+
+Three papers have scored the same learned features both with and without the
+correction, all in retrieval. BM25 wins on sparse-autoencoder features of a dense
+retriever \citep{clavie2026latent} and on SAE concept units \citep{park2025clsr}, and
+comes out level on visual words \citep{han2026bm25v}. Clavi\'e et al.\ and Han et al.\
+give the same explanation, that BM25 helps while a vocabulary keeps a Zipfian frequency
+curve. None of
+the three varies the vocabulary systematically, and none attributes the gain to the
+three components. The Zipfian account has not been turned into a quantity that can be
+computed before the experiment, nor checked where the same computation runs inside a
+model.
 
 \section{Contributions}
 \label{sec:contributions}
-% How the project addresses those shortcomings, restated against what has actually
-% been built by 2 October rather than what was planned.
+
+\begin{enumerate}
+\item A controlled grid, built and run. Fourteen sparse representations from one
+frozen encoder, seven bases at two granularities, are scored under all eight
+configurations on thirteen collections, with sensitivity families over support
+budget, $k_1$ and $b$, basis seed and collection-statistic controls, in 182 primary
+rows and 1{,}226 sensitivity rows from two independent runs.
+\item An attribution of the gain. Shapley values over the three switches show that
+saturation, a per-document transform, carries $61\%$ of the gain and collection
+statistics $39\%$, and that IDF alone carries about a tenth, falling as the support
+budget grows.
+\item A negative result for the pre-registered predictor, with its cause. Frequency
+diagnostics predict neither the margin nor the collection gain, because whether IDF
+and length help depends on relevance, which no statistic of the index measures.
+\item A label-free predictor that works in retrieval. Agreement of each configuration
+with a reference ranking predicts all three components and the collection gain on
+held-out basis families and corpora. Five pre-registered tests of the mechanism pass on
+data the exploration did not use.
+\item A transfer test outside retrieval, implemented. KV-page selection and expert
+routing adapters with native-parity checks are ready for the predictor to be frozen
+and applied.
+\end{enumerate}
 
 \section{Background}
 \label{sec:background}
-% BM25 and what each of its components requires of a representation.
+
+The correction needs three things of a representation, non-negative coordinates, a
+meaningful per-feature collection frequency $df_j$, and a magnitude that admits a
+length. Dense embeddings have none of them, since every coordinate is signed and
+active in every document. Sparse codes built from those embeddings have all three, and
+so does a selection count over KV pages or experts.
+
+For a fixed linear map $C$ and diagonal weights $D$, weighted feature scoring is
+bilinear in the original vectors, $S(q,d) = (Cq)^\top D (Cd) = q^\top C^\top D C d$,
+and it preserves every ranking of the original inner product when
+$C^\top D C = \alpha I$ with $\alpha > 0$. Split rectification, support truncation,
+saturation and a document-dependent length factor are not linear, so none of the
+representations here meets the condition, and the grid is needed to learn what the
+correction does. The identity, the sufficient conditions and a counterexample in which
+a diagonal rescaling reverses a ranking are checked numerically in the code.
 
 \section{Related Work}
 \label{sec:related}
-% Wider than the proposal's three paragraphs. This is where viability is argued:
-% what has been measured already, what has not, and why the gap is real.
+
+\paragraph{Term weighting.} IDF was proposed as a statistical account of term
+specificity \citep{sparckjones1972idf}. Saturation came from approximating the
+two-Poisson model of within-document frequency \citep{robertson1994poisson}, and
+length normalisation was pivoted so that long documents are neither favoured nor
+penalised \citep{singhal1996pivoted}. BM25 combines the three
+\citep{robertson2009bm25}. Each part was motivated by word statistics, which is why
+it is open whether it helps features that are not words.
+
+\paragraph{Dense and learned sparse retrieval.} Dense retrievers score by the inner
+product of embeddings \citep{karpukhin2020dpr}; the encoder used here is multilingual
+E5 \citep{wang2024me5}. Learned sparse retrieval keeps the inverted index and learns
+term weights, through contextual exact match \citep{gao2021coil} or expansion over the
+subword vocabulary in SPLADE \citep{formal2021splade,formal2021spladev2,lassance2024spladev3}.
+\citet{lin2021conceptual} and \citet{nguyen2023unified} place these methods in one
+framework, and \citet{mackenzie2021wacky} show that learned weights change the cost of
+query processing, which is why we report posting visits and index size. All of them
+score by inner product.
+
+\paragraph{Learned concept vocabularies.} Sparse autoencoders decompose dense
+activations into many non-negative features \citep{cunningham2024sae}, and Top-$K$
+SAEs fix the number active per input \citep{gao2025topksae}. Retrieval has adopted
+them. CL-SR indexes SAE-decomposed embeddings as concept units and weights them by IDF,
+and dropping that weighting costs 11 to 18 percent of its nDCG@10 on TREC-DL
+\citep{park2025clsr}, the one published ablation of the correction. SPLARE trains an
+SAE-based sparse retriever \citep{formal2026splare} and SAE-SPLADE replaces SPLADE's
+language-model head with an SAE \citep{zong2026tokens}; both score by inner product.
+Quantised codes are the other route to a discrete vocabulary, through product
+quantisation \citep{jegou2011pq}, residual quantisation \citep{chen2010rq} and their
+GPU implementations \citep{johnson2021faiss}.
+
+\paragraph{BM25 on learned features.} \citet{clavie2026latent} show that SAE features of
+a frozen dense retriever have roughly Zipfian collection statistics and can be scored
+by BM25 directly. In their Appendix~C, BM25 reaches $0.582$ nDCG@10 against $0.381$ for
+the inner product on SAE latent terms and $0.455$ against $0.568$ on SPLADE-v3, so the
+scorers swap places when the vocabulary changes. \citet{han2026bm25v} find the two
+within about two points of R@1 on image retrieval and attribute the parity to top-$k$
+filtering already suppressing what IDF would down-weight. Raising their per-patch
+budget from $16$ to $128$ makes document frequencies converge and R@1 collapse from
+$0.508$ to $0.038$. Our budget sweep reproduces the direction of that effect for IDF
+(Section~\ref{sec:attribution}).
+
+\paragraph{Predicting effectiveness without labels.} Query performance prediction
+estimates retrieval quality from the query and the ranking alone
+\citep{carmel2010difficulty}, through the divergence of the retrieved language model
+from the collection \citep{cronen2002clarity} or the spread of the top retrieval
+scores \citep{shtok2012nqc}. Retrieval systems can also be ranked without judgements
+by comparing each system with pseudo-relevant documents drawn from the pooled output
+\citep{soboroff2001ranking}. Our label-free predictor uses both ideas, score-shape
+statistics and agreement with a reference ranking, to predict a difference between
+scorers, which neither line of work targets.
+
+\paragraph{Attributing an effect to components.} The Shapley value assigns a joint
+outcome to players by averaging marginal contributions over orderings
+\citep{shapley1953value}, and SHAP applies it to model predictions
+\citep{lundberg2017shap}. We apply it to a complete $2^3$ factorial, where it is exact
+and needs no sampling.
+
+\paragraph{Selection inside the transformer.} Quest scores KV pages by an inner
+product against page min-max key summaries \citep{tang2024quest}. H2O keeps recent and
+heavy-hitter tokens \citep{zhang2023h2o}, SnapKV keeps the positions an observation
+window attends to \citep{li2024snapkv}, StreamingLLM keeps the first keys as attention
+sinks \citep{xiao2024streamingllm}, and Expected Attention prunes pairs that future
+queries are predicted to ignore \citep{devoto2025expectedattention}. Massive activations
+single out a few positions by magnitude \citep{sun2024massive}. None of these uses the
+rate at which an entry is selected across queries. Long-context quality is measured by
+RULER \citep{hsieh2024ruler}.
+
+\paragraph{Expert routing.} Sparse mixture-of-experts layers route each token to its
+top-$k$ experts \citep{shazeer2017moe,lepikhin2021gshard,fedus2022switch}. Balance is
+enforced by an auxiliary loss \citep{zoph2022stmoe} or, without one, by a load-driven
+bias \citep{wang2024lossfree}; DeepSeekMoE changes the granularity of experts for the
+same end \citep{dai2024deepseekmoe}. \citet{su2026superexperts} find a handful of experts
+by activation magnitude whose removal degrades the model badly. We use OLMoE
+\citep{muennighoff2025olmoe}. To our knowledge no work treats retrieval scoring, KV
+selection and routing as one scoring problem.
+
+\paragraph{Viability.} The gap is narrow and measurable. Two papers report the
+correction winning on SAE features and one reports parity, all without a systematic
+vocabulary variation or a component attribution. The correction is cheap to switch on,
+sparse codes are cheap to build from one encoder, and label-free proxies for quality
+already work for single systems, so closing the gap needs no new model.
 
 \section{Method}
 \label{sec:method}
-% The modular scorer, the eight bases at two granularities, the six diagnostics,
-% and the two transformer settings, as built rather than as planned.
+
+\paragraph{Representations.} All representations come from
+\texttt{multilingual-e5-base} \citep{wang2024me5}, frozen at a pinned revision. Seven
+bases are fitted on the same $200{,}000$ MS~MARCO passages \citep{bajaj2016msmarco}
+and nowhere else, namely split-rectified identity, Gaussian projection (768) and PCA
+(384), soft $k$-means over $4{,}096$ centroids, product and residual quantisation
+($8 \times 256$), and a Top-$K$ SAE with $8{,}192$ features. Each is applied at pooled
+granularity, to the mean of the content token states, and at token granularity, to
+each state before summing, giving fourteen representations. A secondary SAE shares one
+dictionary across both granularities to separate aggregation from fitting. SPLADE,
+which has its own backbone, is an external comparison and not part of the grid.
+
+\paragraph{Scoring and statistics.} Supports are capped before any statistic, at 32
+query and 128 document features in the primary budget. Document frequency, lengths and
+IDF are computed on each target corpus from the capped vectors, and retrieval is exact
+over the whole corpus. The primary grid uses $k_1 = 1.2$, $b = 0.75$ and seed zero.
+
+\paragraph{Collections.} Thirteen collections from eleven corpora, MS~MARCO dev with
+TREC-DL 2019 and 2020 over the same documents, six BEIR sets
+\citep{thakur2021beir}, LIMIT \citep{weller2025limit}, and the Hindi, Bengali and
+Telugu portions of MIRACL \citep{zhang2023miracl}, each evaluated within its language.
+LIMIT is built so that a query's top-$k$ set exceeds what a low-dimensional embedding
+can represent, which is the axis the bases span.
+
+\paragraph{Experiment families.} Table~\ref{tab:families} lists the families. The
+primary family was run twice, on a four-GPU cluster node for all thirteen
+collections and on a single-GPU workstation for the ten outside MS~MARCO, which also
+ran every sensitivity family.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+Family & Rows \\
+\midrule
+primary (14 representations $\times$ 13 collections) & 182 \\
+support budget 16/64, 32/128, 64/256, native & 462 \\
+$k_1 \in \{0.6, 1.2, 2.4\}$, $b \in \{0, 0.5, 0.75\}$ & 630 \\
+basis seeds 1 and 2 & 100 \\
+shuffled and uniform $df$ controls & 84 \\
+shared SAE dictionary & 20 \\
+\midrule
+union on the ten non-MS~MARCO collections & 1{,}226 \\
+\bottomrule
+\end{tabular}
+\caption{Retrieval rows, each with eight scoring configurations. The primary count is
+the cluster run's; the other families and the union are the workstation run's. Families
+share their default cells, so the union is smaller than the sum. The MS~MARCO budget rows are
+pending (Section~\ref{sec:plan}).}
+\label{tab:families}
+\end{table}
+
+\paragraph{Statistics.} Comparisons use a paired bootstrap over queries that recomputes
+numerator and denominator, with Holm correction \citep{holm1979} within each
+pre-declared family, the all-on against all-off comparison and the three component main
+effects. The cluster run drew $2{,}000$ samples, which puts the smallest attainable Holm
+$p$-value over 182 comparisons at $0.091$, so significance is reported from the
+workstation run, which drew $10{,}000$.
+
+\paragraph{Diagnostics.} Three kinds of label-free feature describe a row. The six
+pre-registered frequency diagnostics are the active fraction, the Zipf slope of the
+feature-frequency curve, the Gini coefficient of activation mass, frequency and
+activation mass in the most frequent $1\%$ of features, and IDF variance; the primary
+ridge model uses the slope, IDF variance and frequent activation share. Index
+statistics describe the stored values, chiefly $\mathrm{cv}_x$, the coefficient of
+variation of the stored document values, with the peak-to-mean ratio and the spread of
+document lengths. Ranking features are read from the stored top-100 list $R_c(q)$ of every
+configuration $c$ and query $q$. The disruption of switch $s$ is
+$1 - |R_c^{10}(q) \cap R_{c'}^{10}(q)|/10$ averaged over queries and over the four
+pairs $(c, c')$ that differ only in $s$. Score-shape statistics of the kind used in
+query performance prediction \citep{shtok2012nqc} are the coefficient of variation of
+the top-100 scores and the relative drop from the first to the tenth. The
+pseudo-quality $\tilde{Q}_c$ is the mean nDCG@10 of $R_c(q)$ when the top 10 of a
+reference retriever on the same query is taken as relevant, with binary gains. The
+references are text BM25, the dense encoder, and the two fused by reciprocal rank
+($k = 60$ over their top 100). Replacing $Q_c$ by $\tilde{Q}_c$ in
+Eq.~\eqref{eq:shapley} and in $G$ gives a pseudo-label estimate of every target,
+$\tilde{\phi}_s$ and $\tilde{G}$, with no fitted parameter.
+
+\paragraph{Validation.} Predictors are ridge regressions with the scaler and the
+regularisation chosen inside training folds, and gradient-boosted trees with fixed
+settings. Folds hold out a whole basis family (linear, clustered, quantised, learned) or
+a whole corpus, reported separately, since a new basis and a new corpus are different
+claims. A fit on primary rows is also scored on the budget, seed and parameter rows,
+which share collections with it.
+
+\paragraph{Attention and routing.} The attention adapter implements Quest-style page
+criticality over sixteen-token pages with dense prefill and sparse decode, counts how
+often each page enters the top-$k$ over causal prefill positions, and applies
+Eq.~\eqref{eq:scorer} with pages for documents; all-off calls the native selector, and
+an H2O reference shares the budget accounting. The routing adapter applies the same
+correction to OLMoE router probabilities for selection while combining with the
+original gate weights; all-off calls the native router. Six tests confirm exact
+native parity, causal calibration, budget charging including sink pages, and the gate
+mixture.
 
 \section{Progress}
 \label{sec:progress}
-% What runs, what it produced, and what disagrees with expectation. Reproduction
-% of the published Appendix~C reversal goes here as the pipeline check.
+
+\subsection{The pipeline reproduces itself}
+
+The two runs used the same imported bases and pinned data. Over the 140 primary rows
+they share, the median absolute difference in all-on nDCG@10 is $0.0007$ (maximum
+$0.0077$, from fp16 rounding on different GPUs), and the margin sign agrees in 136 of
+the 137 rows where it is defined. The text BM25 baselines agree to seven decimals. Basis
+seeds move all-on nDCG@10 by a median standard deviation of $0.006$ over 50
+representation-collection groups. The conceptual replication of the Appendix~C reversal
+of \citet{clavie2026latent} needs SPLADE-v3 and is scheduled (Section~\ref{sec:plan}).
+
+\subsection{Retrieval quality}
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Collection & BM25 & E5 & \texttt{000} & \texttt{111} & best \texttt{111} \\
+\midrule
+MS MARCO dev & .222 & .425 & .013 & .130 & .318 \\
+TREC-DL 19 & .456 & .704 & .036 & .255 & .604 \\
+TREC-DL 20 & .484 & .697 & .035 & .251 & .556 \\
+ArguAna & .411 & .445 & .021 & .130 & .371 \\
+FiQA & .236 & .382 & .013 & .085 & .266 \\
+NFCorpus & .307 & .325 & .064 & .115 & .285 \\
+SCIDOCS & .152 & .172 & .009 & .044 & .120 \\
+SciFact & .662 & .694 & .089 & .197 & .419 \\
+TREC-COVID & .582 & .695 & .134 & .246 & .508 \\
+LIMIT & .939 & .016 & .001 & .004 & .032 \\
+MIRACL hi & .357 & .583 & .011 & .124 & .328 \\
+MIRACL bn & .407 & .701 & .025 & .216 & .490 \\
+MIRACL te & .331 & .751 & .019 & .259 & .579 \\
+\bottomrule
+\end{tabular}
+\caption{nDCG@10 of text BM25, the dense encoder, and the fourteen sparse
+representations with the plain inner product (\texttt{000}) and full correction
+(\texttt{111}), averaged, with the best representation's \texttt{111}. The best is the
+token-level SAE everywhere except LIMIT (token $k$-means).}
+\label{tab:quality}
+\end{table}
+
+Table~\ref{tab:quality} gives the primary grid. The plain inner product of the capped
+sparse codes nearly fails, with mean nDCG@10 below $0.14$ on every collection, and full
+correction raises the mean by a factor of between $1.8$ and $14$. Token granularity is far stronger
+than pooled (mean all-on $0.219$ against $0.097$), and the token-level SAE is the best
+representation on twelve collections, reaching $0.60$ on TREC-DL 2019 against $0.70$
+for the dense encoder it was built from. The shared-dictionary SAE keeps that gap
+($0.339$ against $0.291$ on ten collections), so aggregation order matters beyond
+fitting granularity. LIMIT behaves as its construction predicts, BM25 on words reaching
+$0.94$ where the dense encoder and every representation built from it stay near zero.
+
+\subsection{Whether the correction helps}
+
+The margin is positive in $90\%$ of the 179 primary rows with a defined margin. Over
+the 140 rows of the workstation run, Holm-corrected all-on against all-off comparisons
+are significant in 99, and the main effects of saturation, length and IDF in 93, 79 and
+56, with mean effects of $+0.065$, $+0.032$ and $+0.013$ nDCG@10. Of the 182 primary
+rows, full correction is the best of the eight configurations in only 43; the most
+frequent winner, in 51, is saturation with length normalisation and no IDF. The margin
+itself carries little information. On the workstation run the all-off configuration is
+below $0.01$ nDCG@10 in $42\%$ of rows, and the margin falls between $1.5$ and $3.5$ in
+$83\%$, so it mostly records that the uncorrected scorer is broken.
+
+\subsection{Where the gain comes from}
+\label{sec:attribution}
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Rows & IDF & Sat. & Len. & IDF + len. \\
+\midrule
+cluster, 182 primary & .10 & .62 & .28 & .38 (.36--.41) \\
+workstation, 140 primary & .10 & .61 & .29 & .39 (.36--.42) \\
+\midrule
+budget 16/64 & .16 & .60 & .25 & .40 \\
+budget 32/128 & .11 & .61 & .29 & .39 \\
+budget 64/256 & .08 & .57 & .35 & .43 \\
+native, 3 collections & $-.02$ & .55 & .47 & .45 \\
+\bottomrule
+\end{tabular}
+\caption{Share of the all-on minus all-off gain assigned to each switch by
+Eq.~\eqref{eq:shapley}. Intervals resample whole collections. Budget rows cover the ten
+collections of the workstation run, and native support covers ArguAna, NFCorpus and
+SciFact.}
+\label{tab:shapley}
+\end{table}
+
+Table~\ref{tab:shapley} gives the attribution. Saturation carries about $61\%$ of the
+gain and IDF about $10\%$, identically on both runs. Collection statistics add
+$0.015$ nDCG@10 on average once saturation is applied and help in two thirds of rows.
+As the support budget
+grows, the share of IDF falls from $16\%$ to below zero while that of length rises to
+$47\%$, the direction \citet{han2026bm25v} report for image features, where larger
+budgets flatten document frequencies. At $b = 0$ the all-on nDCG@10 falls as $k_1$
+grows ($0.170$, $0.164$, $0.153$), and at $b = 0.75$ it is flat ($0.175$ to $0.176$).
+
+The IDF signal is real but small. Replacing document frequencies by shuffled ones on
+three collections turns the mean IDF Shapley value from $+0.011$ to $-0.011$ (real
+larger in $83\%$ of 42 rows, one-sided Wilcoxon $p = 8.9\times10^{-7}$); uniform
+frequencies remove it by construction, and do not lower all-on nDCG@10 ($0.157$
+against $0.147$, $p = 0.15$).
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llrrrrr@{}}
+\toprule
+Basis & Gran. & \texttt{111} & $\mathrm{cv}_x$ & $\phi_{\mathrm{sat}}$ & IDF + len. & $G > 0$ \\
+\midrule
+identity & pooled & .147 & 0.37 & .043 & .68 & 1.00 \\
+ & token & .142 & 0.60 & .060 & .55 & .77 \\
+Gaussian & pooled & .098 & 0.29 & .020 & .77 & .85 \\
+ & token & .088 & 0.55 & .029 & .64 & .92 \\
+PCA & pooled & .222 & 0.75 & .138 & .24 & .69 \\
+ & token & .311 & 1.35 & .155 & .45 & .46 \\
+$k$-means & pooled & .018 & 0.04 & .000 & .94 & .31 \\
+ & token & .185 & 1.71 & .125 & .11 & .85 \\
+PQ & pooled & .012 & 0.00 & .000 & 1.00 & .62 \\
+ & token & .144 & 1.44 & .099 & .09 & .69 \\
+RQ & pooled & .056 & 0.00 & .000 & 1.00 & .92 \\
+ & token & .292 & 2.10 & .176 & .18 & .69 \\
+SAE & pooled & .127 & 0.18 & .014 & .66 & .77 \\
+ & token & .373 & 3.31 & .193 & .32 & .46 \\
+\bottomrule
+\end{tabular}
+\caption{Per representation, over the 13 primary collections, mean all-on nDCG@10,
+mean $\mathrm{cv}_x$ of the stored values, mean saturation Shapley value, share of the
+gain from IDF and length, and the fraction of collections where collection statistics
+help after saturation ($G > 0$).}
+\label{tab:bases}
+\end{table}
+
+Table~\ref{tab:bases} breaks the attribution down by representation. Saturation's
+contribution follows $\mathrm{cv}_x$ closely, and the extreme case is exact. Pooled PQ
+and RQ codes store equal values with equal lengths ($\mathrm{cv}_x = 0$), and their
+Shapley values for saturation and length are exactly zero in all 26 of their cluster
+rows and all 166 workstation rows, as the mechanism below requires. The share of the
+gain from collection statistics is largest for the weakest representations. For the two
+strongest, token-level SAE and PCA, collection statistics help after saturation on
+fewer than half the collections, which is where predicting the decision matters.
+
+\subsection{The pre-registered predictor}
+
+The primary ridge model predicts the margin with held-out $R^2$ of $0.04$ across basis
+families and $0.02$ across corpora on the cluster run, and $-0.11$ and $0.14$ on the
+workstation run with the rows that respond to fewer than two switches excluded. Its
+sign accuracy equals the majority-sign baseline in every case ($0.899$ and $0.924$). The
+six-diagnostic model reaches $R^2 = 0.30$ across corpora on the workstation run but
+$-0.54$ across basis families, and its sign accuracy is never more than $0.03$ above the
+majority sign. By the pre-registered criterion the frequency diagnostics carry no usable
+information about the margin.
+
+\subsection{What does predict the gain}
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+Target & Features & Family & Corpus & Params \\
+\midrule
+$\phi_{\mathrm{sat}}$ & pre-registered & $-.46$ & .14 & .02 \\
+ & index & .47 & .42 & .50 \\
+ & pseudo-labels & .56 & .62 & .76 \\
+$\phi_{\mathrm{len}}$ & pre-registered & $-.30$ & .14 & .00 \\
+ & index & $-.16$ & .25 & $-.02$ \\
+ & pseudo-labels & .49 & .70 & .77 \\
+$\phi_{\mathrm{idf}}$ & pre-registered & $-.01$ & .00 & .02 \\
+ & index & .02 & .02 & .07 \\
+ & pseudo-labels & .40 & .21 & .73 \\
+$G$ & pre-registered & $-.07$ & $-.02$ & .16 \\
+ & index & $-.05$ & $-.09$ & .15 \\
+ & pseudo-labels & .38 & .52 & .62 \\
+ & pseudo-labels, E5 & .51 & .66 & .80 \\
+\bottomrule
+\end{tabular}
+\caption{Held-out $R^2$ of ridge regression fitted on 139 primary rows, holding out
+basis families, corpora, or predicting the 560 rows at other $k_1$ and $b$. Each tier
+adds features to the one above it. Pseudo-labels use text BM25 unless marked E5.}
+\label{tab:predictor}
+\end{table}
+
+\paragraph{Mechanism.} With length normalisation off, saturation maps a stored value
+$f$ to $g(f) = (k_1+1)f/(f+k_1)$, and $g(f)/f$ falls as $f$ grows, so it shrinks large
+values relative to small ones. If every stored value were equal, $g$ would rescale all
+scores alike and change no ranking; the change grows with how unequal the values are,
+which $\mathrm{cv}_x$ measures, and a smaller $k_1$ bends $g$ more. Whether saturation
+helps is a property of the index. Length normalisation and IDF change the
+ranking by an amount the index fixes, but whether the change helps depends on whether
+heavy documents are over-rewarded relative to their relevance, and whether rare features
+separate relevant documents from the rest. Both are properties of the index jointly
+with relevance, so no statistic of the index can fix their sign.
+
+\paragraph{Prediction.} Table~\ref{tab:predictor} bears this out. Index statistics
+predict saturation and fail for IDF and the collection gain; the frequency diagnostics
+predict nothing. Pseudo-labels supply the missing relevance information. The Shapley
+values and $G$ are fixed linear combinations of the eight $Q_c$, so a pseudo-quality
+that orders configurations like the true one gives correlated targets, and it does, with
+a median within-row Spearman correlation of $0.98$ between pseudo and true nDCG@10 over
+the eight configurations of 1{,}112 rows. Used with no fitting, the pseudo-label
+estimates rank the true values with Spearman $0.91$ for saturation, $0.82$ for length,
+$0.83$ for IDF and $0.66$ for $G$ on the primary rows. Gradient-boosted trees do no
+better on the family and corpus axes.
+
+\paragraph{Decision.} Using collection statistics only where the unfitted pseudo-label
+estimate of $G$ is positive raises mean nDCG@10 on the primary rows from $0.1429$
+(always) to $0.1478$, against $0.1510$ for an oracle, recovering $61\%$ of the headroom
+with a collection-resampled $95\%$ interval of $0.0003$ to $0.0101$ above always. It
+recovers $67\%$ at other budgets and $65\%$ at other parameters, and $22\%$ at other
+seeds, where the interval reaches zero. The gain comes from SciFact and NFCorpus, where
+always using collection statistics is wrong on average; the rule is at chance only on
+LIMIT and TREC-COVID, where the true gain is near zero.
+
+\paragraph{Choice of reference.} The two references carry different biases. The sparse
+codes are built from the same encoder as the dense reference, so agreement with it
+partly measures how much of the embedding a configuration keeps, while lexical systems
+contributed to the pools behind several collections' judgements. The result holds with
+either (the E5 row of Table~\ref{tab:predictor}), within-row agreement is $0.98$ for
+both, and the unfitted rule with the dense reference recovers $45$ to $75\%$ of the
+headroom across the four groups of rows. All of this analysis was chosen after the pre-registered result and is
+exploratory.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{@{}llp{0.58\textwidth}l@{}}
+\toprule
+Week & Dates & Work & Owner \\
+\midrule
+1 & 3--9 Oct & Resume the MS~MARCO budget sweep (84 rows) after the cluster maintenance.
+Run SPLADE-v3 as the external comparison and a conceptual replication of the Appendix~C
+reversal. Commit the second pre-registration, the pseudo-label rule tested on the unseen
+MS~MARCO budget rows, and the frozen transfer predictors. & Gupta, Singh \\
+ & & Validation runs of both adapters on the cluster, native parity at scale, calibration
+cost and memory. & Sankar, Tripathy \\
+2 & 10--16 Oct & Setting B primary grid on Llama-3.2-1B-Instruct, all 13 RULER tasks with
+500 examples, 4K and 8K contexts, budgets of 512 and 1{,}024 tokens, with H2O. Second
+confirmatory round in retrieval. & Sankar, Singh \\
+3 & 17--23 Oct & Setting C on OLMoE-1B-7B, WikiText-2 negative log-likelihood and zero-shot
+MMLU, with the additive loss-free-balancing analogue. Written proof and checks of the
+bilinear identity and its ranking conditions. & Tripathy, Singh \\
+4 & 24--28 Oct & Transfer scoring with uncertainty for both predictors, per setting.
+Figures and tables regenerated from saved artifacts. & all \\
+5 & 29--31 Oct & Final report, slides, code archive. & all \\
+\bottomrule
+\end{tabular}
+\caption{Schedule to the final submission. If time runs short we cut, in order, GSM8K and
+expert preservation, the 8K context in Setting B, MMLU in Setting C (keeping
+WikiText), and the Appendix~C replication.}
+\label{tab:plan}
+\end{table*}
+
+\subsection{Confirmatory tests}
+
+Six hypotheses were committed to the repository before their tests ran, on the $k_1$ and
+$b$ family, whose 630 rows the exploration up to that point had not used. H2 to H6 are Holm-corrected together; H1
+overlaps the exploratory data and checks consistency only.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{0.52\columnwidth}p{0.4\columnwidth}@{}}
+\toprule
+Hypothesis & Result \\
+\midrule
+H1 IDF + length share at default in $[.36, .42]$ & $.393$ \\
+H2 $\phi_{\mathrm{sat}}$ larger at $k_1 = 0.6$ than $2.4$ & $.093$ vs $.080$, $p = 3.6\times10^{-5}$ \\
+H3 within-corpus Spearman of $\mathrm{cv}_x$ with $\phi_{\mathrm{sat}} \ge 0.3$ & $.89$ and $.89$ \\
+H4 primary-fitted $\mathrm{cv}_x$ model ranks $\phi_{\mathrm{sat}}$ at $\rho \ge 0.5$ & $.87$ and $.90$ \\
+H5 $\phi_{\mathrm{len}} = 0$ exactly at $b = 0$ & max $0.0$, 210 rows \\
+H6 $\phi_{\mathrm{len}}$ larger at $b = 0.75$ than $0.5$ & $.045$ vs $.029$, $p = 3.6\times10^{-5}$ \\
+\bottomrule
+\end{tabular}
+\caption{Confirmatory tests. All pass. H3 and H4 are tested at $k_1 = 0.6$ and $2.4$,
+compression strengths the model was not fitted on.}
+\label{tab:confirm}
+\end{table}
+
+Table~\ref{tab:confirm} gives the outcomes. H5 checks the implementation. H2, H3, H4 and
+H6 confirm that the switches behave as their mechanisms predict when their strength is
+varied, and that the value-dispersion predictor of saturation keeps its ranking at
+settings it was not fitted on.
+
+\subsection{Attention and routing}
+
+The adapters and their parity tests are complete (Section~\ref{sec:method}); no
+production run has been made. The predictor and the acceptance thresholds will be frozen
+before any corrected transfer outcome is seen.
 
 \section{Remaining Plan}
 \label{sec:plan}
-% Concrete, dated, week by week to 31 October, with the cut order if time runs
-% short.
+
+The plan follows from the retrieval result. The pre-registered predictor is kept and
+will be carried to attention and routing as registered. The pseudo-label predictor is
+carried beside it, with a reference native to each setting, exact attention mass for KV
+pages, and the dense softmax mixture over all experts for routing, both label-free and
+computed from the uncorrected model. Before any transfer outcome is seen, both
+predictors, the references and the thresholds are committed. Table~\ref{tab:plan} gives
+the weeks.
 
 \section{Limitations}
 \label{sec:limitations}
 
-%\bibliography{refs}
+All representations come from one encoder, so basis and encoder effects are not
+separable, and E5 was trained with MIRACL data, so the Indic results do not concern
+unseen languages. The sparse codes are far below the dense encoder they come from,
+which bounds how far the attribution speaks to strong learned sparse retrievers; the
+SPLADE comparison is meant to test that. The label-free predictor needs queries and a
+second retriever run, and its evidence is exploratory until the second pre-registered
+round. Each reference carries a bias, and the result holding with both makes a single bias an
+unlikely explanation without ruling one out. Routing is inference-time only, so nothing is claimed about training
+dynamics.
 
-\appendix
-% One page at most, and optional.
+\bibliography{refs}
 
 \end{document}
