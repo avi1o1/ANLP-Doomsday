@@ -1,0 +1,70 @@
+{
+  "completed_retrieval_rows": 1226,
+  "completed_transfer_rows": {
+    "attention": 0,
+    "routing": 0
+  },
+  "degenerate_rows_excluded_from_predictor": 19,
+  "families": {
+    "controls": {
+      "complete": true,
+      "completed": 84,
+      "planned": 84
+    },
+    "parameters": {
+      "complete": true,
+      "completed": 630,
+      "planned": 630
+    },
+    "primary": {
+      "complete": true,
+      "completed": 140,
+      "planned": 140
+    },
+    "robustness": {
+      "complete": true,
+      "completed": 100,
+      "planned": 100
+    },
+    "shared_sae": {
+      "complete": true,
+      "completed": 20,
+      "planned": 20
+    },
+    "sparsity": {
+      "complete": true,
+      "completed": 462,
+      "planned": 462
+    }
+  },
+  "fixture": false,
+  "incomplete_artifacts": [
+    {
+      "error": "Interruption requested; completed shards/checkpoints are retained",
+      "path": "/home/sustaind/adr-doomsday/output/baselines/dense/6d265ad8b84ac95b/000054/manifest.json",
+      "status": "interrupted"
+    },
+    {
+      "error": "Interruption requested; completed shards/checkpoints are retained",
+      "path": "/home/sustaind/adr-doomsday/output/baselines/dense/6d265ad8b84ac95b/manifest.json",
+      "status": "interrupted"
+    },
+    {
+      "error": "Interruption requested; completed shards/checkpoints are retained",
+      "path": "/home/sustaind/adr-doomsday/output/baselines/dense/bb730a359a50d0a7/000055/manifest.json",
+      "status": "interrupted"
+    },
+    {
+      "error": "Interruption requested; completed shards/checkpoints are retained",
+      "path": "/home/sustaind/adr-doomsday/output/baselines/dense/bb730a359a50d0a7/manifest.json",
+      "status": "interrupted"
+    }
+  ],
+  "missing_rows": [],
+  "planned_retrieval_rows": 1226,
+  "unavailable_datasets": {
+    "msmarco_dev": "MS MARCO corpus not encoded on the SERC workstation run",
+    "trec_dl_2019": "MS MARCO corpus not encoded on the SERC workstation run",
+    "trec_dl_2020": "MS MARCO corpus not encoded on the SERC workstation run"
+  }
+}

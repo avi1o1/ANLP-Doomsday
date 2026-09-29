@@ -1,0 +1,238 @@
+[
+  {
+    "collection": "arguana",
+    "corpus_id": "beir/arguana",
+    "dense_search": null,
+    "examples": 1406,
+    "external": false,
+    "fixture": false,
+    "implementation": "bm25s",
+    "index_bytes": 8227486,
+    "method": "bm25",
+    "metrics": {
+      "mrr@10": 0.32896176251439413,
+      "ndcg@10": 0.4113739296855358,
+      "recall@100": 0.9089615931721194,
+      "recall@1000": 0.9779516358463727
+    }
+  },
+  {
+    "collection": "arguana",
+    "corpus_id": "beir/arguana",
+    "dense_search": {
+      "backend": "gpu",
+      "candidate_buffer": 128,
+      "gpu_id": 0,
+      "query_batch_size": 256
+    },
+    "examples": 1406,
+    "external": false,
+    "fixture": false,
+    "implementation": null,
+    "index_bytes": null,
+    "method": "dense",
+    "metrics": {
+      "mrr@10": 0.36742729571676946,
+      "ndcg@10": 0.44491015555040575,
+      "recall@100": 0.9523470839260313,
+      "recall@1000": 0.9935988620199147
+    }
+  },
+  {
+    "collection": "fiqa",
+    "corpus_id": "beir/fiqa",
+    "dense_search": null,
+    "examples": 648,
+    "external": false,
+    "fixture": false,
+    "implementation": "bm25s",
+    "index_bytes": 40711873,
+    "method": "bm25",
+    "metrics": {
+      "mrr@10": 0.29364283264746227,
+      "ndcg@10": 0.23595892319875475,
+      "recall@100": 0.5093854019779945,
+      "recall@1000": 0.7251221472286287
+    }
+  },
+  {
+    "collection": "fiqa",
+    "corpus_id": "beir/fiqa",
+    "dense_search": {
+      "backend": "gpu",
+      "candidate_buffer": 128,
+      "gpu_id": 0,
+      "query_batch_size": 256
+    },
+    "examples": 648,
+    "external": false,
+    "fixture": false,
+    "implementation": null,
+    "index_bytes": null,
+    "method": "dense",
+    "metrics": {
+      "mrr@10": 0.45745884773662543,
+      "ndcg@10": 0.3816567718060948,
+      "recall@100": 0.7060484782707005,
+      "recall@1000": 0.8924727535838648
+    }
+  },
+  {
+    "collection": "limit",
+    "corpus_id": "limit",
+    "dense_search": null,
+    "examples": 1000,
+    "external": false,
+    "fixture": false,
+    "implementation": "bm25s",
+    "index_bytes": 30269548,
+    "method": "bm25",
+    "metrics": {
+      "mrr@10": 0.9405468253968254,
+      "ndcg@10": 0.9388502825825377,
+      "recall@100": 0.963,
+      "recall@1000": 0.9955
+    }
+  },
+  {
+    "collection": "limit",
+    "corpus_id": "limit",
+    "dense_search": {
+      "backend": "gpu",
+      "candidate_buffer": 128,
+      "gpu_id": 0,
+      "query_batch_size": 256
+    },
+    "examples": 1000,
+    "external": false,
+    "fixture": false,
+    "implementation": null,
+    "index_bytes": null,
+    "method": "dense",
+    "metrics": {
+      "mrr@10": 0.019309920634920638,
+      "ndcg@10": 0.015512946166343104,
+      "recall@100": 0.075,
+      "recall@1000": 0.208
+    }
+  },
+  {
+    "collection": "miracl_bn",
+    "corpus_id": "miracl/bn",
+    "dense_search": null,
+    "examples": 411,
+    "external": false,
+    "fixture": false,
+    "implementation": "bm25s",
+    "index_bytes": 135818442,
+    "method": "bm25",
+    "metrics": {
+      "mrr@10": 0.43823716834665744,
+      "ndcg@10": 0.4065683578227759,
+      "recall@100": 0.791435909319121,
+      "recall@1000": 0.9251399992275904
+    }
+  },
+  {
+    "collection": "miracl_hi",
+    "corpus_id": "miracl/hi",
+    "dense_search": null,
+    "examples": 350,
+    "external": false,
+    "fixture": false,
+    "implementation": "bm25s",
+    "index_bytes": 221646114,
+    "method": "bm25",
+    "metrics": {
+      "mrr@10": 0.38473015873015876,
+      "ndcg@10": 0.35691704991560624,
+      "recall@100": 0.7366870748299319,
+      "recall@1000": 0.8890136054421769
+    }
+  },
+  {
+    "collection": "miracl_te",
+    "corpus_id": "miracl/te",
+    "dense_search": null,
+    "examples": 828,
+    "external": false,
+    "fixture": false,
+    "implementation": "bm25s",
+    "index_bytes": 217983210,
+    "method": "bm25",
+    "metrics": {
+      "mrr@10": 0.2881982785062495,
+      "ndcg@10": 0.3313393062371975,
+      "recall@100": 0.6894122383252818,
+      "recall@1000": 0.836755233494364
+    }
+  },
+  {
+    "collection": "nfcorpus",
+    "corpus_id": "beir/nfcorpus",
+    "dense_search": null,
+    "examples": 323,
+    "external": false,
+    "fixture": false,
+    "implementation": "bm25s",
+    "index_bytes": 4473962,
+    "method": "bm25",
+    "metrics": {
+      "mrr@10": 0.5150830507641654,
+      "ndcg@10": 0.30694483905086023,
+      "recall@100": 0.2368943890515512,
+      "recall@1000": 0.44060929469021587
+    }
+  },
+  {
+    "collection": "scidocs",
+    "corpus_id": "beir/scidocs",
+    "dense_search": null,
+    "examples": 1000,
+    "external": false,
+    "fixture": false,
+    "implementation": "bm25s",
+    "index_bytes": 23448748,
+    "method": "bm25",
+    "metrics": {
+      "mrr@10": 0.2719047619047619,
+      "ndcg@10": 0.15232732663652815,
+      "recall@100": 0.34735000000000005,
+      "recall@1000": 0.5607166666666668
+    }
+  },
+  {
+    "collection": "scifact",
+    "corpus_id": "beir/scifact",
+    "dense_search": null,
+    "examples": 300,
+    "external": false,
+    "fixture": false,
+    "implementation": "bm25s",
+    "index_bytes": 5948457,
+    "method": "bm25",
+    "metrics": {
+      "mrr@10": 0.6276177248677248,
+      "ndcg@10": 0.6616762967340877,
+      "recall@100": 0.8858888888888888,
+      "recall@1000": 0.9638888888888889
+    }
+  },
+  {
+    "collection": "trec_covid",
+    "corpus_id": "beir/trec-covid",
+    "dense_search": null,
+    "examples": 50,
+    "external": false,
+    "fixture": false,
+    "implementation": "bm25s",
+    "index_bytes": 135572672,
+    "method": "bm25",
+    "metrics": {
+      "mrr@10": 0.7905555555555556,
+      "ndcg@10": 0.5818767825508627,
+      "recall@100": 0.09729903209094841,
+      "recall@1000": 0.35981964871091365
+    }
+  }
+]

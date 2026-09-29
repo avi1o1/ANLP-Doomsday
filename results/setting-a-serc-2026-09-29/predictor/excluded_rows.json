@@ -1,0 +1,135 @@
+[
+  {
+    "collection": "arguana",
+    "margin": -2.0,
+    "representation_id": "pq__pooled",
+    "responsive_switches": 1,
+    "row_id": "9fcd20bf7702d1ef4bb423d40945e458f6f963c13eb0b7dd286df4d91a1547a8"
+  },
+  {
+    "collection": "arguana",
+    "margin": 2.0,
+    "representation_id": "rq__pooled",
+    "responsive_switches": 1,
+    "row_id": "72855f800717bd9864aa5b599776039d0aea7a98ab6ba4c019121f0ad55b9fa6"
+  },
+  {
+    "collection": "fiqa",
+    "margin": 2.0,
+    "representation_id": "pq__pooled",
+    "responsive_switches": 1,
+    "row_id": "d393b88251503016ebe7c10efd9b3d8e735b3794998ccbfbe2ebbfcf3c5e4e20"
+  },
+  {
+    "collection": "fiqa",
+    "margin": 2.0,
+    "representation_id": "rq__pooled",
+    "responsive_switches": 1,
+    "row_id": "327de2c4d88cadf13bad1231ae6c1827446f2c9163dac97df711149af6b41f5f"
+  },
+  {
+    "collection": "limit",
+    "margin": -2.0,
+    "representation_id": "sae__pooled",
+    "responsive_switches": 1,
+    "row_id": "1bea12d9e5a9a12d6ebd40941ef0e52aeaef6a27af16369ef8eef74418f4468f"
+  },
+  {
+    "collection": "miracl_bn",
+    "margin": -2.0,
+    "representation_id": "pq__pooled",
+    "responsive_switches": 1,
+    "row_id": "fa67e2f8e5610555063f86e8dc65655829c0a58fbd00d6ee1b64b622b125968d"
+  },
+  {
+    "collection": "miracl_bn",
+    "margin": 2.0,
+    "representation_id": "rq__pooled",
+    "responsive_switches": 1,
+    "row_id": "952e208ac8cdea1beb0b5060a0d3e8c9bf2f45fce31c7bf8ee0284103ff92573"
+  },
+  {
+    "collection": "miracl_hi",
+    "margin": 2.0,
+    "representation_id": "pq__pooled",
+    "responsive_switches": 1,
+    "row_id": "578d24e02aa8ba00ccf39fda8881d7ead9c814ffade75b823671cfc00b33385a"
+  },
+  {
+    "collection": "miracl_hi",
+    "margin": 2.0,
+    "representation_id": "rq__pooled",
+    "responsive_switches": 1,
+    "row_id": "ac62e11aa17729e391dc4a1bb24a62cd3d0d92a0f5c372b81afaceceed3d21a5"
+  },
+  {
+    "collection": "miracl_te",
+    "margin": 2.0,
+    "representation_id": "pq__pooled",
+    "responsive_switches": 1,
+    "row_id": "7cfb43c27bf7c8d1d19a9ce2d4f257f4e316b2355ad8c0d07fb2ad76bfa5db82"
+  },
+  {
+    "collection": "miracl_te",
+    "margin": 2.0,
+    "representation_id": "rq__pooled",
+    "responsive_switches": 1,
+    "row_id": "34582c1cba408524895c7a807103425d64f81e731e6a2b169ed0d6b5a1ac4c48"
+  },
+  {
+    "collection": "nfcorpus",
+    "margin": 2.0,
+    "representation_id": "pq__pooled",
+    "responsive_switches": 1,
+    "row_id": "65a52d33827b16ce5e0d99b90b10aeeb69f47fc210fe5f99af7daf66fd1cf4a3"
+  },
+  {
+    "collection": "nfcorpus",
+    "margin": 2.0,
+    "representation_id": "rq__pooled",
+    "responsive_switches": 1,
+    "row_id": "a5430bcca275a278d4eaa4c588e3b8bf7dbd3ab4d6b4fc854a119b4668034d84"
+  },
+  {
+    "collection": "scidocs",
+    "margin": 2.0,
+    "representation_id": "pq__pooled",
+    "responsive_switches": 1,
+    "row_id": "33eaddb9c02b0056ba77a9ba81625683c0270d5a48d47ec69fc6a3e66bc332c6"
+  },
+  {
+    "collection": "scidocs",
+    "margin": 2.0,
+    "representation_id": "rq__pooled",
+    "responsive_switches": 1,
+    "row_id": "33d80bc75992e758d713139f4d82fee15437301ce682c71f712b0e2e3456b76e"
+  },
+  {
+    "collection": "scifact",
+    "margin": -2.0,
+    "representation_id": "pq__pooled",
+    "responsive_switches": 1,
+    "row_id": "913d4bd54c59fa41448f446cffd7de24fa894566af66d8d295ab35baf6c87998"
+  },
+  {
+    "collection": "scifact",
+    "margin": 2.0,
+    "representation_id": "rq__pooled",
+    "responsive_switches": 1,
+    "row_id": "4ae27d43fade3427edc98fa3ca6ea4e7be717f660900fcaf1d1c9c9644a8fcc1"
+  },
+  {
+    "collection": "trec_covid",
+    "margin": 2.0,
+    "representation_id": "pq__pooled",
+    "responsive_switches": 1,
+    "row_id": "57a492d9e2a25cc2dc4888ab316c78fdb398fbca955faf12cecb2f853885be5f"
+  },
+  {
+    "collection": "trec_covid",
+    "margin": 2.0000000000000004,
+    "representation_id": "rq__pooled",
+    "responsive_switches": 1,
+    "row_id": "cb5bea44790ba13c7185413517d1b87373ad03c64bfff7beb3b3fe2db4bc5368"
+  }
+]
