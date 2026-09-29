@@ -28,17 +28,19 @@ def file_hash(path: str | Path) -> str:
     return h.hexdigest()
 
 
-def atomic_json(path: str | Path, value) -> None:
+def atomic_json(path: str | Path, value, compact: bool = False) -> None:
+    """Write JSON atomically. Compact output drops indentation, for bulky per-query records."""
+    layout = {"separators": (",", ":")} if compact else {"indent": 2}
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
     try:
         with os.fdopen(fd, "wb" if path.suffix == ".gz" else "w") as handle:
             if path.suffix == ".gz":
-                payload = json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2, allow_nan=False) + "\n"
+                payload = json.dumps(value, ensure_ascii=False, sort_keys=True, allow_nan=False, **layout) + "\n"
                 handle.write(gzip.compress(payload.encode("utf8"), mtime=0))
             else:
-                json.dump(value, handle, ensure_ascii=False, sort_keys=True, indent=2, allow_nan=False)
+                json.dump(value, handle, ensure_ascii=False, sort_keys=True, allow_nan=False, **layout)
                 handle.write("\n")
             handle.flush()
             os.fsync(handle.fileno())

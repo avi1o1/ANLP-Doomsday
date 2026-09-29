@@ -107,3 +107,14 @@ def test_documented_missing_judgments_are_preserved_and_audited(tmp_path):
         (raw / "qrels.tsv").write_text("q unexpected 1\n")
         with pytest.raises(ValueError, match="unknown document unexpected"):
             prepare_dataset({**spec, "name": "unexpected"}, tmp_path / "out", stop)
+
+
+def test_compact_json_matches_indented_content(tmp_path):
+    from src.artifacts import atomic_json, read_json
+
+    value = {"b": [1, 2.5, "x"], "a": {"n": None}}
+    atomic_json(tmp_path / "wide.json", value)
+    atomic_json(tmp_path / "tight.json", value, compact=True)
+    assert read_json(tmp_path / "wide.json") == read_json(tmp_path / "tight.json") == value
+    assert "\n  " in (tmp_path / "wide.json").read_text()
+    assert (tmp_path / "tight.json").read_text() == '{"a":{"n":null},"b":[1,2.5,"x"]}\n'

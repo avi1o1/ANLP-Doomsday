@@ -322,6 +322,17 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
     directory = root(config) / "evaluations" / dataset / representation / budget_name / f"k{k1}_b{b}_{control or 'primary'}"
     identity = {"dataset": dataset, "representation": representation, "budget": budget,
                 "k1": k1, "b": b, "control": control, "analysis": config.get("analysis", {})}
+    # Every metric is computed from the full top-1000 before a record is written; the
+    # stored ranking is provenance only. At the full depth, indented, a row of eight
+    # configurations over ArguAna's 1406 queries is about 1 GB. A shorter stored depth
+    # still recomputes nDCG@10, MRR@10 and Recall@100 exactly. The default keeps the
+    # original records, and the original identity, unchanged.
+    stored = config.get("evaluation", {})
+    depth, compact = int(stored.get("stored_ranking_depth", 1000)), bool(stored.get("compact_records", False))
+    if depth < 100:
+        raise ValueError("A stored ranking shorter than 100 cannot recompute Recall@100")
+    if (depth, compact) != (1000, False):
+        identity["records"] = {"stored_ranking_depth": depth, "compact": compact}
     with Artifact(directory, identity, [index, queries, collection]) as work:
         if work.reused:
             return directory
@@ -404,7 +415,7 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
                         qid = query_ids[row]
                         values = (metric_fn(rankings[i], judgments[qid]) if config.get("fixture", False)
                                   else metric_fn(qid, rankings[i], judgments[qid]))
-                        records.append({"query_id": qid, "ranking": rankings[i], "metrics": values,
+                        records.append({"query_id": qid, "ranking": rankings[i][:depth], "metrics": values,
                             "posting_visits": int(visits[i]), "query_nonzeros": int(query_matrix[row].nnz),
                             "amortized_search_seconds": elapsed / len(rows),
                             "execution": {"backend": "cuda_ordered_fp32", "query_group_size": len(rows),
@@ -412,7 +423,8 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
                     position = 0
                     for start in group:
                         count = min(checkpoint_size, len(query_ids) - start)
-                        atomic_json(directory / f"{switches.key}/{start:08d}.json", records[position:position+count])
+                        atomic_json(directory / f"{switches.key}/{start:08d}.json", records[position:position+count],
+                                    compact=compact)
                         position += count
                     del scorer
             for start in range(0, len(query_ids), config.get("evaluation_batch_size", 32)):
@@ -437,12 +449,12 @@ def evaluate(config, dataset, name, granularity, seed, budget_name, stop, k1=1.2
                     for i, qid in enumerate(query_ids[start:end]):
                         values = (metric_fn(rankings[i], judgments[qid]) if config.get("fixture", False)
                                   else metric_fn(qid, rankings[i], judgments[qid]))
-                        records.append({"query_id": qid, "ranking": rankings[i], "metrics": values,
+                        records.append({"query_id": qid, "ranking": rankings[i][:depth], "metrics": values,
                                         "posting_visits": int(visits[i]), "query_nonzeros": int(query_matrix[start+i].nnz),
                                         "amortized_search_seconds": elapsed / (end - start),
                                         "execution": {"postings_cache": bool(cache),
                                             "worker_slots": int(os.environ.get("CSX_EVALUATION_SLOTS", "1"))}})
-                    atomic_json(path, records)
+                    atomic_json(path, records, compact=compact)
                 records = read_json(path)
                 all_records.extend(records)
                 outcomes[start:end, column] = [r["metrics"]["ndcg@10"] for r in records]

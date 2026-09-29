@@ -171,3 +171,41 @@ def test_gpu_grouping_preserves_existing_cpu_checkpoints(tmp_path, monkeypatch):
             for ref, actual in zip(records, read_json(directory / name)):
                 for key in ('ranking', 'metrics', 'posting_visits', 'query_id'):
                     assert ref[key] == actual[key]
+
+
+def test_stored_ranking_depth_is_bounded_compact_and_part_of_identity(tmp_path):
+    import pytest
+
+    config = load_config("configs/fixture.yaml")
+    config["output_root"] = str(tmp_path / "run")
+    config["bases"] = config["bases"][:1]
+    with StopFlag() as stop:
+        for dataset in ("train", "english"):
+            pipeline.prepare(config, dataset, stop)
+        pipeline.encode_sample(config, stop)
+        pipeline.fit_basis(config, "identity", "pooled", 0, stop)
+        pipeline.encode_corpus(config, "english", "identity", "pooled", 0, stop)
+        pipeline.build_index(config, "english", "identity", "pooled", 0, "small", stop)
+        full = pipeline.evaluate(config, "english", "identity", "pooled", 0, "small", stop)
+        config["evaluation"] = {"stored_ranking_depth": 100, "compact_records": True}
+        with pytest.raises(ValueError, match="identity changed"):
+            pipeline.evaluate(config, "english", "identity", "pooled", 0, "small", stop)
+        config["output_root"] = str(tmp_path / "compact")
+        for dataset in ("train", "english"):
+            pipeline.prepare(config, dataset, stop)
+        pipeline.encode_sample(config, stop)
+        pipeline.fit_basis(config, "identity", "pooled", 0, stop)
+        pipeline.encode_corpus(config, "english", "identity", "pooled", 0, stop)
+        pipeline.build_index(config, "english", "identity", "pooled", 0, "small", stop)
+        compact = pipeline.evaluate(config, "english", "identity", "pooled", 0, "small", stop)
+        batch = next((compact / "111").glob("*.json"))
+        assert "\n " not in batch.read_text()
+        # Fixture rankings are under 100 deep, so records agree in everything but timing.
+        def untimed(path):
+            return [{k: v for k, v in r.items() if k != "amortized_search_seconds"} for r in read_json(path)]
+        assert untimed(batch) == untimed(full / "111" / batch.name)
+        np.testing.assert_array_equal(np.load(compact / "outcomes.npy"), np.load(full / "outcomes.npy"))
+        assert read_json(compact / "manifest.json")["config"]["records"]["stored_ranking_depth"] == 100
+        config["evaluation"] = {"stored_ranking_depth": 10}
+        with pytest.raises(ValueError, match="Recall@100"):
+            pipeline.evaluate(config, "english", "identity", "pooled", 0, "small", stop, k1=0.6)

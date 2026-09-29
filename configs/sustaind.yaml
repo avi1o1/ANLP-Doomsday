@@ -26,3 +26,7 @@ routing:
   dataset_revisions: {wikitext: b08601e04326c79dfdd32d625aee71d232d685c3,
                       mmlu: c30699e8356da336a370243923dbaf21066bb9fe,
                       gsm8k: 740312add88f781978c0658806c59bc2815b9866}
+# Per-query records keep the top 100 of each ranking, compactly. Metrics are still
+# computed from the full top-1000 before writing; at full depth, indented, the
+# 1226 rows would need about 480 GB, twice this machine's free disk.
+evaluation: {stored_ranking_depth: 100, compact_records: true}
