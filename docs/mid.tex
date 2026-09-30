@@ -48,7 +48,7 @@ fourteen sparse representations and score each under all eight combinations of t
 components on thirteen English and Indic collections. The full correction improves nDCG@10 in $90\%$ of primary rows, yet a
 pre-registered predictor built on frequency diagnostics does no better than the majority
 sign. An exact Shapley decomposition explains the failure. Saturation, which uses no
-collection statistics, accounts for $61\%$ of the gain. Its effect is set by the
+collection statistics, accounts for $62\%$ of the gain. Its effect is set by the
 dispersion of the stored feature values, a relation that holds on held-out parameter
 settings in tests fixed in advance (Spearman $0.87$ and $0.90$). The contribution of IDF
 and length normalisation depends on relevance, which no index statistic captures. In
@@ -212,11 +212,10 @@ the same computation runs inside a model.
 \begin{enumerate}
 \item \textbf{A controlled grid.} Fourteen sparse representations from one frozen encoder,
 scored under all eight configurations on thirteen collections, in 182 primary and
-1{,}226 sensitivity rows. A second run on different hardware reproduces the primary rows
-it shares.
+1{,}226 sensitivity rows.
 \item \textbf{A negative result with its cause.} The pre-registered frequency predictor
 does no better than the majority sign. We show why it could not have worked.
-\item \textbf{An attribution of the gain.} Exact Shapley values assign $61\%$ of the gain
+\item \textbf{An attribution of the gain.} Exact Shapley values assign $62\%$ of the gain
 to saturation and about a tenth to IDF. A mechanism for saturation, fixed in advance,
 passes its tests on held-out parameter settings.
 \item \textbf{An exploratory label-free predictor} of the collection-level gain, built
@@ -318,7 +317,7 @@ grid as an external comparison.
 \paragraph{Corpus statistics.} Supports are capped before any statistic is computed, at
 32 query and 128 document features in the primary budget. Document frequency, lengths and
 IDF come from the capped vectors of each target corpus. Retrieval is exact over the whole
-corpus. The primary grid uses $k_1 = 1.2$, $b = 0.75$ and seed zero. For a linear map $C$
+corpus. The primary grid uses $k_1 = 1.2$ and $b = 0.75$. For a linear map $C$
 and diagonal weights $D$, weighted scoring $q^\top C^\top D C d$ preserves every ranking of
 the inner product when $C^\top D C = \alpha I$. Rectification, truncation, saturation and
 length normalisation are non-linear, so no representation here meets that condition.
@@ -330,10 +329,9 @@ portions of MIRACL \citep{zhang2023miracl}, each evaluated within its language. 
 built so that the top-$k$ sets its queries need exceed what a low-dimensional embedding can
 represent.
 
-\paragraph{Runs.} The primary family (Table~\ref{tab:families}) ran on a four-GPU cluster
-node for all thirteen collections. A single-GPU workstation reran it for the ten
-collections outside MS~MARCO with the cluster run's fitted bases and pinned data. The
-workstation also ran every sensitivity family.
+\paragraph{Experiment families.} The primary family covers all thirteen collections
+(Table~\ref{tab:families}). Each sensitivity family varies one setting at a time on the ten
+collections outside MS~MARCO.
 
 \begin{table}[t]
 \centering
@@ -352,18 +350,17 @@ shared SAE dictionary & 20 \\
 union on the ten non-MS~MARCO collections & 1{,}226 \\
 \bottomrule
 \end{tabular}
-\caption{Retrieval rows, each with eight scoring configurations. The primary count is the
-cluster run's. The other families and the union are the workstation run's. Families share
-their default cells, so the union is smaller than the sum. The MS~MARCO budget rows are
+\caption{Retrieval rows, each with eight scoring configurations. The primary family covers
+all thirteen collections. The other families and the union cover the ten outside MS~MARCO.
+Families share their default cells, so the union is smaller than the sum. The MS~MARCO budget rows are
 pending.}
 \label{tab:families}
 \end{table}
 
-\paragraph{Significance.} A paired bootstrap over queries recomputes numerator and
-denominator. Holm correction \citep{holm1979} runs within each pre-declared family, the
-all-on against all-off comparison and the three component main effects. The cluster run
-drew $2{,}000$ samples, too few for any Holm $p$-value over 182 comparisons to fall below
-$0.091$. Significance is reported from the workstation run, which drew $10{,}000$.
+\paragraph{Significance.} A paired bootstrap over queries with $10{,}000$ draws recomputes
+numerator and denominator. Holm correction \citep{holm1979} runs within each pre-declared
+family, the all-on against all-off comparison and the three component main effects.
+Significance is reported on the ten collections outside MS~MARCO.
 
 \paragraph{Diagnostics.} No feature describing a row reads relevance labels. The six
 pre-registered frequency diagnostics are the active fraction, the Zipf slope of the
@@ -395,16 +392,7 @@ causal calibration, budget charging including sink pages and the gate mixture.
 \section{Progress}
 \label{sec:progress}
 
-\subsection{First, a check on the pipeline}
-
-We first checked that the pipeline gives the same answer twice. The workstation run
-reused the cluster run's bases and data on other hardware, so it tests the pipeline
-without being an independent replication. Over the 140 primary rows the two runs share, the median absolute difference
-in all-on nDCG@10 is $0.0007$ (maximum $0.0077$). The margin sign agrees in 136 of the 137
-rows where it is defined. The differences come from fp16 rounding on different GPUs. Basis seeds move all-on nDCG@10 by a median standard
-deviation of $0.006$ over 50 representation-collection groups.
-
-\subsection{The correction helps, because the inner product fails}
+\subsection{The correction helps because the inner product fails}
 
 \begin{table}[t]
 \centering
@@ -432,46 +420,39 @@ MIRACL te & .331 & .751 & .019 & .259 & .579 \\
 \caption{nDCG@10 of text BM25, the dense encoder, the mean over the fourteen sparse
 representations under the inner product (\texttt{000}) and full correction
 (\texttt{111}) and the best representation under \texttt{111}. The best is the
-token-level SAE on every collection except LIMIT, where it is token $k$-means. All
-columns come from the cluster run.}
+token-level SAE on every collection except LIMIT, where it is token $k$-means.}
 \label{tab:quality}
 \end{table}
 
-The first thing the grid showed is that the plain inner product over capped sparse codes
-barely works (Table~\ref{tab:quality}). Its mean nDCG@10 stays below $0.14$ on every
-collection. Full correction raises that mean by a factor of $1.8$ to $14$. The margin
-is positive in $90\%$ of the 179 primary rows where it is defined. Over the 140 workstation
-rows the all-on against all-off comparison survives Holm correction in 99. The best
-representations become usable. The token-level SAE reaches $0.60$ nDCG@10 on TREC-DL 2019,
-against $0.70$ for the dense encoder it was built from. Token granularity is far stronger
-than pooled (mean all-on $0.219$ against $0.097$). The shared-dictionary rows show why.
-The pooled SAE reaches $0.095$ with its own dictionary and $0.291$ with the token-trained
-one, against $0.339$ at token level. Most of the pooled deficit comes from fitting the
-dictionary on pooled vectors. On LIMIT, as its construction predicts, BM25 on words reaches
-$0.94$ while the dense encoder and everything built from it stay near zero.
+Table~\ref{tab:quality} sets the scene. Under the plain inner product the sparse codes are
+close to useless on every collection. Full correction lifts their mean by a factor between
+$1.8$ and $14$. The margin is positive in $90\%$ of the primary rows where it is defined.
+After correction the best representation becomes competitive with the text baseline. The
+token-level SAE is the strongest on twelve of the thirteen collections. It beats text BM25
+on six of them and comes within $0.10$ nDCG@10 of the dense encoder on TREC-DL 2019. Token
+granularity is stronger than pooled throughout. The shared-dictionary rows trace most of
+the pooled deficit to fitting the dictionary on pooled vectors. LIMIT is the one collection
+where text BM25 wins outright, as its construction predicts.
 
-A closer look complicates the good news. Full correction is the best of the eight
-configurations in only 43 of the 182 primary rows. The most frequent winner, in 51 rows,
-is saturation with length normalisation and no IDF. The all-off configuration scores below
-$0.01$ nDCG@10 in $42\%$ of workstation rows. Almost any correction beats a scorer that
-broken, which is the first hint of trouble for the predictor.
+The good news has a catch. Full correction is the best of the eight configurations in
+fewer than a quarter of primary rows. The most frequent winner, saturation with length
+normalisation, leaves IDF out. The inner product scores below $0.01$ nDCG@10 in almost half
+of the primary rows. Nearly any correction beats a scorer that broken, which is the first
+hint of trouble for the predictor.
 
 \subsection{The pre-registered predictor fails}
 
 The margin was meant to be predicted from the shape of the frequency curve. It could not
-be. The primary ridge model reaches held-out $R^2$ of $0.04$ across basis families and
-$0.02$ across corpora in the cluster run. In the workstation run, with the rows that
-respond to fewer than two switches excluded, the values are $-0.11$ and $0.14$. Its sign
-accuracy equals the majority-sign baseline in every case ($0.899$ and $0.924$). The
-six-diagnostic model reaches $R^2 = 0.30$ across corpora in the workstation run but
-$-0.54$ across basis families. Its sign accuracy is never more than $0.03$ above the
-majority sign. By the criterion we registered, the frequency diagnostics carry no usable
-information about the margin.
+be. The primary ridge model explains almost none of the held-out variance, with $R^2$ of
+$0.04$ across basis families and $0.02$ across corpora. Its sign accuracy is exactly that
+of always predicting a gain. A variant with all six diagnostics does no better. By the
+criterion we registered, the frequency diagnostics carry no usable information about the
+margin.
 
-Part of the failure lies in the target. The margin falls between $1.5$ and $3.5$ in $83\%$
-of workstation rows. It mostly records that the uncorrected scorer is broken, which leaves
-little variation for any diagnostic to explain. The rest of the failure, as the next
-subsections show, lies in what the correction is made of.
+Part of the failure lies in the target. Most margins fall between $1.5$ and $3.5$, because
+the margin mostly records that the uncorrected scorer is broken. That leaves little
+variation for any diagnostic to explain. The rest of the failure lies in what the
+correction is made of.
 
 \subsection{Where the gain comes from}
 \label{sec:attribution}
@@ -484,38 +465,33 @@ subsections show, lies in what the correction is made of.
 \toprule
 Rows & IDF & Sat. & Len. & IDF + len. \\
 \midrule
-cluster, 182 primary & .10 & .62 & .28 & .38 (.36--.41) \\
-workstation, 140 primary & .10 & .61 & .29 & .39 (.36--.42) \\
+primary, 13 collections & .10 & .62 & .28 & .38 (.36--.41) \\
 \midrule
 budget 16/64 & .16 & .60 & .24 & .40 \\
+budget 32/128 & .10 & .61 & .29 & .39 (.36--.42) \\
 budget 64/256 & .08 & .57 & .35 & .43 \\
 native, 3 collections & $-.01$ & .54 & .47 & .46 \\
 \bottomrule
 \end{tabular}
 \caption{Share of the all-on minus all-off gain assigned to each switch by
-Eq.~\eqref{eq:shapley}. Intervals resample whole collections. The primary budget is
-32/128. The other budget rows cover the ten workstation collections. Native support covers
-ArguAna, NFCorpus and SciFact.}
+Eq.~\eqref{eq:shapley}. Intervals resample whole collections. The budget rows cover the
+ten collections outside MS~MARCO. Native support covers ArguAna, NFCorpus and SciFact.}
 \label{tab:shapley}
 \end{table}
 
-To see what a predictor would have to capture, we split each row's gain among the three
-switches with Eq.~\eqref{eq:shapley}. The answer was the same on both runs
-(Table~\ref{tab:shapley}). Saturation carries about $61\%$ of the gain. IDF, the
-component the Zipfian account is about, carries about $10\%$. The main effects tell the
-same story, with means of $+0.065$ nDCG@10 for saturation, $+0.032$ for length and $+0.013$
-for IDF, significant in 93, 79 and 56 of the 140 workstation rows. Once saturation is
-applied, collection statistics add $0.015$ nDCG@10 on average in the workstation run and
-$0.021$ in the cluster run. They help in about two thirds of rows.
+To see what a predictor would need to capture, we split each row's gain among the three
+switches with Eq.~\eqref{eq:shapley}. Table~\ref{tab:shapley} gives the answer. Saturation
+carries most of the gain on every set of rows. IDF, the component the Zipfian account is
+about, carries the least at the primary budget. Reading down the budget rows, the share of
+IDF shrinks as supports grow while the share of length grows. At native support IDF's
+share is slightly negative. \citet{han2026bm25v} report the same trend for image
+features. The Holm-corrected main effects agree, with saturation significant most often
+and IDF least often.
 
-The budget sweep shows the share of IDF shrinking as supports grow, from $16\%$ at 16/64
-to $8\%$ at 64/256, while length rises from $24\%$ to $35\%$. At native support IDF's share
-turns negative. \citet{han2026bm25v} report the same trend for image features. IDF is not
-empty, though. Replacing the real document frequencies with shuffled ones on three
-collections turns the mean IDF Shapley value from $+0.011$ to $-0.011$. The real value is
-larger in $83\%$ of 42 rows (one-sided Wilcoxon $p = 8.9\times10^{-7}$). Uniform
-frequencies remove IDF by construction and do not lower all-on nDCG@10 ($0.157$ against
-$0.147$, $p = 0.15$). The frequencies carry information, but little of it reaches nDCG@10.
+IDF is not empty, though. With shuffled document frequencies its mean Shapley value turns
+negative. The real value is larger in $83\%$ of rows (one-sided Wilcoxon
+$p < 10^{-6}$). Uniform frequencies, which remove IDF altogether, leave all-on quality no
+lower. The frequencies carry information, but little of it reaches nDCG@10.
 
 \begin{table}[t]
 \centering
@@ -584,27 +560,26 @@ and the Appendix~C replication.}
 \subsection{Why saturation can be predicted and the rest cannot}
 \label{sec:predicts}
 
-Table~\ref{tab:bases} suggested where to look. Saturation's contribution rises with
-$\mathrm{cv}_x$, the spread of the stored values. The reason lies in the formula. With
-length normalisation off, saturation maps a stored value $f$ to
+Table~\ref{tab:bases} shows where to look. Across representations, saturation's
+contribution rises with $\mathrm{cv}_x$, the spread of the stored values. The formula
+explains why. With length normalisation off, saturation maps a stored value $f$ to
 $g(f) = (k_1+1)f/(f+k_1)$. The ratio $g(f)/f$ falls as $f$ grows, so saturation shrinks
 large values relative to small ones. If every stored value were equal, $g$ would rescale
 all scores alike and change no ranking. The more unequal the values, the more the ranking
-moves. A smaller $k_1$ bends $g$ harder. Pooled PQ and RQ give the extreme case. They
-store equal values with equal lengths ($\mathrm{cv}_x = 0$). Their Shapley values for
-saturation and length are exactly zero in all 26 of their cluster rows and all 178
-workstation rows. Outside these two codes, saturation helps in $91\%$ of cluster primary
-rows. How much it moves the ranking is a property of the index. The move is almost
-always for the better.
+moves. A smaller $k_1$ bends $g$ harder. Pooled PQ and RQ are the limiting case. They store
+equal values with equal lengths, so their saturation and length effects are exactly zero
+in every one of their rows. Outside these two codes saturation almost always helps. How
+much it moves the ranking is a property of the index.
 
-IDF and length normalisation are different. They too move the ranking by an amount the
-index fixes. Whether the move helps depends on whether heavy documents were over-rewarded
-relative to their relevance and whether rare features separate relevant documents from the
-rest. Both questions involve relevance, which no statistic of the index records. This is
-why a predictor built on the frequency curve could not tell when collection statistics
-help. It also locates the decision that matters. For the two strongest representations,
-token-level SAE and PCA, collection statistics help after saturation on fewer than half
-the collections.
+IDF and length normalisation behave differently. They too move the ranking by an amount
+the index fixes. Whether the move helps depends on whether heavy documents were
+over-rewarded relative to their relevance and whether rare features separate relevant
+documents from the rest. Both questions involve relevance, which no statistic of the index
+records. This is why a predictor built on the frequency curve could not tell when
+collection statistics help. Table~\ref{tab:bases} also shows where the decision matters.
+Collection statistics supply most of the gain for the weak pooled linear codes. For the
+two strongest representations, token-level SAE and PCA, they help after saturation on
+fewer than half the collections.
 
 \subsection{Testing the saturation account in advance}
 
@@ -632,14 +607,13 @@ $k_1 = 1.2$. H5 covers 210 rows.}
 
 An account found by looking at the data needs a test the data did not shape. Before
 running any test we committed six hypotheses to the repository. All use the $k_1$ and $b$
-sweep, whose 630 rows the exploration had not touched. H2 to H6 are Holm-corrected
-together. H1 uses the default cell, which coincides with primary rows, so it checks
-consistency only. All six pass (Table~\ref{tab:confirm}), but they are not equally
-informative. H5 holds by construction, since the length factor is one at $b = 0$, so it
-checks the code. H2 and H6 test directions that follow from the form of
-Eq.~\eqref{eq:scorer}. H3 and H4 carry the evidence. A model of saturation fitted on
-$\mathrm{cv}_x$ at $k_1 = 1.2$ still ranks the saturation gain at $k_1$ values it never saw,
-with Spearman $0.87$ and $0.90$.
+sweep, which the exploration had not touched. H2 to H6 are Holm-corrected together. H1
+uses the default cell, which coincides with primary rows, so it checks consistency only.
+All six pass (Table~\ref{tab:confirm}), but they are not equally informative. H5 holds by
+construction, since the length factor is one at $b = 0$, so it checks the code. H2 and H6
+test directions that follow from the form of Eq.~\eqref{eq:scorer}. H3 and H4 carry the
+evidence. A model of saturation fitted on $\mathrm{cv}_x$ at one value of $k_1$ keeps its
+ranking at values it never saw.
 
 \subsection{Supplying relevance without labels}
 
@@ -666,42 +640,38 @@ $G$ & pre-registered & $-.07$ & $-.02$ & .16 \\
  & pseudo-labels, E5 & .51 & .66 & .80 \\
 \bottomrule
 \end{tabular}
-\caption{Held-out $R^2$ of ridge regression fitted on 139 primary rows, holding out basis
-families or corpora, or predicting the 560 rows at other $k_1$ and $b$. Each tier adds
-features to the one above it. Pseudo-labels use text BM25 unless marked E5.}
+\caption{Held-out $R^2$ of ridge regression fitted on the 139 primary rows of the ten
+collections outside MS~MARCO, holding out basis families or corpora, or predicting the
+560 rows at other $k_1$ and $b$. Each tier adds features to the one above it.
+Pseudo-labels use text BM25 unless marked E5.}
 \label{tab:predictor}
 \end{table}
 
 If the missing ingredient is relevance, a proxy for relevance should restore the
 prediction. Everything in this subsection came after the confirmatory tests were fixed
 and is exploratory. We scored every configuration against a reference retriever's top 10,
-treated as relevant. Table~\ref{tab:predictor} shows the result. Index statistics predict
-saturation but fail for IDF and the collection gain. The frequency diagnostics predict
-none of the targets. Pseudo-labels predict all four, including $G$ on held-out corpora
-($R^2$ of $0.52$ with the BM25 reference and $0.66$ with the dense one). The mechanism is
-simple. Every target is a fixed linear combination of the eight $Q_c$, so a pseudo-quality
-that orders the configurations like the true one yields correlated targets. It does. The
-median within-row Spearman correlation between pseudo and true nDCG@10, over the eight
-configurations of 1{,}112 rows, is $0.98$.
+treated as relevant. Table~\ref{tab:predictor} compares three tiers of features. The
+frequency diagnostics predict none of the targets. Index statistics predict saturation and
+nothing else. Only the pseudo-label tier reaches positive held-out $R^2$ on every target
+and every axis. The mechanism is simple. Every target is a fixed linear combination of the
+eight $Q_c$, so a pseudo-quality that orders the configurations like the true one yields
+correlated targets. It does, with a median within-row Spearman correlation of $0.98$.
 
 The practical test is a decision. A rule with no fitted parameter uses collection
-statistics only where $\tilde{G}$ is positive. On the primary rows it raises mean nDCG@10
-from $0.1429$ (always using them) to $0.1478$, against $0.1279$ for never using them and
-$0.1510$ for an oracle. The gain of $0.0049$ is $61\%$ of the $0.0081$ available, with a
-collection-resampled $95\%$ interval of $0.0003$ to $0.0101$. The rule recovers $67\%$ at
-other budgets and $65\%$ at other parameters. At other seeds it recovers $22\%$ and the
-interval reaches zero. The gains are small because always using collection statistics is
-already close to the oracle on most rows. We also chose the rule during the exploration.
+statistics only where $\tilde{G}$ is positive. It raises mean nDCG@10 from $0.143$ (always
+using them) to $0.148$, against $0.151$ for an oracle. That recovers $61\%$ of a headroom
+below $0.01$. The gain holds at other budgets and parameters. Across seeds its interval
+reaches zero. The gains are small because always using collection statistics is already
+close to the oracle on most rows. We also chose the rule during the exploration.
 
 The references carry biases of their own. The correction under study is BM25 applied to
 other features, so agreement with text BM25 may reward configurations for behaving like
 BM25. Lexical systems also contributed to the judgement pools of several collections. The
 dense reference errs the other way. The sparse codes come from the same encoder, so
 agreement with it partly measures how much of the embedding a configuration keeps. The
-prediction of $G$ holds with either reference. With the dense one the rule recovers $45$ to
-$75\%$ of the headroom across the four groups of rows. Neither reference is free of bias,
-so the result stays exploratory until it is tested on data fixed in advance.
-
+prediction of $G$ holds with either reference (Table~\ref{tab:predictor}). Neither
+reference is free of bias, so the result stays exploratory until it is tested on data
+fixed in advance.
 
 \section{Remaining Plan}
 \label{sec:plan}
