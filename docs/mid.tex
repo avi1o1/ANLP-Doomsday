@@ -424,8 +424,8 @@ token-level SAE on every collection except LIMIT, where it is token $k$-means.}
 \label{tab:quality}
 \end{table}
 
-Table~\ref{tab:quality} sets the scene. Under the plain inner product the sparse codes are
-close to useless on every collection. Full correction lifts their mean by a factor between
+Under the plain inner product the capped sparse codes are close to useless on every
+collection (Table~\ref{tab:quality}). Full correction lifts their mean by a factor between
 $1.8$ and $14$. The margin is positive in $90\%$ of the primary rows where it is defined.
 After correction the best representation becomes competitive with the text baseline. The
 token-level SAE is the strongest on twelve of the thirteen collections. It beats text BM25
@@ -480,8 +480,8 @@ ten collections outside MS~MARCO. Native support covers ArguAna, NFCorpus and Sc
 \end{table}
 
 To see what a predictor would need to capture, we split each row's gain among the three
-switches with Eq.~\eqref{eq:shapley}. Table~\ref{tab:shapley} gives the answer. Saturation
-carries most of the gain on every set of rows. IDF, the component the Zipfian account is
+switches with Eq.~\eqref{eq:shapley}. Saturation carries most of the gain on every set of
+rows (Table~\ref{tab:shapley}). IDF, the component the Zipfian account is
 about, carries the least at the primary budget. Reading down the budget rows, the share of
 IDF shrinks as supports grow while the share of length grows. At native support IDF's
 share is slightly negative. \citet{han2026bm25v} report the same trend for image
@@ -560,9 +560,9 @@ and the Appendix~C replication.}
 \subsection{Why saturation can be predicted and the rest cannot}
 \label{sec:predicts}
 
-Table~\ref{tab:bases} shows where to look. Across representations, saturation's
-contribution rises with $\mathrm{cv}_x$, the spread of the stored values. The formula
-explains why. With length normalisation off, saturation maps a stored value $f$ to
+Across representations, the contribution of saturation rises with $\mathrm{cv}_x$, the
+coefficient of variation of the stored values (Table~\ref{tab:bases}). This follows from
+the form of the transform. With length normalisation off, saturation maps a stored value $f$ to
 $g(f) = (k_1+1)f/(f+k_1)$. The ratio $g(f)/f$ falls as $f$ grows, so saturation shrinks
 large values relative to small ones. If every stored value were equal, $g$ would rescale
 all scores alike and change no ranking. The more unequal the values, the more the ranking
@@ -576,10 +576,10 @@ the index fixes. Whether the move helps depends on whether heavy documents were
 over-rewarded relative to their relevance and whether rare features separate relevant
 documents from the rest. Both questions involve relevance, which no statistic of the index
 records. This is why a predictor built on the frequency curve could not tell when
-collection statistics help. Table~\ref{tab:bases} also shows where the decision matters.
-Collection statistics supply most of the gain for the weak pooled linear codes. For the
-two strongest representations, token-level SAE and PCA, they help after saturation on
-fewer than half the collections.
+collection statistics help. The decision matters most for strong representations.
+Collection statistics supply most of the gain for the weak pooled linear codes, but for
+token-level SAE and PCA they help after saturation on fewer than half the collections
+(Table~\ref{tab:bases}).
 
 \subsection{Testing the saturation account in advance}
 
