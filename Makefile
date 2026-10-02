@@ -43,12 +43,11 @@ check: ## Check every built document: log, page limit, bibliography
 
 ##@ Submission
 
-mid-zip: docs/pdf/$(TEAM)-Mid.pdf ## Package ANLPDoomsday-Mid.zip: write-up and code
+mid-zip: docs/pdf/$(TEAM)-Mid.pdf ## Package ANLPDoomsday-Mid.zip: the report only
 	@$(STEP) "packaging $(TEAM)-Mid.zip"
 	@mkdir -p $(DIST)
 	@rm -f $(DIST)/$(TEAM)-Mid.zip
 	@zip -qj $(DIST)/$(TEAM)-Mid.zip $<
-	@zip -qr $(DIST)/$(TEAM)-Mid.zip $(CODE) $(ZIP_EXCLUDE)
 	@$(DONE) "$(DIST)/$(TEAM)-Mid.zip"
 
 final-zip: docs/pdf/$(TEAM)-Final.pdf ## Package ANLPDoomsday-Final.zip: write-up, code, slides

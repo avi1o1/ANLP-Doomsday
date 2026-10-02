@@ -17,8 +17,8 @@ can be predicted without relevance labels.
   run).** The same correction applied to Quest-style page selection and to OLMoE routing.
 
 Repository: <https://github.com/avi1o1/ANLP-Doomsday>. The mid report is
-`ANLPDoomsday-Mid.pdf` at the top of the submission zip, and `docs/pdf/` in the
-repository.
+`docs/pdf/ANLPDoomsday-Mid.pdf`; the mid submission zip contains only that PDF, and the
+code is submitted through this repository.
 
 ## Repository layout
 
@@ -119,7 +119,7 @@ in `.env` (see `.env.example`).
 make            # list targets
 make mid        # build the mid report
 make check      # log, page limit and bibliography checks
-make mid-zip    # dist/ANLPDoomsday-Mid.zip: report and code
+make mid-zip    # dist/ANLPDoomsday-Mid.zip: the report only
 ```
 
 Building needs TeX Live with `natbib`, `times`, `microtype`, `booktabs` and `tikz`; the
