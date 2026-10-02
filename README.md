@@ -30,7 +30,7 @@ repository.
 | `scripts/`                                         | Analysis, curation and maintenance scripts                                                              |
 | `tests/`                                           | Unit, numerical-parity and recovery tests                                                               |
 | `results/`                                         | Curated Setting A results, each directory with its own README                                           |
-| `docs/`                                            | LaTeX sources of all reports; built PDFs in `docs/pdf/` (repository only)                               |
+| `docs/`                                            | LaTeX sources of all reports and built PDFs in `docs/pdf/` (repository only, not in the zip)            |
 | `*.sbatch`, `submit-setting-a.sh`                  | Slurm launchers for the cluster                                                                         |
 
 ## Install and test
