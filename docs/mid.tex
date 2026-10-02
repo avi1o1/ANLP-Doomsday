@@ -212,7 +212,7 @@ the same computation runs inside a model.
 \begin{enumerate}
 \item \textbf{A controlled grid.} Fourteen sparse representations from one frozen encoder,
 scored under all eight configurations on thirteen collections, in 182 primary and
-1{,}226 sensitivity rows.
+1{,}086 sensitivity rows.
 \item \textbf{A negative result with its cause.} The pre-registered frequency predictor
 does no better than the majority sign. We show why it could not have worked.
 \item \textbf{An attribution of the gain.} Exact Shapley values assign $62\%$ of the gain
@@ -330,8 +330,9 @@ built so that the top-$k$ sets its queries need exceed what a low-dimensional em
 represent.
 
 \paragraph{Experiment families.} The primary family covers all thirteen collections
-(Table~\ref{tab:families}). Each sensitivity family varies one setting at a time on the ten
-collections outside MS~MARCO.
+(Table~\ref{tab:families}). Each sensitivity family varies one setting at a time on
+collections outside MS~MARCO, ten for the budgets and the shared dictionary, five for
+$k_1$, $b$ and seeds, and three for the frequency controls and native support.
 
 \begin{table}[t]
 \centering
@@ -351,7 +352,8 @@ union on the ten non-MS~MARCO collections & 1{,}226 \\
 \bottomrule
 \end{tabular}
 \caption{Retrieval rows, each with eight scoring configurations. The primary family covers
-all thirteen collections. The other families and the union cover the ten outside MS~MARCO.
+all thirteen collections. The other families cover ten, five or three of the collections
+outside MS~MARCO, and the union counts all rows on those ten.
 Families share their default cells, so the union is smaller than the sum. The MS~MARCO budget rows are
 pending.}
 \label{tab:families}
@@ -575,7 +577,7 @@ $k_1 = 1.2$. H5 covers 210 rows.}
 
 An account found by looking at the data needs a test the data did not shape. Before
 running any test we committed six hypotheses to the repository. All use the $k_1$ and $b$
-sweep, which the exploration had not touched. H2 to H6 are Holm-corrected together. H1
+sweep on five collections, which the exploration had not touched. H2 to H6 are Holm-corrected together. H1
 uses the default cell, which coincides with primary rows, so it checks consistency only.
 All six pass (Table~\ref{tab:confirm}), but they are not equally informative. H5 holds by
 construction, since the length factor is one at $b = 0$, so it checks the code. H2 and H6
@@ -642,8 +644,7 @@ the majority sign. & Mohit \\
  & & Slides and presentation. Code archive. & Aviral, Anirudh \\
 \bottomrule
 \end{tabular}
-\caption{Schedule to the final submission. If time runs short we cut, in order, GSM8K and
-expert preservation, the 8K context in Setting B, MMLU in Setting C (keeping WikiText)
+\caption{Schedule to the final submission. If time runs short we cut, in order, the 8K context in Setting B, MMLU in Setting C (keeping WikiText)
 and the Appendix~C replication.}
 \label{tab:plan}
 \end{table*}

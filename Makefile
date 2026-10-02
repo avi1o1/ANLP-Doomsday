@@ -6,13 +6,15 @@ include make/common.mk
 
 # Everything that goes into a submission zip alongside the write-up. Listed with
 # wildcard so the zip targets keep working as directories appear.
-CODE = $(wildcard src scripts configs analysis tests results pyproject.toml uv.lock README.md \
+CODE = $(wildcard src scripts configs analysis tests results docs pyproject.toml uv.lock README.md \
 	Makefile make .env.example *.sbatch submit-setting-a.sh)
 
 # Nothing generated, cached or private ever enters a zip. context/ is not listed
 # in CODE, so it cannot be picked up by accident.
 ZIP_EXCLUDE = -x '*/__pycache__/*' '*.pyc' '*/.DS_Store' '*/.pytest_cache/*' \
-	'*.egg-info/*' '*/.ruff_cache/*' '*/data/*' '*/results/raw/*'
+	'*.egg-info/*' '*/.ruff_cache/*' '*/data/*' '*/results/raw/*' \
+	'docs/*.pdf' 'docs/*.aux' 'docs/*.log' 'docs/*.bbl' 'docs/*.blg' 'docs/*.out' \
+	'docs/.check-*'
 
 ##@ Documents
 
@@ -27,7 +29,7 @@ interim: ## Build the interim proposal, 2 pages, submitted 14 Aug 2026
 proposal: ## Build the final proposal, 3-4 pages, due 28 Aug 2026
 	@$(MAKE) -C docs proposal
 
-mid: ## Build the mid report, 7-8 pages, due 30 Sep 2026
+mid: ## Build the mid report, 7-8 pages, due 2 Oct 2026
 	@$(MAKE) -C docs mid
 
 final: ## Build the final report, at most 8 pages, due 31 Oct 2026

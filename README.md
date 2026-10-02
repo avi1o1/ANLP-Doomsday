@@ -16,7 +16,9 @@ can be predicted without relevance labels.
 - **Setting B, KV-page selection** and **Setting C, expert routing (implemented, not yet
   run).** The same correction applied to Quest-style page selection and to OLMoE routing.
 
-The mid report is `docs/pdf/ANLPDoomsday-Mid.pdf`.
+Repository: <https://github.com/avi1o1/ANLP-Doomsday>. The mid report is
+`ANLPDoomsday-Mid.pdf` at the top of the submission zip, and `docs/pdf/` in the
+repository.
 
 ## Repository layout
 
@@ -28,7 +30,7 @@ The mid report is `docs/pdf/ANLPDoomsday-Mid.pdf`.
 | `scripts/`                                         | Analysis, curation and maintenance scripts                                                              |
 | `tests/`                                           | Unit, numerical-parity and recovery tests                                                               |
 | `results/`                                         | Curated Setting A results, each directory with its own README                                           |
-| `docs/`                                            | LaTeX sources of all reports; built PDFs in `docs/pdf/`                                                 |
+| `docs/`                                            | LaTeX sources of all reports; built PDFs in `docs/pdf/` (repository only)                               |
 | `*.sbatch`, `submit-setting-a.sh`                  | Slurm launchers for the cluster                                                                         |
 
 ## Install and test
@@ -53,18 +55,36 @@ uv run csx --config configs/fixture.yaml report
 
 ## Reproducing the mid-report analysis
 
-The tables in the mid report come from the files under `results/`. The analysis scripts
-read those files directly:
+The tables in the mid report come from the files under `results/`:
+
+| Report table | Source |
+| --- | --- |
+| 2, retrieval quality | `results/setting-a-2026-09-26/research-v5/report/` (`retrieval.csv`, `baselines.json`) |
+| 3, attribution | primary row: `results/setting-a-2026-09-26/research-v5/exploratory/shapley_summary.json`; budget rows: `results/setting-a-2026-09-29/exploratory/shapley_rows.csv` |
+| 4, per representation | both `shapley_rows.csv` files, and `mechanism_diagnostics.json` for $\mathrm{cv}_x$ |
+| 5, confirmatory tests | `results/setting-a-2026-09-29/exploratory/confirmatory_tests.json` |
+| 6, predictor study | `results/setting-a-2026-09-29/exploratory/predictor_study.json` (BM25) and `predictor_study_dense.json` (E5) |
+| Section 7.2, pre-registered predictor | `results/setting-a-2026-09-26/research-v5/report/predictor.csv` |
+
+The analysis scripts read those files directly. To reproduce them without overwriting the
+shipped copies, write to a scratch directory and compare:
 
 ```sh
-R=results/setting-a-2026-09-29
-uv run python -m scripts.shapley_attribution $R/analysis/rows.json $R/exploratory
+R=results/setting-a-2026-09-29; C=results/setting-a-2026-09-26/research-v5
+mkdir -p /tmp/repro
+uv run python -m scripts.shapley_attribution $C/analysis/rows.json /tmp/repro/primary13
+uv run python -m scripts.shapley_attribution $R/analysis/rows.json /tmp/repro/sensitivity
 uv run python -m scripts.test_hypotheses $R/analysis/rows.json \
-    $R/exploratory/mechanism_diagnostics.json $R/exploratory/confirmatory_tests.json
-uv run python -m scripts.predictor_study $R/analysis/rows.json \
-    $R/exploratory/mechanism_diagnostics.json $R/exploratory/ranking_features.json \
-    $R/exploratory/predictor_study.json --reference bm25
+    $R/exploratory/mechanism_diagnostics.json /tmp/repro/confirmatory_tests.json
+for ref in bm25 dense; do
+  uv run python -m scripts.predictor_study $R/analysis/rows.json \
+      $R/exploratory/mechanism_diagnostics.json $R/exploratory/ranking_features.json \
+      /tmp/repro/predictor_study_$ref.json --reference $ref
+done
 ```
+
+Each output matches the shipped file apart from the `label` field and floating-point
+noise in the last digits.
 
 `results/setting-a-2026-09-29/exploratory/README.md` describes each output. The index
 diagnostics and ranking features (`scripts/mechanism_diagnostics.py`,
