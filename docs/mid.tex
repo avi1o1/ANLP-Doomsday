@@ -39,7 +39,7 @@ From Retrieval to Attention and Expert Routing}
 
 \begin{abstract}
 Learned sparse retrieval, block-sparse attention and mixture-of-experts routing all
-select items by a top-$k$ over inner products with learned non-negative features. Only
+select items by a top-$k$ over inner products with learned features. Only
 lexical retrieval corrects this score, through the inverse document frequency (IDF),
 term-frequency saturation and length normalisation of BM25. Prior work disagrees on
 whether the correction helps learned features. We ask when it helps and whether that can
@@ -47,8 +47,8 @@ be predicted without relevance labels. From one frozen multilingual encoder we b
 fourteen sparse representations and score each under all eight combinations of the three
 components on thirteen English and Indic collections. The full correction improves nDCG@10 in $90\%$ of primary rows, yet a
 pre-registered predictor built on frequency diagnostics does no better than the majority
-sign. An exact Shapley decomposition explains the failure. Saturation, which uses no
-collection statistics, accounts for $62\%$ of the gain. Its effect is set by the
+sign. In an exact Shapley decomposition, saturation, which uses no collection statistics,
+accounts for $62\%$ of the gain. Its effect is set by the
 dispersion of the stored feature values, a relation that holds on held-out parameter
 settings in tests fixed in advance (Spearman $0.87$ and $0.90$). The contribution of IDF
 and length normalisation depends on relevance, which no index statistic captures. In
@@ -97,7 +97,7 @@ These methods grew up in different communities. They share one computation
 \draw[arr] ([xshift=6mm]df.south) -- ([xshift=6mm]z.north);
 \end{tikzpicture}
 \caption{The computation shared by the three settings. Each scores an input against
-learned non-negative features and keeps the top $k$. The BM25 correction sits between
+learned features and keeps the top $k$. The BM25 correction sits between
 the two steps. The selection counts it needs are also the input to the predictors of
 its gain.}
 \label{fig:overview}
@@ -319,7 +319,7 @@ grid as an external comparison.
 IDF come from the capped vectors of each target corpus. Retrieval is exact over the whole
 corpus. The primary grid uses $k_1 = 1.2$ and $b = 0.75$. For a linear map $C$
 and diagonal weights $D$, weighted scoring $q^\top C^\top D C d$ preserves every ranking of
-the inner product when $C^\top D C = \alpha I$. Rectification, truncation, saturation and
+the inner product when $C^\top D C = \alpha I$ with $\alpha > 0$. Rectification, truncation, saturation and
 length normalisation are non-linear, so no representation here meets that condition.
 
 \paragraph{Collections.} The thirteen collections come from eleven corpora. MS~MARCO dev,
@@ -429,12 +429,12 @@ collection (Table~\ref{tab:quality}). Full correction lifts their mean by a fact
 $1.8$ and $14$. The margin is positive in $90\%$ of the primary rows where it is defined.
 After correction the best representation becomes competitive with the text baseline. The
 token-level SAE is the strongest on twelve of the thirteen collections. It beats text BM25
-on six of them and comes within $0.10$ nDCG@10 of the dense encoder on TREC-DL 2019. Token
+on six of them and comes within about $0.10$ nDCG@10 of the dense encoder on TREC-DL 2019. Token
 granularity is stronger than pooled throughout. The shared-dictionary rows trace most of
 the pooled deficit to fitting the dictionary on pooled vectors. LIMIT is the one collection
 where text BM25 wins outright, as its construction predicts.
 
-The good news has a catch. Full correction is the best of the eight configurations in
+Full correction is the best of the eight configurations in
 fewer than a quarter of primary rows. The most frequent winner, saturation with length
 normalisation, leaves IDF out. The inner product scores below $0.01$ nDCG@10 in almost half
 of the primary rows. Nearly any correction beats a scorer that broken, which is the first
@@ -442,10 +442,10 @@ hint of trouble for the predictor.
 
 \subsection{The pre-registered predictor fails}
 
-The margin was meant to be predicted from the shape of the frequency curve. It could not
-be. The primary ridge model explains almost none of the held-out variance, with $R^2$ of
+The margin was meant to be predicted from the shape of the frequency curve, and it could
+not be. The primary ridge model explains almost none of the held-out variance, with $R^2$ of
 $0.04$ across basis families and $0.02$ across corpora. Its sign accuracy is exactly that
-of always predicting a gain. A variant with all six diagnostics does no better. By the
+of always predicting a gain. A variant with all six diagnostics is not consistently better. By the
 criterion we registered, the frequency diagnostics carry no usable information about the
 margin.
 
@@ -524,38 +524,6 @@ mean over the ten collections whose indexes were measured.}
 \label{tab:bases}
 \end{table}
 
-\begin{table*}[t]
-\centering
-\small
-\begin{tabular}{@{}llp{0.58\textwidth}l@{}}
-\toprule
-Week & Dates & Work & Owner \\
-\midrule
-1 & 3--9 Oct & Resume the MS~MARCO budget sweep (84 rows) after the cluster maintenance. Run
-SPLADE-v3 as the external comparison and the conceptual replication of the Appendix~C
-reversal. Validate both adapters at scale, with native parity, calibration cost and memory.
-& Anirudh \\
- & & Commit the second pre-registration, the pseudo-label rule on the unseen MS~MARCO budget
-rows, the frozen transfer predictors and the transfer thresholds. & Mohit \\
-2 & 10--16 Oct & Setting B on Llama-3.2-1B-Instruct over all 13 RULER tasks with 500
-examples, 4K and 8K contexts, budgets of 512 and 1{,}024 tokens, with H2O. & Anirudh \\
- & & Second confirmatory round in retrieval. & Mohit \\
-3 & 17--23 Oct & Setting C on OLMoE-1B-7B, WikiText-2 negative log-likelihood and zero-shot
-MMLU, with the loss-free-balancing analogue. & Anirudh \\
- & & Write-up of the bilinear identity and its ranking conditions. Draft of the final report
-from the retrieval results. & Arihant \\
-4 & 24--28 Oct & Transfer scoring with uncertainty for both predictors, per setting, against
-the majority sign. & Mohit \\
- & & Figures and tables from the saved artifacts. Viva slides. & Arihant, Aviral \\
-5 & 29--31 Oct & Final report & Arihant \\
- & & Slides and presentation. Code archive. & Aviral, Anirudh \\
-\bottomrule
-\end{tabular}
-\caption{Schedule to the final submission. If time runs short we cut, in order, GSM8K and
-expert preservation, the 8K context in Setting B, MMLU in Setting C (keeping WikiText)
-and the Appendix~C replication.}
-\label{tab:plan}
-\end{table*}
 
 \subsection{Why saturation can be predicted and the rest cannot}
 \label{sec:predicts}
@@ -647,17 +615,50 @@ Pseudo-labels use text BM25 unless marked E5.}
 \label{tab:predictor}
 \end{table}
 
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{@{}llp{0.58\textwidth}l@{}}
+\toprule
+Week & Dates & Work & Owner \\
+\midrule
+1 & 3--9 Oct & Resume the MS~MARCO budget sweep (84 rows) after the cluster maintenance. Run
+SPLADE-v3 as the external comparison and the conceptual replication of the Appendix~C
+reversal. Validate both adapters at scale, with native parity, calibration cost and memory.
+& Anirudh \\
+ & & Commit the second pre-registration, the pseudo-label rule on the unseen MS~MARCO budget
+rows, the frozen transfer predictors and the transfer thresholds. & Mohit \\
+2 & 10--16 Oct & Setting B on Llama-3.2-1B-Instruct over all 13 RULER tasks with 500
+examples, 4K and 8K contexts, budgets of 512 and 1{,}024 tokens, with H2O. & Anirudh \\
+ & & Second confirmatory round in retrieval. & Mohit \\
+3 & 17--23 Oct & Setting C on OLMoE-1B-7B, WikiText-2 negative log-likelihood and zero-shot
+MMLU, with the loss-free-balancing analogue. & Anirudh \\
+ & & Write-up of the bilinear identity and its ranking conditions. Draft of the final report
+from the retrieval results. & Arihant \\
+4 & 24--28 Oct & Transfer scoring with uncertainty for both predictors, per setting, against
+the majority sign. & Mohit \\
+ & & Figures and tables from the saved artifacts. Viva slides. & Arihant, Aviral \\
+5 & 29--31 Oct & Final report. & Arihant \\
+ & & Slides and presentation. Code archive. & Aviral, Anirudh \\
+\bottomrule
+\end{tabular}
+\caption{Schedule to the final submission. If time runs short we cut, in order, GSM8K and
+expert preservation, the 8K context in Setting B, MMLU in Setting C (keeping WikiText)
+and the Appendix~C replication.}
+\label{tab:plan}
+\end{table*}
+
 If the missing ingredient is relevance, a proxy for relevance should restore the
 prediction. Everything in this subsection came after the confirmatory tests were fixed
 and is exploratory. We scored every configuration against a reference retriever's top 10,
 treated as relevant. Table~\ref{tab:predictor} compares three tiers of features. The
-frequency diagnostics predict none of the targets. Index statistics predict saturation and
-nothing else. Only the pseudo-label tier reaches positive held-out $R^2$ on every target
-and every axis. The mechanism is simple. Every target is a fixed linear combination of the
+frequency diagnostics barely predict any target. Index statistics predict saturation and
+little else. Only the pseudo-label tier reaches positive held-out $R^2$ on every target
+and every axis. Every target is a fixed linear combination of the
 eight $Q_c$, so a pseudo-quality that orders the configurations like the true one yields
 correlated targets. It does, with a median within-row Spearman correlation of $0.98$.
 
-The practical test is a decision. A rule with no fitted parameter uses collection
+The practical test is a decision rule with no fitted parameter, which uses collection
 statistics only where $\tilde{G}$ is positive. It raises mean nDCG@10 from $0.143$ (always
 using them) to $0.148$, against $0.151$ for an oracle. That recovers $61\%$ of a headroom
 below $0.01$. The gain holds at other budgets and parameters. Across seeds its interval
