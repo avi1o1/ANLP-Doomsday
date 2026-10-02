@@ -47,7 +47,8 @@ mid-zip: docs/pdf/$(TEAM)-Mid.pdf ## Package ANLPDoomsday-Mid.zip: write-up and 
 	@$(STEP) "packaging $(TEAM)-Mid.zip"
 	@mkdir -p $(DIST)
 	@rm -f $(DIST)/$(TEAM)-Mid.zip
-	@zip -qr $(DIST)/$(TEAM)-Mid.zip $< $(CODE) $(ZIP_EXCLUDE)
+	@zip -qj $(DIST)/$(TEAM)-Mid.zip $<
+	@zip -qr $(DIST)/$(TEAM)-Mid.zip $(CODE) $(ZIP_EXCLUDE)
 	@$(DONE) "$(DIST)/$(TEAM)-Mid.zip"
 
 final-zip: docs/pdf/$(TEAM)-Final.pdf ## Package ANLPDoomsday-Final.zip: write-up, code, slides
@@ -56,7 +57,8 @@ final-zip: docs/pdf/$(TEAM)-Final.pdf ## Package ANLPDoomsday-Final.zip: write-u
 	@$(STEP) "packaging $(TEAM)-Final.zip"
 	@mkdir -p $(DIST)
 	@rm -f $(DIST)/$(TEAM)-Final.zip
-	@zip -qr $(DIST)/$(TEAM)-Final.zip $< slides/$(TEAM)-Slides.pdf $(CODE) $(ZIP_EXCLUDE)
+	@zip -qj $(DIST)/$(TEAM)-Final.zip $< slides/$(TEAM)-Slides.pdf
+	@zip -qr $(DIST)/$(TEAM)-Final.zip $(CODE) $(ZIP_EXCLUDE)
 	@$(DONE) "$(DIST)/$(TEAM)-Final.zip"
 
 docs/pdf/$(TEAM)-Mid.pdf:
