@@ -63,10 +63,40 @@ nDCG@10 on full corpora, queries with judgments only:
 | miracl_te | 0.001 | | |
 
 The MIRACL collections are near zero because SPLADE-v3's English vocabulary does not
-tokenise Hindi, Bengali or Telugu. These are the plain-retrieval runs. SPLADE scored under
-all eight IDF, saturation and length combinations, which the Appendix C reversal needs, is
-not in this directory (`scripts/export_splade_features.py` and the GPU path in
-`src/retrieval/external.py` were written for it).
+tokenise Hindi, Bengali or Telugu. These are the plain-retrieval runs.
+
+## Appendix C reversal on SPLADE-v3
+
+The stored SPLADE-v3 document features were scored under all eight IDF, saturation and
+length combinations (`splade/eight_configs/`, `splade/splade_v3_eight_configs.csv`;
+`scripts/export_splade_features.py`, GPU scoring in `src/retrieval/external.py`). All off
+is the plain inner product; all on is the full correction. The all-off column reproduces
+the plain SPLADE run above to three decimals on every collection checked. The comparison is
+conceptual: it is a different backbone and protocol from Clavie et al.'s Appendix C.
+
+| Collection | SPLADE off | SPLADE on | E5 mean off (14 reps) | E5 mean on |
+|---|---:|---:|---:|---:|
+| arguana | 0.489 | 0.563 | 0.021 | 0.130 |
+| fiqa | 0.380 | 0.318 | 0.013 | 0.084 |
+| limit | 0.447 | 0.667 | 0.001 | 0.004 |
+| msmarco_dev | 0.470 | 0.382 | 0.013 | 0.130 |
+| nfcorpus | 0.364 | 0.356 | 0.064 | 0.115 |
+| scidocs | 0.156 | 0.154 | 0.009 | 0.044 |
+| scifact | 0.717 | 0.716 | 0.088 | 0.197 |
+| trec_covid | 0.731 | 0.583 | 0.135 | 0.246 |
+| trec_dl_2019 | 0.722 | 0.680 | 0.036 | 0.255 |
+| trec_dl_2020 | 0.751 | 0.674 | 0.035 | 0.251 |
+| mean of these 10 | 0.523 | 0.509 | 0.042 | 0.146 |
+
+MIRACL is left out of the mean (all scores near zero for SPLADE). On the E5 features the
+correction raises every collection's mean. On SPLADE-v3 the plain inner product is as good
+or better on 8 of the 10, and the correction helps only on arguana and limit. The p-values
+below are uncorrected bootstrap values at 2,000 draws, taken from each collection's own
+all-on against all-off comparison: all on is significantly worse (p < 0.05) on fiqa,
+msmarco_dev, trec_covid and trec_dl_2020, significantly better on arguana and limit, and
+not distinguishable on the other seven (including the three MIRACL collections). The
+direction matches the reversal Appendix C reports for SPLADE-v3. The size does not: the
+10-collection mean gap is 0.014 here, against 0.113 in their numbers.
 
 ## Not done in this directory
 
@@ -74,7 +104,7 @@ not in this directory (`scripts/export_splade_features.py` and the GPU path in
   diagnostics (`mechanism_diagnostics.py`) and ranking features (`ranking_features.py`)
   for the MS MARCO indexes and rows. These come from the built indexes and stored
   rankings on the cluster and have not been computed, so those results are not updated.
-- The adapter validation at scale.
+- The adapter validation at scale (routing has WikiText and five MMLU subjects; attention has no results).
 
 ## Provenance
 
