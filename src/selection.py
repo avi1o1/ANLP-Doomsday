@@ -32,6 +32,37 @@ def corrected_positive(values, counts, opportunities, lengths, average_length, s
     return result
 
 
+def corrected_positive_batched(values, counts, opportunities, lengths, average_length, switches, scale):
+    """`corrected_positive` for every head at once.
+
+    values and lengths are [heads, pages]; counts and opportunities are [heads, observed pages]
+    and are zero-padded to the current page count; average_length and scale are [heads].
+    Row h equals corrected_positive applied to head h alone.
+    """
+    import torch
+
+    f = values.float() / scale.float().clamp_min(1e-12)[:, None]
+    if not torch.isfinite(f).all() or (f < 0).any():
+        raise ValueError("Selection requires finite nonnegative activations")
+    extra = f.shape[1] - counts.shape[1]
+    counts = torch.nn.functional.pad(counts.float(), (0, extra))
+    opportunities = torch.nn.functional.pad(opportunities.float(), (0, extra))
+    ell = torch.ones_like(lengths.float())
+    if switches.length:
+        average = average_length.float()[:, None]
+        scaled = 1 - switches.b + switches.b * lengths.float() / average.clamp_min(torch.finfo(torch.float32).tiny)
+        ell = torch.where(average > 0, scaled, ell)
+    if switches.saturation:
+        result = (switches.k1 + 1) * f / (f + switches.k1 * ell).clamp_min(1e-12)
+    else:
+        result = f / ell.clamp_min(1e-12)
+    if switches.idf:
+        idf = torch.log1p((opportunities - counts + 0.5) / (counts + 0.5))
+        idf = torch.where(opportunities > 0, idf, torch.ones_like(idf))
+        result = result * idf
+    return result
+
+
 def aggregate_diagnostics(traces):
     """One downstream row, averaging diagnostics across reference heads/layers."""
     rows = []
