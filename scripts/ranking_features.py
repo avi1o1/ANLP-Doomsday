@@ -37,6 +37,9 @@ REFERENCES = ("bm25", "dense", "fused")
 FUSION_DEPTH = 100
 RRF_K = 60
 DEPTH = 10
+# Runs differ in how deep a ranking they store (workstation and sweep rows keep 100, the original
+# cluster rows 1000); every feature is computed on the top 100 so that rows are comparable.
+STORED_DEPTH = 100
 IDEAL = sum(1 / math.log2(i + 2) for i in range(DEPTH))
 
 
@@ -44,7 +47,7 @@ def read_rankings(directory: Path, pattern: str):
     rankings = {}
     for path in sorted(directory.glob(pattern)):
         for record in json.loads(path.read_text()):
-            rankings[record["query_id"]] = record["ranking"]
+            rankings[record["query_id"]] = record["ranking"][:STORED_DEPTH]
     return rankings
 
 

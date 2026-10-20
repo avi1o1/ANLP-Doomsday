@@ -10,8 +10,11 @@ workstation rows are unchanged.
 |---|---|
 | `analysis/msmarco_rows.json` | The 126 MS MARCO rows, diagnosed with 10,000 bootstrap draws: 42 primary rows (q32_d128, from the cluster run research-v5) and 84 new budget rows (q16_d64 and q64_d256) from the sweep. |
 | `analysis/msmarco_component_ablations.json` | Their 126 component ablations (3 per primary row). |
-| `analysis/rows.json`, `analysis/component_ablations.json` | The union with the 29 September workstation rows (`results/setting-a-2026-09-29/analysis/`): 1,352 rows, 182 primary. Holm correction is redone over the 182 primary rows and over 182 rows per component (`scripts/merge_analysis_rows.py`). |
+| `analysis/rows.json`, `analysis/component_ablations.json` | the union with the 29 September workstation rows (`results/setting-a-2026-09-29/analysis/`) and the six shared-SAE rows: 1,358 rows, 182 primary. Holm correction is redone over the 182 primary rows and over 182 rows per component (`scripts/merge_analysis_rows.py`). |
 | `exploratory/shapley_*` | Shapley attribution over the 182 primary rows (13 collections). |
+| `exploratory/confirmatory_tests.json`, `predictor_study*.json` | Hypothesis tests and predictor study re-run with the MS MARCO rows. |
+| `exploratory/mechanism_diagnostics.json`, `ranking_features.json` | Workstation files with the MS MARCO indexes and rows appended. |
+| `analysis/msmarco_shared_sae_rows.json` | The six shared-SAE rows for MS MARCO. |
 | `splade/splade_v3.csv` | SPLADE-v3 (`naver/splade-v3`, revision fdfeceb) as an external reference, full corpus, 13 collections. |
 
 ## MS MARCO budget sweep
@@ -98,15 +101,62 @@ not distinguishable on the other seven (including the three MIRACL collections).
 direction matches the reversal Appendix C reports for SPLADE-v3. The size does not: the
 10-collection mean gap is 0.014 here, against 0.113 in their numbers.
 
+## Shared-SAE rows for MS MARCO
+
+The six shared-SAE rows the cluster run never made (`analysis/msmarco_shared_sae_rows.json`,
+appended to `analysis/rows.json`, now 1,358 rows): the SAE dictionary fitted on tokens, applied
+at pooled and token granularity, q32_d128. They are outside the primary family, as in the
+workstation run, so the Holm correction above is unchanged.
+
+| Collection | Granularity | All off | All on |
+|---|---|---:|---:|
+| msmarco_dev | pooled | 0.171 | 0.303 |
+| | token | 0.021 | 0.318 |
+| trec_dl_2019 | pooled | 0.354 | 0.534 |
+| | token | 0.109 | 0.604 |
+| trec_dl_2020 | pooled | 0.312 | 0.517 |
+| | token | 0.076 | 0.556 |
+
+All on beats all off in all six rows (margin 2.35 to 2.44, bootstrap p at its floor of 1e-4).
+
+## Confirmatory tests and predictor study with MS MARCO
+
+Label-free index diagnostics (`exploratory/mechanism_diagnostics.json`, 42 MS MARCO indexes,
+copied to the three collections that share the corpus) and ranking features
+(`exploratory/ranking_features.json`, 126 MS MARCO rows) were computed on the cluster and
+appended to the workstation files. The ranking features use the top 100 of each stored
+ranking, as the workstation and sweep rows store, because the original cluster rows keep
+1,000 and the score-shape features depend on depth (`STORED_DEPTH` in
+`scripts/ranking_features.py`).
+
+- `exploratory/confirmatory_tests.json`: H1, H2, H3, H4, H5 and H6 all still pass, with the same
+  values as on 29 September. They are computed on the parameter-sweep collections, which
+  MS MARCO is not part of, so nothing was expected to change.
+- `exploratory/predictor_study*.json` (bm25, dense and fused references): refitted with the
+  MS MARCO rows included, which changes both the training rows and the held-out sets. The
+  script's summary line for the BM25 reference and ridge regression on pseudo-labels, then
+  the same on rankings alone:
+
+```
+pseudo-labels / ridge   family +0.53/+0.76/0.78 | corpus +0.44/+0.73/0.77 | other budgets +0.74/+0.80/0.80 | other seeds +0.53/+0.77/0.85 | other parameters +0.59/+0.62/0.72
+rankings / ridge        family -0.02/+0.29/0.63 | corpus +0.06/+0.34/0.66 | other budgets +0.17/+0.46/0.69 | other seeds +0.27/+0.41/0.69 | other parameters +0.12/+0.33/0.61
+```
+
+  The 29 September values for the same lines were `+0.38/+0.58/0.75`, `+0.52/+0.63/0.71`, ...
+  (pseudo-labels, family and corpus) and `-0.14/-0.07/0.55`, `-0.17/+0.12/0.58` (rankings).
+  The pseudo-label tier is still the only one with positive held-out R-squared on every axis.
+  The movement is not uniform (corpus held-out falls from +0.52 to +0.44 on the first
+  number), and no claim about the direction of the change is made here.
+
 ## Not done in this directory
 
-- `scripts/test_hypotheses.py` and `scripts/predictor_study.py` need label-free index
-  diagnostics (`mechanism_diagnostics.py`) and ranking features (`ranking_features.py`)
-  for the MS MARCO indexes and rows. These come from the built indexes and stored
-  rankings on the cluster and have not been computed, so those results are not updated.
-- The adapter validation at scale (routing has WikiText and five MMLU subjects; attention has no results).
+- The adapter results (Settings B and C) are not in this directory.
+- Nothing here has been committed to the repository.
 
 ## Provenance
+
+Shared-SAE rows: jobs 27744 to 27747 on gnode060; ranking features jobs 27733 and 29906; index
+diagnostics job 27820.
 
 Row sets: workstation run `results/setting-a-2026-09-29/analysis/`; cluster run
 research-v5 (42 primary MS MARCO rows); sweep job 23634 on gnode060. Diagnosis job 26434,
