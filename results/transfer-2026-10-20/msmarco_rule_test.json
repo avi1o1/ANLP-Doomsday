@@ -1,0 +1,80 @@
+{
+  "bm25": {
+    "new_budget_rows": {
+      "always_off": 0.15617140712204175,
+      "always_on": 0.20210070015272558,
+      "better_constant": 0.8809523809523809,
+      "constant_positive": 0.8809523809523809,
+      "headroom_recovered": 0.20763707850245333,
+      "oracle": 0.20277858089541678,
+      "rows": 84,
+      "rule": 0.20224145332971105,
+      "sign_accuracy": 0.8690476190476191,
+      "spearman": 0.9065623069835259
+    },
+    "primary_q32_d128": {
+      "always_off": 0.1715372081164776,
+      "always_on": 0.21202514509915962,
+      "better_constant": 0.8571428571428571,
+      "constant_positive": 0.8571428571428571,
+      "headroom_recovered": 0.23439343320978948,
+      "oracle": 0.21319135012838308,
+      "rows": 42,
+      "rule": 0.21229849589978583,
+      "sign_accuracy": 0.8809523809523809,
+      "spearman": 0.8350214731383194
+    }
+  },
+  "dense": {
+    "new_budget_rows": {
+      "always_off": 0.15617140712204175,
+      "always_on": 0.20210070015272558,
+      "better_constant": 0.8809523809523809,
+      "constant_positive": 0.8809523809523809,
+      "headroom_recovered": 0.7722563791109213,
+      "oracle": 0.20277858089541678,
+      "rows": 84,
+      "rule": 0.2026241978805453,
+      "sign_accuracy": 0.9523809523809523,
+      "spearman": 0.9060762851732972
+    },
+    "primary_q32_d128": {
+      "always_off": 0.1715372081164776,
+      "always_on": 0.21202514509915962,
+      "better_constant": 0.8571428571428571,
+      "constant_positive": 0.8571428571428571,
+      "headroom_recovered": 0.6731049587206995,
+      "oracle": 0.21319135012838308,
+      "rows": 42,
+      "rule": 0.21281012348721495,
+      "sign_accuracy": 0.9285714285714286,
+      "spearman": 0.8970909974880482
+    }
+  },
+  "fused": {
+    "new_budget_rows": {
+      "always_off": 0.15617140712204175,
+      "always_on": 0.20210070015272558,
+      "better_constant": 0.8809523809523809,
+      "constant_positive": 0.8809523809523809,
+      "headroom_recovered": 0.6582918003065423,
+      "oracle": 0.20277858089541678,
+      "rows": 84,
+      "rule": 0.2025469434872249,
+      "sign_accuracy": 0.9523809523809523,
+      "spearman": 0.939044764633813
+    },
+    "primary_q32_d128": {
+      "always_off": 0.1715372081164776,
+      "always_on": 0.21202514509915962,
+      "better_constant": 0.8571428571428571,
+      "constant_positive": 0.8571428571428571,
+      "headroom_recovered": 0.6922518585813239,
+      "oracle": 0.21319135012838308,
+      "rows": 42,
+      "rule": 0.21283245269812645,
+      "sign_accuracy": 0.9523809523809523,
+      "spearman": 0.8899602949517867
+    }
+  }
+}
