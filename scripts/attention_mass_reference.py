@@ -5,7 +5,7 @@ with `src.attention.mass.MassProbe`, using the example's stored calibration refe
 `reference.json.gz` and `full.json` are read from the row; corrected outcomes are not. The
 regenerated text is compared with the stored full-attention prediction as a parity check.
 
-    python -m scripts.attention_mass_reference CONFIG ROW_DIRECTORY OUTPUT
+    python -m scripts.attention_mass_reference CONFIG ROW_DIRECTORY OUTPUT [--examples N]
 """
 
 import argparse
@@ -35,6 +35,7 @@ def main():
     parser.add_argument("config")
     parser.add_argument("row", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--examples", type=int, help="probe only the first N examples, for a smoke test")
     args = parser.parse_args()
     match = ROW.match(args.row.name)
     if match is None:
@@ -42,7 +43,7 @@ def main():
     task, context, budget, sink = match["task"], int(match["context"]), int(match["budget"]), match["sink"] == "1"
     spec = load_config(args.config)["attention"]
     model, tokenizer, model_info = load_language_model(spec)
-    examples = list(jsonl(Path(spec["ruler_data"]) / str(context) / task / "validation.jsonl"))
+    examples = list(jsonl(Path(spec["ruler_data"]) / str(context) / task / "validation.jsonl"))[:args.examples]
     records = []
     for example in examples:
         item = args.row / "examples" / str(example["index"])
