@@ -150,8 +150,8 @@ rankings / ridge        family -0.02/+0.29/0.63 | corpus +0.06/+0.34/0.66 | othe
 
 ## Not done in this directory
 
-- The adapter results (Settings B and C) are not in this directory.
-- Nothing here has been committed to the repository.
+- The adapter results (Settings B and C) are in `results/transfer-2026-10-20/`, with the
+  label-free tests on SPLADE-v3 and on the MS MARCO budget rows.
 
 ## Provenance
 

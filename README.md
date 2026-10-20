@@ -13,8 +13,12 @@ can be predicted without relevance labels.
   `multilingual-e5-base` encoder (seven bases at pooled and token granularity), each
   scored under all eight on/off combinations of IDF, saturation and length on thirteen
   English and Indic collections.
-- **Setting B, KV-page selection** and **Setting C, expert routing (implemented, not yet
-  run).** The same correction applied to Quest-style page selection and to OLMoE routing.
+- **Setting B, KV-page selection (complete).** The same correction applied to Quest-style
+  page selection in Qwen2.5-1.5B-Instruct on all 13 RULER tasks at 4K.
+- **Setting C, expert routing (running).** The correction applied to OLMoE-1B-7B routing on
+  WikiText-2 and the 57 MMLU subjects.
+- **Registered transfer tests.** `results/registration-2026-10-20.md`, committed before any
+  Setting B or C outcome was read; results in `results/transfer-2026-10-20/`.
 
 Repository: <https://github.com/avi1o1/ANLP-Doomsday>. The mid report is
 `docs/pdf/ANLPDoomsday-Mid.pdf`; the mid submission zip contains only that PDF, and the
