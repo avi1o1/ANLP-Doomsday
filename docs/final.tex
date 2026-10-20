@@ -52,9 +52,9 @@ the answer can be predicted without labels. On fourteen sparse codes of one froz
 scored under all eight on/off combinations of the three components on thirteen
 collections, the correction raises nDCG@10 in $91\%$ of primary rows. A predictor
 registered in advance from the shape of the frequency curve does no better than always
-predicting a gain. Exact Shapley values assign $62\%$ of the gain to saturation, which
-reads no collection statistics, and tests fixed in advance confirm that its size follows
-the dispersion of the stored values. The value of IDF and length normalisation depends on
+predicting a gain. Exact Shapley values assign $62\%$ of the gain to saturation, a
+component that reads no collection statistics, and tests fixed in advance confirm that its
+size follows the dispersion of the stored values. The value of IDF and length normalisation depends on
 relevance. Agreement with a reference retriever predicts it on held-out corpora, but on
 SPLADE-v3, where the correction lowers nDCG@10 on 8 of 10 collections, the registered
 BM25-agreement rule is right on only half of them. Carried into KV-page selection with no
@@ -119,7 +119,7 @@ experiment is run, in retrieval and wherever else the same computation appears.
 We tested that prediction and it failed. Fourteen sparse codes of one frozen encoder were
 scored under all eight combinations of the three components on thirteen collections. The
 correction helped almost everywhere, and the registered predictor could not say where it
-helped more. Most of the gain comes from saturation, which reads no collection statistics.
+helped more. Most of the gain comes from saturation, a component that reads no collection statistics.
 How much saturation moves a ranking is fixed by the stored values, a relation we confirmed
 on held-out parameter settings. Whether IDF and length normalisation help depends on
 relevance. A relevance proxy restores part of the prediction but inherits the biases of the
@@ -220,8 +220,8 @@ answers the practical question of whether to use collection statistics.
 \paragraph{Predictors.} The pre-registered predictor is a ridge regression of $m$ on three
 diagnostics of the frequency curve. The label-free predictor replaces $Q_c$ by a
 pseudo-quality $\tilde{Q}_c$, the agreement of configuration $c$ with a reference that
-needs no labels, which gives estimates $\tilde{\phi}_s$ and $\tilde{G}$ with no fitted
-parameter. Its decision rule uses collection statistics where $\tilde{G} > 0$.
+needs no labels. The substitution gives estimates $\tilde{\phi}_s$ and $\tilde{G}$ with no
+fitted parameter. Its decision rule uses collection statistics where $\tilde{G} > 0$.
 
 \paragraph{Transfer.} Eq.~\eqref{eq:scorer} applies to any selection with a non-negative
 score and a frequency count. For KV page $i$ the value is the softplus of the Quest
@@ -263,7 +263,7 @@ reported in Section~\ref{sec:proxy} but was not registered as a test.}
 
 \paragraph{Registration.} Each test in Table~\ref{tab:registered} was committed to the
 repository before its data existed or were read. The transfer registration also fixes the
-baselines: a predictor has shown transfer only if it beats the constant prediction of the
+baselines. A predictor has shown transfer only if it beats the constant prediction of the
 retrieval majority sign and the better of the two constant signs on the transfer rows.
 
 \section{Experimental Setup}
@@ -275,8 +275,8 @@ MS~MARCO passages \citep{bajaj2016msmarco}: split-rectified identity, Gaussian p
 (768), PCA (384), soft $k$-means over $4{,}096$ centroids, product and residual quantisation
 ($8 \times 256$, \citealp{jegou2011pq,chen2010rq}) and a Top-$K$ SAE with $8{,}192$ features
 of which at most 32 are active. Pooled granularity applies each basis to the mean of the
-token states and token granularity to each state before summing, which gives fourteen
-representations. Supports are capped at 32 query and 128 document features in the primary
+token states and token granularity to each state before summing. The two granularities
+give fourteen representations. Supports are capped at 32 query and 128 document features in the primary
 budget, and document frequency, lengths and IDF come from the capped vectors of each
 corpus. Retrieval is exact over the whole corpus with $k_1 = 1.2$ and $b = 0.75$.
 
@@ -357,7 +357,7 @@ inner product scores below $0.01$ in almost half of them, so nearly any correcti
 The primary ridge model explains almost none of the held-out variance of $m$, with $R^2$ of
 $0.04$ across basis families and $0.02$ across corpora, and its sign accuracy equals that of
 always predicting a gain. Part of the failure lies in the target. Most margins fall between
-$1.5$ and $3.5$ because $m$ mostly records that \texttt{000} is broken, which leaves little
+$1.5$ and $3.5$ because $m$ mostly records that \texttt{000} is broken. That leaves little
 variation for a diagnostic to explain.
 
 \subsection{Where the gain comes from}
@@ -379,8 +379,8 @@ Over the 182 primary rows it takes $62\%$, length normalisation $28\%$ and IDF $
 collection statistics account for $38\%$ ($36$ to $41\%$ resampling collections). IDF, the
 component the Zipfian account is about, contributes least. As supports grow the share of IDF
 shrinks and that of length grows, and at native support IDF's mean value is slightly
-negative, the trend \citet{han2026bm25v} report for image features. IDF is not empty: with
-shuffled document frequencies its mean Shapley value turns negative, and the real value is
+negative, the trend \citet{han2026bm25v} report for image features. IDF still carries
+information. With shuffled document frequencies its mean Shapley value turns negative, and the real value is
 larger in $83\%$ of rows (one-sided Wilcoxon $p < 10^{-6}$).
 
 \subsection{Why saturation can be predicted and the rest cannot}
@@ -413,7 +413,7 @@ and $2.4$; H4's model is fitted at $k_1 = 1.2$. H5 covers 210 rows.}
 We committed six hypotheses before running them, on the $k_1$ and $b$ sweep of five
 collections that the exploration had not used (Table~\ref{tab:confirm}). All six pass. H5
 holds by construction and checks the code, and H1 overlaps the primary rows. H3 and H4
-carry the evidence: a model of $\phi_{\mathrm{sat}}$ fitted on $\mathrm{cv}_x$ at one value
+carry the evidence. A model of $\phi_{\mathrm{sat}}$ fitted on $\mathrm{cv}_x$ at one value
 of $k_1$ keeps its ranking at values it never saw (Spearman $0.87$ and $0.90$).
 
 \subsection{Supplying relevance without labels}
@@ -441,8 +441,8 @@ statistics to $0.163$, against $0.165$ for an oracle.
 The mid report fixed this rule before the 84 MS~MARCO budget rows were produced. On those
 rows $\tilde{G}$ ranks $G$ well (Spearman $0.91$ with the BM25 reference), but its sign is
 right on $0.87$ of rows against $0.88$ for always predicting a gain. With the dense or fused
-reference it is right on $0.95$. The headroom is small: always-on scores $0.202$ and the
-oracle $0.203$. The three collections share one corpus, so these rows are not independent.
+reference it is right on $0.95$. The headroom is small, with always-on at $0.202$ and the
+oracle at $0.203$. The three collections share one corpus, so these rows are not independent.
 
 \section{A Strong Retriever Reverses the Effect}
 \label{sec:splade}
@@ -458,7 +458,7 @@ normalisation, $-0.073$ on average, while saturation still adds $0.048$
 re-weighting them by document length undoes part of that training.
 
 Here the sign of $G$ splits five to five, so the registered label-free test has a real
-choice to make. With the BM25 reference it fails: its sign is right on half the
+choice to make. With the BM25 reference it fails. Its sign is right on half the
 collections and its correlation with $G$ is $-0.04$. On the MS~MARCO collections, where the
 correction hurts most, it raises agreement with BM25 by $0.06$ to $0.08$ while lowering true
 quality. Agreement with BM25 rewards a configuration for behaving like BM25, the bias the
@@ -507,9 +507,9 @@ saturation with length normalisation off is a strictly increasing map of $f_i$ a
 the same top $k$ as the plain score, up to ties.
 \end{proposition}
 
-The proof is one line: $g$ is strictly increasing on $f \ge 0$. In retrieval the score is a
-sum over features and saturation re-weights the terms of the sum, which is why it carries
-most of the gain there and nothing here. In our runs \texttt{010} and \texttt{000} differ
+It holds because $g$ is strictly increasing on $f \ge 0$. In retrieval the score is a sum
+over features and saturation changes the weight of each term, so there it carries most of
+the gain; with one score per item it carries none. In our runs \texttt{010} and \texttt{000} differ
 by at most $0.002$ in mean accuracy, from floating-point ties at the flat end of $g$.
 
 The registered predictor, fitted where the correction usually helps, predicts a gain on all
@@ -530,8 +530,8 @@ Saturation helps when the score is a sum of terms and the stored values are uneq
 amount the index fixes; with one score per item it cannot change the selection. Collection
 statistics help when the frequency they read is a property of the item, independent of
 relevance, and the scorer over-rewards common features. When the frequency is a count of
-past selections, IDF turns the scorer's own evidence against it. A practitioner can check
-both conditions before running anything: whether the score is a sum, and what the frequency
+past selections, IDF turns the scorer's own evidence against it. Both conditions can be
+checked before any run, by asking whether the score is a sum and what the frequency
 counts.
 
 Neither condition says whether collection statistics will help a given representation on
