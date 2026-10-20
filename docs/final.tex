@@ -49,15 +49,15 @@ the top $k$ items by a learned score. Lexical retrieval corrects that score
 with BM25's inverse document frequency (IDF), saturation and length normalisation, and the
 other two usually do not. We score fourteen weak sparse codes of one frozen encoder under
 all eight on/off combinations of the three components on thirteen collections. The
-correction raises nDCG@10 in 162 of the 179 rows of the main grid. A predictor registered
+correction raises nDCG@10 in 162 of the 179 main-grid rows where the margin is defined. A predictor registered
 in advance from the frequency curve does no better than always predicting a gain. Exact
 Shapley values assign $62\%$ of the gain to saturation, which uses no collection statistics. Tests
 fixed in advance confirm that saturation's effect follows the dispersion of the stored
 values. The gain from adding IDF and length normalisation varies with representation and
 corpus. A label-free rule based on agreement with text BM25 gets the sign of that gain right
-on new MS~MARCO rows no more often than a constant ($0.87$ against $0.88$), and on 5 of 10
-collections for SPLADE-v3, no better than a constant, where the full correction lowers mean nDCG@10 from $0.523$ to
-$0.509$. In KV-page selection, with a page's frequency taken as how often Quest selected
+on new MS~MARCO rows no more often than a constant ($0.87$ against $0.88$). On SPLADE-v3,
+where the full correction lowers mean nDCG@10 from $0.523$ to $0.509$, it gets that sign
+right on 5 of 10 collections, as does a constant. In KV-page selection, with a page's frequency taken as how often Quest selected
 it, IDF down-weights the most selected pages and mean RULER accuracy falls from $0.71$ and
 $0.78$ for Quest to between $0.015$ and $0.046$. The registered predictor, applied without
 refitting, predicts a gain of about $2.2$ on every row and is wrong in sign on all 24.
@@ -126,9 +126,8 @@ correction helped almost everywhere, and the registered predictor did not predic
 helped more. Most of the gain comes from saturation, a component that uses no collection
 statistics. The dispersion of the stored values predicts the size of saturation's effect, a
 relation confirmed on held-out parameter settings. No statistic of the index predicted
-whether IDF and length normalisation help. A relevance proxy restores part of the
-prediction but inherits the biases of the reference it is built on, and on SPLADE-v3 the
-registered version fails. In KV-page selection we computed each page's frequency from how
+whether IDF and length normalisation help. A relevance proxy predicts part of it, and
+on SPLADE-v3 the registered version fails. In KV-page selection we computed each page's frequency from how
 often Quest selected it. With all three components on, accuracy falls on all twelve tasks
 the model can answer, to $0.07$ or below on eleven. On the one single-needle task we checked, the page
 holding the answer is among the ten pages Quest selected most often, so IDF gives it one
@@ -290,12 +289,12 @@ reported in Section~\ref{sec:proxy} but was not registered as a test.}
 \end{table*}
 
 \paragraph{Registration.} The tests in Table~\ref{tab:registered} come from the project
-proposal (August), the interim report (2 October) and two later registration files. Each
-was committed to the repository before the data it concerns existed or were read. The limit of $1.81$ on mean absolute error (MAE) is
-$1.5$ times the corpus-held-out RMSE in retrieval ($1.21$), and the condition of beating the majority sign was
-added in the interim report, before any transfer run, because always predicting a gain is
-already right on $90\%$ of the 179 retrieval rows. The transfer registration also fixes the
-baselines. A predictor that does not beat the constant prediction of the retrieval
+proposal (August), a hypotheses file (29 September) and a registration file (20 October).
+Each was committed to the repository before the data it concerns existed or were read. The
+limit of $1.81$ on mean absolute error (MAE) is $1.5$ times the corpus-held-out RMSE in
+retrieval ($1.21$). The interim report (2 October) added the condition of beating the
+majority sign, before any transfer run, because always predicting a gain is
+already right on $90\%$ of the 179 retrieval rows. A predictor that does not beat the constant prediction of the retrieval
 majority sign has not shown transfer. The better of the two constant signs on the transfer
 rows is reported as the strictest comparison, and the label-free rule must exceed it.
 
@@ -437,7 +436,7 @@ appendix). IDF and length normalisation also move the ranking by an amount the i
 Whether those moves help depends on whether long documents were over-rewarded and whether
 rare features separate relevant documents from the rest. For the strongest codes,
 token-level SAE and token-level PCA, collection statistics help after saturation on fewer
-than half the collections. In our rows index statistics predict little of it (held-out
+than half the collections. In our rows index statistics predict little of whether those moves help (held-out
 $R^2$ of $0.01$ to $0.12$ for $G$, Table~\ref{tab:predictor}). We take relevance to be the
 missing input and test this in Section~\ref{sec:proxy}.
 
@@ -487,8 +486,8 @@ $0.165$ for an oracle ($59\%$ of the headroom).
 The interim report fixed this rule before the 84 MS~MARCO budget rows were produced. On those
 rows $\tilde{G}$ ranks $G$ well (Spearman $0.91$ with the BM25 reference), but its sign is
 right on $0.87$ of rows against $0.88$ for always predicting a gain. With the dense or fused
-reference it is right on $0.95$, though the dense reference is the encoder the codes are
-built from, so agreement with it may partly measure closeness to their source. The headroom is small, with always-on at $0.202$ and the
+reference it is right on $0.95$, but the dense reference is the encoder the codes come
+from (Section~\ref{sec:discussion}). The headroom is small, with always-on at $0.202$ and the
 oracle at $0.203$. The three collections share one corpus, so these rows are not independent.
 
 \section{The Correction on SPLADE-v3}
