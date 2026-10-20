@@ -1,0 +1,1028 @@
+{
+  "examples": 100,
+  "range": {
+    "last_page_rate": [
+      1.0,
+      1.0
+    ],
+    "median_rate": [
+      0.4427693208430913,
+      0.548080870279146
+    ],
+    "needle_rank": [
+      2.0,
+      10.0
+    ],
+    "needle_rate": [
+      0.8240800865800862,
+      0.9970238095238095
+    ],
+    "sink_rate": [
+      0.9582403273809523,
+      0.9658203125
+    ]
+  },
+  "records": [
+    {
+      "id": 0,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5465956025267248,
+      "needle_page": 191,
+      "needle_rank": 8,
+      "needle_rate": 0.9494047619047619,
+      "pages": 210,
+      "sink_rate": 0.9642857142857143
+    },
+    {
+      "id": 1,
+      "last_page_rate": 1.0,
+      "median_rate": 0.514346642674927,
+      "needle_page": 94,
+      "needle_rank": 5,
+      "needle_rate": 0.9337585034013604,
+      "pages": 210,
+      "sink_rate": 0.9638206845238095
+    },
+    {
+      "id": 2,
+      "last_page_rate": 1.0,
+      "median_rate": 0.46421130952380935,
+      "needle_page": 37,
+      "needle_rank": 4,
+      "needle_rate": 0.8987544091710762,
+      "pages": 247,
+      "sink_rate": 0.9590308779761905
+    },
+    {
+      "id": 3,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5307440476190479,
+      "needle_page": 49,
+      "needle_rank": 5,
+      "needle_rate": 0.9197643343051518,
+      "pages": 210,
+      "sink_rate": 0.9630766369047619
+    },
+    {
+      "id": 4,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4764384920634918,
+      "needle_page": 233,
+      "needle_rank": 5,
+      "needle_rate": 0.9694940476190477,
+      "pages": 247,
+      "sink_rate": 0.9603794642857143
+    },
+    {
+      "id": 5,
+      "last_page_rate": 1.0,
+      "median_rate": 0.508756868131868,
+      "needle_page": 113,
+      "needle_rank": 10,
+      "needle_rate": 0.8837301587301584,
+      "pages": 210,
+      "sink_rate": 0.9646577380952381
+    },
+    {
+      "id": 6,
+      "last_page_rate": 1.0,
+      "median_rate": 0.541870590828924,
+      "needle_page": 35,
+      "needle_rank": 9,
+      "needle_rate": 0.8627583108715181,
+      "pages": 210,
+      "sink_rate": 0.9639601934523809
+    },
+    {
+      "id": 7,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4550595238095238,
+      "needle_page": 32,
+      "needle_rank": 8,
+      "needle_rate": 0.8354437229437233,
+      "pages": 247,
+      "sink_rate": 0.9592168898809523
+    },
+    {
+      "id": 8,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45333333333333287,
+      "needle_page": 107,
+      "needle_rank": 8,
+      "needle_rate": 0.8619378306878306,
+      "pages": 247,
+      "sink_rate": 0.958984375
+    },
+    {
+      "id": 9,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5123477297895905,
+      "needle_page": 139,
+      "needle_rank": 5,
+      "needle_rate": 0.9354707792207797,
+      "pages": 210,
+      "sink_rate": 0.9649367559523809
+    },
+    {
+      "id": 10,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45079365079365064,
+      "needle_page": 188,
+      "needle_rank": 6,
+      "needle_rate": 0.9242931547619048,
+      "pages": 247,
+      "sink_rate": 0.9613560267857143
+    },
+    {
+      "id": 11,
+      "last_page_rate": 1.0,
+      "median_rate": 0.46272675736961383,
+      "needle_page": 8,
+      "needle_rank": 9,
+      "needle_rate": 0.8510441061670568,
+      "pages": 247,
+      "sink_rate": 0.9601934523809523
+    },
+    {
+      "id": 12,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5256924198250725,
+      "needle_page": 25,
+      "needle_rank": 5,
+      "needle_rate": 0.9291560374149652,
+      "pages": 210,
+      "sink_rate": 0.9635881696428571
+    },
+    {
+      "id": 13,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45421732522796304,
+      "needle_page": 19,
+      "needle_rank": 4,
+      "needle_rate": 0.9045096852300245,
+      "pages": 247,
+      "sink_rate": 0.9591703869047619
+    },
+    {
+      "id": 14,
+      "last_page_rate": 1.0,
+      "median_rate": 0.522209230914588,
+      "needle_page": 143,
+      "needle_rank": 10,
+      "needle_rate": 0.8971088435374154,
+      "pages": 210,
+      "sink_rate": 0.9639601934523809
+    },
+    {
+      "id": 15,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5409598214285711,
+      "needle_page": 185,
+      "needle_rank": 7,
+      "needle_rate": 0.9523809523809523,
+      "pages": 210,
+      "sink_rate": 0.9650762648809523
+    },
+    {
+      "id": 16,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5396174863387977,
+      "needle_page": 101,
+      "needle_rank": 9,
+      "needle_rate": 0.8946608946608945,
+      "pages": 210,
+      "sink_rate": 0.9640531994047619
+    },
+    {
+      "id": 17,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5241126543209873,
+      "needle_page": 25,
+      "needle_rank": 5,
+      "needle_rate": 0.9297406462585033,
+      "pages": 210,
+      "sink_rate": 0.9634021577380952
+    },
+    {
+      "id": 18,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4427693208430913,
+      "needle_page": 152,
+      "needle_rank": 7,
+      "needle_rate": 0.8803571428571422,
+      "pages": 247,
+      "sink_rate": 0.9600074404761905
+    },
+    {
+      "id": 19,
+      "last_page_rate": 1.0,
+      "median_rate": 0.518743235930736,
+      "needle_page": 23,
+      "needle_rank": 10,
+      "needle_rate": 0.8740079365079362,
+      "pages": 210,
+      "sink_rate": 0.9631696428571429
+    },
+    {
+      "id": 20,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5430680495882563,
+      "needle_page": 68,
+      "needle_rank": 10,
+      "needle_rate": 0.8686323366555927,
+      "pages": 210,
+      "sink_rate": 0.9635881696428571
+    },
+    {
+      "id": 21,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5261243386243386,
+      "needle_page": 151,
+      "needle_rank": 5,
+      "needle_rate": 0.952050264550265,
+      "pages": 210,
+      "sink_rate": 0.9646577380952381
+    },
+    {
+      "id": 22,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5302332471450115,
+      "needle_page": 109,
+      "needle_rank": 5,
+      "needle_rate": 0.9249231950844848,
+      "pages": 210,
+      "sink_rate": 0.9647507440476191
+    },
+    {
+      "id": 23,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5447820037105757,
+      "needle_page": 51,
+      "needle_rank": 3,
+      "needle_rate": 0.9650917658730161,
+      "pages": 210,
+      "sink_rate": 0.9638206845238095
+    },
+    {
+      "id": 24,
+      "last_page_rate": 1.0,
+      "median_rate": 0.524592771505765,
+      "needle_page": 130,
+      "needle_rank": 5,
+      "needle_rate": 0.9378720238095235,
+      "pages": 210,
+      "sink_rate": 0.9652157738095238
+    },
+    {
+      "id": 25,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5273779636061613,
+      "needle_page": 14,
+      "needle_rank": 10,
+      "needle_rate": 0.880145278450363,
+      "pages": 210,
+      "sink_rate": 0.9638206845238095
+    },
+    {
+      "id": 26,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4556339977851603,
+      "needle_page": 19,
+      "needle_rank": 4,
+      "needle_rate": 0.9080912025827278,
+      "pages": 247,
+      "sink_rate": 0.9589378720238095
+    },
+    {
+      "id": 27,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5462714947089946,
+      "needle_page": 188,
+      "needle_rank": 9,
+      "needle_rate": 0.9481292517006807,
+      "pages": 210,
+      "sink_rate": 0.9658203125
+    },
+    {
+      "id": 28,
+      "last_page_rate": 1.0,
+      "median_rate": 0.526222286922015,
+      "needle_page": 161,
+      "needle_rank": 6,
+      "needle_rate": 0.9291666666666669,
+      "pages": 210,
+      "sink_rate": 0.9653087797619048
+    },
+    {
+      "id": 29,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5149636243386237,
+      "needle_page": 122,
+      "needle_rank": 10,
+      "needle_rate": 0.8754409171075836,
+      "pages": 210,
+      "sink_rate": 0.9647042410714286
+    },
+    {
+      "id": 30,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5246518418688229,
+      "needle_page": 77,
+      "needle_rank": 8,
+      "needle_rate": 0.8922619047619043,
+      "pages": 210,
+      "sink_rate": 0.9637741815476191
+    },
+    {
+      "id": 31,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5290291305916301,
+      "needle_page": 10,
+      "needle_rank": 5,
+      "needle_rate": 0.9213293650793646,
+      "pages": 210,
+      "sink_rate": 0.9637741815476191
+    },
+    {
+      "id": 32,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5104943064182197,
+      "needle_page": 134,
+      "needle_rank": 8,
+      "needle_rate": 0.9149844720496897,
+      "pages": 210,
+      "sink_rate": 0.9650762648809523
+    },
+    {
+      "id": 33,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5145341614906831,
+      "needle_page": 101,
+      "needle_rank": 9,
+      "needle_rate": 0.8840187590187595,
+      "pages": 210,
+      "sink_rate": 0.9643787202380952
+    },
+    {
+      "id": 34,
+      "last_page_rate": 1.0,
+      "median_rate": 0.47619047619047594,
+      "needle_page": 234,
+      "needle_rank": 2,
+      "needle_rate": 0.9970238095238095,
+      "pages": 247,
+      "sink_rate": 0.9610305059523809
+    },
+    {
+      "id": 35,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5104389245014247,
+      "needle_page": 82,
+      "needle_rank": 5,
+      "needle_rate": 0.9277319902319896,
+      "pages": 210,
+      "sink_rate": 0.9644717261904762
+    },
+    {
+      "id": 36,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4668737060041416,
+      "needle_page": 5,
+      "needle_rank": 8,
+      "needle_rate": 0.8679915514592929,
+      "pages": 247,
+      "sink_rate": 0.9602399553571429
+    },
+    {
+      "id": 37,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5239766970618033,
+      "needle_page": 131,
+      "needle_rank": 9,
+      "needle_rate": 0.8950892857142863,
+      "pages": 210,
+      "sink_rate": 0.9640066964285714
+    },
+    {
+      "id": 38,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5230392881790393,
+      "needle_page": 140,
+      "needle_rank": 8,
+      "needle_rate": 0.9039115646258505,
+      "pages": 210,
+      "sink_rate": 0.9648902529761905
+    },
+    {
+      "id": 39,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45413961038961037,
+      "needle_page": 115,
+      "needle_rank": 4,
+      "needle_rate": 0.9097514005602244,
+      "pages": 247,
+      "sink_rate": 0.9588913690476191
+    },
+    {
+      "id": 40,
+      "last_page_rate": 1.0,
+      "median_rate": 0.44965277777777746,
+      "needle_page": 20,
+      "needle_rank": 8,
+      "needle_rate": 0.8458025451559934,
+      "pages": 247,
+      "sink_rate": 0.9582403273809523
+    },
+    {
+      "id": 41,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5156844731940395,
+      "needle_page": 116,
+      "needle_rank": 10,
+      "needle_rate": 0.8829022988505747,
+      "pages": 210,
+      "sink_rate": 0.9649832589285714
+    },
+    {
+      "id": 42,
+      "last_page_rate": 1.0,
+      "median_rate": 0.522582259854296,
+      "needle_page": 133,
+      "needle_rank": 5,
+      "needle_rate": 0.9329710144927539,
+      "pages": 210,
+      "sink_rate": 0.9651692708333334
+    },
+    {
+      "id": 43,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5234280769045203,
+      "needle_page": 130,
+      "needle_rank": 5,
+      "needle_rate": 0.9342757936507937,
+      "pages": 210,
+      "sink_rate": 0.9654482886904762
+    },
+    {
+      "id": 44,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4589285714285714,
+      "needle_page": 35,
+      "needle_rank": 8,
+      "needle_rate": 0.8240800865800862,
+      "pages": 247,
+      "sink_rate": 0.9592168898809523
+    },
+    {
+      "id": 45,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45401493930905706,
+      "needle_page": 86,
+      "needle_rank": 8,
+      "needle_rate": 0.8622448979591842,
+      "pages": 247,
+      "sink_rate": 0.9593563988095238
+    },
+    {
+      "id": 46,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4679449648711947,
+      "needle_page": 39,
+      "needle_rank": 4,
+      "needle_rate": 0.956018518518519,
+      "pages": 247,
+      "sink_rate": 0.9600539434523809
+    },
+    {
+      "id": 47,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5332177848529591,
+      "needle_page": 164,
+      "needle_rank": 8,
+      "needle_rate": 0.9175170068027207,
+      "pages": 210,
+      "sink_rate": 0.9647972470238095
+    },
+    {
+      "id": 48,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45093307593307635,
+      "needle_page": 101,
+      "needle_rank": 8,
+      "needle_rate": 0.8331766917293235,
+      "pages": 247,
+      "sink_rate": 0.9591703869047619
+    },
+    {
+      "id": 49,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5445978682170545,
+      "needle_page": 203,
+      "needle_rank": 6,
+      "needle_rate": 0.9900793650793653,
+      "pages": 210,
+      "sink_rate": 0.9642857142857143
+    },
+    {
+      "id": 50,
+      "last_page_rate": 1.0,
+      "median_rate": 0.46252927400468397,
+      "needle_page": 47,
+      "needle_rank": 8,
+      "needle_rate": 0.8399152930402929,
+      "pages": 247,
+      "sink_rate": 0.9590773809523809
+    },
+    {
+      "id": 51,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45393990929705247,
+      "needle_page": 82,
+      "needle_rank": 4,
+      "needle_rate": 0.9033776301218174,
+      "pages": 247,
+      "sink_rate": 0.9593098958333334
+    },
+    {
+      "id": 52,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5224800971113082,
+      "needle_page": 140,
+      "needle_rank": 7,
+      "needle_rate": 0.9143990929705219,
+      "pages": 210,
+      "sink_rate": 0.9649367559523809
+    },
+    {
+      "id": 53,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5477678571428566,
+      "needle_page": 202,
+      "needle_rank": 3,
+      "needle_rate": 0.9970238095238095,
+      "pages": 210,
+      "sink_rate": 0.9645182291666666
+    },
+    {
+      "id": 54,
+      "last_page_rate": 1.0,
+      "median_rate": 0.548080870279146,
+      "needle_page": 86,
+      "needle_rank": 10,
+      "needle_rate": 0.8814223057644118,
+      "pages": 210,
+      "sink_rate": 0.9640531994047619
+    },
+    {
+      "id": 55,
+      "last_page_rate": 1.0,
+      "median_rate": 0.519586977648202,
+      "needle_page": 99,
+      "needle_rank": 3,
+      "needle_rate": 0.9747899159663866,
+      "pages": 210,
+      "sink_rate": 0.9654482886904762
+    },
+    {
+      "id": 56,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5364309786414563,
+      "needle_page": 17,
+      "needle_rank": 9,
+      "needle_rate": 0.8760262725779965,
+      "pages": 210,
+      "sink_rate": 0.9638671875
+    },
+    {
+      "id": 57,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4584899749373433,
+      "needle_page": 17,
+      "needle_rank": 7,
+      "needle_rate": 0.878934624697337,
+      "pages": 247,
+      "sink_rate": 0.9602864583333334
+    },
+    {
+      "id": 58,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5222082039337473,
+      "needle_page": 145,
+      "needle_rank": 5,
+      "needle_rate": 0.9483630952380948,
+      "pages": 210,
+      "sink_rate": 0.9650297619047619
+    },
+    {
+      "id": 59,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5307599474215919,
+      "needle_page": 31,
+      "needle_rank": 5,
+      "needle_rate": 0.9261463844797182,
+      "pages": 210,
+      "sink_rate": 0.9634951636904762
+    },
+    {
+      "id": 60,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5175781249999999,
+      "needle_page": 91,
+      "needle_rank": 5,
+      "needle_rate": 0.92650462962963,
+      "pages": 210,
+      "sink_rate": 0.9640066964285714
+    },
+    {
+      "id": 61,
+      "last_page_rate": 1.0,
+      "median_rate": 0.525365949951409,
+      "needle_page": 130,
+      "needle_rank": 5,
+      "needle_rate": 0.9445684523809523,
+      "pages": 210,
+      "sink_rate": 0.9644252232142857
+    },
+    {
+      "id": 62,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5294368039956023,
+      "needle_page": 25,
+      "needle_rank": 5,
+      "needle_rate": 0.9284651360544215,
+      "pages": 210,
+      "sink_rate": 0.9631696428571429
+    },
+    {
+      "id": 63,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4539262820512818,
+      "needle_page": 94,
+      "needle_rank": 4,
+      "needle_rate": 0.9048363095238094,
+      "pages": 247,
+      "sink_rate": 0.9593563988095238
+    },
+    {
+      "id": 64,
+      "last_page_rate": 1.0,
+      "median_rate": 0.527697888049451,
+      "needle_page": 56,
+      "needle_rank": 10,
+      "needle_rate": 0.8563829787234033,
+      "pages": 210,
+      "sink_rate": 0.9634021577380952
+    },
+    {
+      "id": 65,
+      "last_page_rate": 1.0,
+      "median_rate": 0.46369047619047565,
+      "needle_page": 59,
+      "needle_rank": 9,
+      "needle_rate": 0.8652033730158735,
+      "pages": 247,
+      "sink_rate": 0.9597749255952381
+    },
+    {
+      "id": 66,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5170670995670994,
+      "needle_page": 20,
+      "needle_rank": 10,
+      "needle_rate": 0.8736424394319136,
+      "pages": 210,
+      "sink_rate": 0.9636346726190477
+    },
+    {
+      "id": 67,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5121494171290912,
+      "needle_page": 125,
+      "needle_rank": 8,
+      "needle_rate": 0.9140338827838823,
+      "pages": 210,
+      "sink_rate": 0.9654947916666666
+    },
+    {
+      "id": 68,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5199773692545799,
+      "needle_page": 25,
+      "needle_rank": 5,
+      "needle_rate": 0.9244791666666665,
+      "pages": 210,
+      "sink_rate": 0.9634021577380952
+    },
+    {
+      "id": 69,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5250377747252747,
+      "needle_page": 115,
+      "needle_rank": 5,
+      "needle_rate": 0.9395525451559935,
+      "pages": 210,
+      "sink_rate": 0.9647042410714286
+    },
+    {
+      "id": 70,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5438220427059712,
+      "needle_page": 74,
+      "needle_rank": 10,
+      "needle_rate": 0.8686846689895473,
+      "pages": 210,
+      "sink_rate": 0.9635416666666666
+    },
+    {
+      "id": 71,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45271164021164056,
+      "needle_page": 19,
+      "needle_rank": 4,
+      "needle_rate": 0.9006255044390636,
+      "pages": 247,
+      "sink_rate": 0.9587983630952381
+    },
+    {
+      "id": 72,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5473238714090287,
+      "needle_page": 194,
+      "needle_rank": 10,
+      "needle_rate": 0.948809523809524,
+      "pages": 210,
+      "sink_rate": 0.9645182291666666
+    },
+    {
+      "id": 73,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4642857142857142,
+      "needle_page": 46,
+      "needle_rank": 4,
+      "needle_rate": 0.9083104395604387,
+      "pages": 247,
+      "sink_rate": 0.9591238839285714
+    },
+    {
+      "id": 74,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5337409420289853,
+      "needle_page": 40,
+      "needle_rank": 5,
+      "needle_rate": 0.9181255835667596,
+      "pages": 210,
+      "sink_rate": 0.9636811755952381
+    },
+    {
+      "id": 75,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5411017416225752,
+      "needle_page": 13,
+      "needle_rank": 5,
+      "needle_rate": 0.9157242063492051,
+      "pages": 210,
+      "sink_rate": 0.9639136904761905
+    },
+    {
+      "id": 76,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45535714285714285,
+      "needle_page": 32,
+      "needle_rank": 8,
+      "needle_rate": 0.8469696969696964,
+      "pages": 247,
+      "sink_rate": 0.9590308779761905
+    },
+    {
+      "id": 77,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5124387254901963,
+      "needle_page": 70,
+      "needle_rank": 5,
+      "needle_rate": 0.9220521541950123,
+      "pages": 210,
+      "sink_rate": 0.9643787202380952
+    },
+    {
+      "id": 78,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4508145363408519,
+      "needle_page": 29,
+      "needle_rank": 7,
+      "needle_rate": 0.8648490646258505,
+      "pages": 247,
+      "sink_rate": 0.9592633928571429
+    },
+    {
+      "id": 79,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5192212301587302,
+      "needle_page": 143,
+      "needle_rank": 10,
+      "needle_rate": 0.8952664399092977,
+      "pages": 210,
+      "sink_rate": 0.9652622767857143
+    },
+    {
+      "id": 80,
+      "last_page_rate": 1.0,
+      "median_rate": 0.4584500466853407,
+      "needle_page": 56,
+      "needle_rank": 8,
+      "needle_rate": 0.8443877551020416,
+      "pages": 247,
+      "sink_rate": 0.9592168898809523
+    },
+    {
+      "id": 81,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5285015792031102,
+      "needle_page": 52,
+      "needle_rank": 5,
+      "needle_rate": 0.9204489087301585,
+      "pages": 210,
+      "sink_rate": 0.9632626488095238
+    },
+    {
+      "id": 82,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5284954407294833,
+      "needle_page": 127,
+      "needle_rank": 5,
+      "needle_rate": 0.9376190476190474,
+      "pages": 210,
+      "sink_rate": 0.9652157738095238
+    },
+    {
+      "id": 83,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5289837041373928,
+      "needle_page": 58,
+      "needle_rank": 5,
+      "needle_rate": 0.9274068322981364,
+      "pages": 210,
+      "sink_rate": 0.9630301339285714
+    },
+    {
+      "id": 84,
+      "last_page_rate": 1.0,
+      "median_rate": 0.46118804664723095,
+      "needle_page": 197,
+      "needle_rank": 5,
+      "needle_rate": 0.9159798534798534,
+      "pages": 247,
+      "sink_rate": 0.9607514880952381
+    },
+    {
+      "id": 85,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5398065476190477,
+      "needle_page": 52,
+      "needle_rank": 5,
+      "needle_rate": 0.9204489087301588,
+      "pages": 210,
+      "sink_rate": 0.9630301339285714
+    },
+    {
+      "id": 86,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45267857142857126,
+      "needle_page": 29,
+      "needle_rank": 8,
+      "needle_rate": 0.8446534863945581,
+      "pages": 247,
+      "sink_rate": 0.9590308779761905
+    },
+    {
+      "id": 87,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5237297101908134,
+      "needle_page": 116,
+      "needle_rank": 10,
+      "needle_rate": 0.8911124794745485,
+      "pages": 210,
+      "sink_rate": 0.9656808035714286
+    },
+    {
+      "id": 88,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5395400432900429,
+      "needle_page": 23,
+      "needle_rank": 8,
+      "needle_rate": 0.8810568086883873,
+      "pages": 210,
+      "sink_rate": 0.9641927083333334
+    },
+    {
+      "id": 89,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5203157349896476,
+      "needle_page": 145,
+      "needle_rank": 5,
+      "needle_rate": 0.9398809523809519,
+      "pages": 210,
+      "sink_rate": 0.9650297619047619
+    },
+    {
+      "id": 90,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5260426049360476,
+      "needle_page": 61,
+      "needle_rank": 6,
+      "needle_rate": 0.9090608465608467,
+      "pages": 210,
+      "sink_rate": 0.9634951636904762
+    },
+    {
+      "id": 91,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5353700697450696,
+      "needle_page": 176,
+      "needle_rank": 8,
+      "needle_rate": 0.929383116883117,
+      "pages": 210,
+      "sink_rate": 0.9645182291666666
+    },
+    {
+      "id": 92,
+      "last_page_rate": 1.0,
+      "median_rate": 0.44318181818181845,
+      "needle_page": 137,
+      "needle_rank": 9,
+      "needle_rate": 0.874794745484401,
+      "pages": 247,
+      "sink_rate": 0.9605654761904762
+    },
+    {
+      "id": 93,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5320294784580498,
+      "needle_page": 173,
+      "needle_rank": 9,
+      "needle_rate": 0.9134199134199135,
+      "pages": 210,
+      "sink_rate": 0.9645647321428571
+    },
+    {
+      "id": 94,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5254699063691413,
+      "needle_page": 61,
+      "needle_rank": 5,
+      "needle_rate": 0.9117724867724871,
+      "pages": 210,
+      "sink_rate": 0.9633091517857143
+    },
+    {
+      "id": 95,
+      "last_page_rate": 1.0,
+      "median_rate": 0.46183035714285703,
+      "needle_page": 37,
+      "needle_rank": 4,
+      "needle_rate": 0.9036596119929461,
+      "pages": 247,
+      "sink_rate": 0.9588448660714286
+    },
+    {
+      "id": 96,
+      "last_page_rate": 1.0,
+      "median_rate": 0.5219405470521539,
+      "needle_page": 17,
+      "needle_rank": 10,
+      "needle_rate": 0.8669437602627251,
+      "pages": 210,
+      "sink_rate": 0.9638206845238095
+    },
+    {
+      "id": 97,
+      "last_page_rate": 1.0,
+      "median_rate": 0.46182266009852213,
+      "needle_page": 203,
+      "needle_rank": 5,
+      "needle_rate": 0.9268353174603179,
+      "pages": 247,
+      "sink_rate": 0.9609375
+    },
+    {
+      "id": 98,
+      "last_page_rate": 1.0,
+      "median_rate": 0.526280663780663,
+      "needle_page": 34,
+      "needle_rank": 5,
+      "needle_rate": 0.9239667565139251,
+      "pages": 210,
+      "sink_rate": 0.9631696428571429
+    },
+    {
+      "id": 99,
+      "last_page_rate": 1.0,
+      "median_rate": 0.45186781609195426,
+      "needle_page": 119,
+      "needle_rank": 8,
+      "needle_rate": 0.8629148629148627,
+      "pages": 247,
+      "sink_rate": 0.9594494047619048
+    }
+  ],
+  "row": "niah_single_1__c4096__b1024__sink0"
+}

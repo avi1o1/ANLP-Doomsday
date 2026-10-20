@@ -493,9 +493,11 @@ its 30-token budget restating the question; its two rows have no defined margin.
 
 The cause is what the frequency counts. In retrieval $df_j$ counts the documents that
 contain feature $j$, a property of the corpus that no query affects. A page's $\sfreq_i$
-counts how often the page was selected, which is the scorer's own past judgement of
-relevance. The pages selected most often are the attention sinks, the recent window and the
-page holding the needle. Their smoothed IDF is close to $\ln(1 + 0.5/64.5) \approx 0.008$,
+counts how often the page was selected, the scorer's own past judgement of relevance. On
+the 100 single-needle examples at the larger budget, the page holding the needle is selected
+in $0.82$ to $1.00$ of its calibration opportunities and ranks between second and tenth of
+210 to 247 pages, the first page in $0.96$ and the last page in all of them, against a median
+page near $0.5$. The smoothed IDF of a page selected every time is $\ln(1 + 0.5/64.5) \approx 0.008$,
 while a page never selected gets $\ln 130 \approx 4.9$, so the corrected score ranks first
 the pages the model ignores. H2O keeps heavy hitters for the same reason IDF discards them.
 
