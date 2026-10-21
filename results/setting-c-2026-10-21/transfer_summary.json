@@ -1,0 +1,294 @@
+{
+  "auc": 0.4027777777777778,
+  "mae": 3.9619722130324946,
+  "mae_threshold": 1.8136287390068562,
+  "n": 53,
+  "passes_point_thresholds": false,
+  "predictions": [
+    {
+      "margin": -2.4370871833797696,
+      "prediction": 2.0672975584142934,
+      "row_id": "137b64246eefed1124f7296a7e7e52ed7eb89a3303356403f75e0e331d9d487d"
+    },
+    {
+      "margin": -2.1054454238712608,
+      "prediction": 2.1234216549825096,
+      "row_id": "ba08b5cd2e6489edd99488cdd4aa63ca3b741446115bb5bf05a888173e048114"
+    },
+    {
+      "margin": -1.9268719178923883,
+      "prediction": 2.1220534487214597,
+      "row_id": "afacc4a76a58ef6bdb62b7aa606fd6f2f2dff37d42bfdb6d9119437a89e86f6b"
+    },
+    {
+      "margin": -1.5790840679034477,
+      "prediction": 2.1661019482996675,
+      "row_id": "b130844a1ccd40c24bca1e9ed2638de4baa472d7fd4beb0e3a61082578f80904"
+    },
+    {
+      "margin": -2.0,
+      "prediction": 2.1314701496578676,
+      "row_id": "4987fa816c48429fbff2034008a9c738a7995457ede7c7df34c073ddabc1ac7d"
+    },
+    {
+      "margin": -2.116601048851672,
+      "prediction": 2.117839168415483,
+      "row_id": "82fb403c820d1c2ff99d32444bc73f9a320e413c64abe7006bc52e9131aef2b6"
+    },
+    {
+      "margin": -2.180210001322665,
+      "prediction": 2.0843212447755746,
+      "row_id": "eb8af05a94016f7543ae5283bae4a766ccfae5e93b8a2768a2d51b426d6eb6a4"
+    },
+    {
+      "margin": -1.950269037601223,
+      "prediction": 2.103797844598834,
+      "row_id": "4790bcd56f5a0b5cbf0c3263629ed4203cd9c1dae28f16327886f625e2327de5"
+    },
+    {
+      "margin": -1.4368424162142026,
+      "prediction": 2.0516889311850512,
+      "row_id": "6598891df5dc2751fca1a80afe09b2a3f5f032fd30aa8f6f7129b798064675a7"
+    },
+    {
+      "margin": -2.1174519817893462,
+      "prediction": 2.1349505198405496,
+      "row_id": "5e9f20c3ece7eb39039bca92937a456375b246cd6916cdda2208dc839c94d02d"
+    },
+    {
+      "margin": 2.3154387369357488,
+      "prediction": 2.0876375428294427,
+      "row_id": "731a85cee14122b42d4b4bcb414823369fe82b426985164ba1ebad6def436cb8"
+    },
+    {
+      "margin": -2.156661389752245,
+      "prediction": 2.135356822989138,
+      "row_id": "c56169066755eb35ca88a895673c63b3a974bbbf2bf4b9e436e3ef1ef1329886"
+    },
+    {
+      "margin": -1.9638606165510741,
+      "prediction": 2.1244444372592026,
+      "row_id": "ef4a8c21bfd276d7205fdc0901a218f73398dac61119981347db0a837ff4cbe3"
+    },
+    {
+      "margin": 0.0,
+      "prediction": 2.1020629592032423,
+      "row_id": "192d18892e4bdb87f1c7bdb0ca4d6a25800f5999c6809ebb1a3346960eec2f91"
+    },
+    {
+      "margin": -1.869802804633875,
+      "prediction": 2.1349077732928046,
+      "row_id": "bdd47a6558c26efd4559c41b6807df7168451f9273d3bda2cd2c6ea5af28b83d"
+    },
+    {
+      "margin": -1.333846252503425,
+      "prediction": 2.1106230395598473,
+      "row_id": "f2c843e957d09bc134e12d0d7732aa6ea6ad4e6136e89a9fcdd92f83474f8def"
+    },
+    {
+      "margin": -1.9062621691954331,
+      "prediction": 2.094121242942727,
+      "row_id": "bec80828b4c90d86cc411035e4b5cd1a9d6f46b41375213c097eaa49e6586dcc"
+    },
+    {
+      "margin": -2.873684832428398,
+      "prediction": 2.143973526114274,
+      "row_id": "69840566ab08646a70e0326bce62c0b03d9f3c3c60e5d50b3f487b37ea6a5081"
+    },
+    {
+      "margin": -2.1747045193296155,
+      "prediction": 2.1270762968768064,
+      "row_id": "b7c4085a9a19c00d1c7dffc6c53aae2cc601064e71b40deb50ffbc19345d80b5"
+    },
+    {
+      "margin": -1.8164720794580473,
+      "prediction": 2.0912937366270063,
+      "row_id": "822b6edf34fbbecac07d83afaabc7bf5f75fae02332e8dbba7089308b650a23b"
+    },
+    {
+      "margin": -3.1530536901257378,
+      "prediction": 2.128085244869378,
+      "row_id": "dd4bae139b2c9a8178b5d614aa846bfbc5f9bfffc0499b1811abbaed37dda1b3"
+    },
+    {
+      "margin": -2.0412829827503898,
+      "prediction": 2.1386705766437784,
+      "row_id": "d621c9f103e0d3f9d8190ba4572c7d90769bb0d2c08d755317f6968d4d88fa14"
+    },
+    {
+      "margin": -2.1779498695046926,
+      "prediction": 2.159631688797112,
+      "row_id": "d6efc0ab3638a8a7aff0d8ae3653e456071869e5b0e1f6290ccca7a07b613d96"
+    },
+    {
+      "margin": -2.3221749659219215,
+      "prediction": 2.1544292941371177,
+      "row_id": "54b77732fb9244cddc5788f5683a0cc1f87fb356827f7e6e3bc51312d3025602"
+    },
+    {
+      "margin": -2.1213841168876275,
+      "prediction": 2.1438296025543186,
+      "row_id": "e72cf1a4c80446f8ae493158ba2982e81a80a6a344622897d4aca2ca31533b58"
+    },
+    {
+      "margin": -1.159641513187614,
+      "prediction": 2.0744188781088626,
+      "row_id": "9b01a84517d16f569ebc77041866a2b0fd27ba124dfeaf6ee0b243683165bf47"
+    },
+    {
+      "margin": -2.2864641847600065,
+      "prediction": 2.133675317822946,
+      "row_id": "22697ceb5dc4ece1398ea30f83efb87348050ff34d4522d5f25a6ece98fd426f"
+    },
+    {
+      "margin": -1.839514069107346,
+      "prediction": 2.0939631001866394,
+      "row_id": "27c63560e49e3be4e0c0828c6300364e36f9c14e0087c6afa1dcacc26c3e7c65"
+    },
+    {
+      "margin": -2.0898091685006532,
+      "prediction": 2.161203201236984,
+      "row_id": "cd014e1b17ad4f36e1c7b6a75e9f49507d8e9fdd99fd103138ab1fcb3b24e279"
+    },
+    {
+      "margin": -2.085642730912206,
+      "prediction": 2.1240538096756882,
+      "row_id": "ba60050b008c9001c8dd381782976e4985a1a84fb1c1d5b1ba96a4aead1e5c86"
+    },
+    {
+      "margin": -2.0712348200748654,
+      "prediction": 2.1386013553037353,
+      "row_id": "0d9825e1297970d2c4a86c82f936e075f6ee1ecd58853c39c10c498f801e8793"
+    },
+    {
+      "margin": -2.0914494800392496,
+      "prediction": 2.145566141949727,
+      "row_id": "71c1a9c82b6f6e456219dada05a2a11f3a0a917e211a2e4628d9a7ee2f7732d8"
+    },
+    {
+      "margin": -2.923176205442533,
+      "prediction": 2.1574415615007703,
+      "row_id": "4df0750cb7836849d05001eed176bf6fe7647805288bb2d63b4828fc1133d47b"
+    },
+    {
+      "margin": -1.9885254359979867,
+      "prediction": 2.1600322832434973,
+      "row_id": "087ef3ffc17b23438e8670734861bfaf4e154a8ebd980f650cf5ba450b72c663"
+    },
+    {
+      "margin": -2.074179891480539,
+      "prediction": 2.1464397972206446,
+      "row_id": "41d6a3e2e7534984306b2858d3886b2bcb5d3f23e38009add18903ed6c2549d8"
+    },
+    {
+      "margin": 0.0,
+      "prediction": 2.162204002255507,
+      "row_id": "070e71694f9e340f00cfc5e90289f10fb4c212c275ae2e6b9e5015ee1d070b8c"
+    },
+    {
+      "margin": -2.076679965960266,
+      "prediction": 2.1604270783752173,
+      "row_id": "8a53bb28d2ad541b00496e625ef02fb1dd341ea19c091a7de1da78ab682d064e"
+    },
+    {
+      "margin": 0.7882634225314327,
+      "prediction": 2.0947407492121455,
+      "row_id": "5c6015b7f0745b0e5e0634331a96098681c5f86d7da662cd6e811920a7f9ff7a"
+    },
+    {
+      "margin": -2.238372015182131,
+      "prediction": 2.1528008804342935,
+      "row_id": "e64496b4dbcc126fb1790ebb7186bec7c6a845daaeb55bf3293801b703ffce66"
+    },
+    {
+      "margin": -2.0519212028821596,
+      "prediction": 2.160521886699369,
+      "row_id": "858f307116c1542f1e5684218938bbfa4083b7e3ada34c9e0d823eefbb43f770"
+    },
+    {
+      "margin": -1.9770714116513761,
+      "prediction": 2.119574842506362,
+      "row_id": "83ff42608570eb5679e9189f4cb26ba47534ae14a02ebe67da348cc85b890224"
+    },
+    {
+      "margin": -2.0289988251252633,
+      "prediction": 2.165456275317831,
+      "row_id": "9b319560fdb66bcb411063a6a462e97ce3e79351842fc099a9c722a7a0fa8657"
+    },
+    {
+      "margin": -2.1868494076367675,
+      "prediction": 2.1712466873439538,
+      "row_id": "805014f11b3b9c5e9dd5706023e70e9b6a575d560095d806f44b326fd8148f63"
+    },
+    {
+      "margin": 1.032795558988642,
+      "prediction": 2.1780140906061636,
+      "row_id": "27e68dd89f2a2ca213bb571e9fc39fa5ff02994a9e31b5aa3fb2bc9c7c15ee39"
+    },
+    {
+      "margin": -2.1739273126342105,
+      "prediction": 2.1159113118716166,
+      "row_id": "26f533e18e91b225f3c248d635faba5725ab44230bd91c6cac5f0aef42cf283b"
+    },
+    {
+      "margin": -2.331068117719492,
+      "prediction": 2.1673162877351415,
+      "row_id": "b65bf32b6bdc4326fc0cbb9dadf37cbec87e2b02fb21a897cbcf9033da3827ae"
+    },
+    {
+      "margin": -2.43708718337977,
+      "prediction": 2.1678434740050383,
+      "row_id": "977a71a8f75ec4b094df7c2ccd6b17e41a53d33c4f8194075fab23711b9e10e4"
+    },
+    {
+      "margin": -1.7475123335299234,
+      "prediction": 2.1594240139053436,
+      "row_id": "7b40366d7390fe839d176b8b5ac230f66faf41101a637b68280190cef5e21fb9"
+    },
+    {
+      "margin": -2.1626682328182514,
+      "prediction": 2.17547472255824,
+      "row_id": "6bbab293aeaaef070f3fd6a2fdeb1030759145340e4685a6198a8acb9bafc08c"
+    },
+    {
+      "margin": -1.7207949040455164,
+      "prediction": 2.151950057117699,
+      "row_id": "4c360a57483d0fa53133eaf74036cb80f80c3486a6fc7cea956793a7750b95ce"
+    },
+    {
+      "margin": -2.758921978860022,
+      "prediction": 2.1335102687139864,
+      "row_id": "337b4a78402655eec36e7737b5d93098b9fd76a1bcf626819d30222352f4a5db"
+    },
+    {
+      "margin": -2.2517050070105746,
+      "prediction": 2.141351560281598,
+      "row_id": "160099b6b5744d1698ab5c1f8e59be042d6298e21f98e0ad48aa0ac22d240c2e"
+    },
+    {
+      "margin": -2.0688322870655136,
+      "prediction": 2.190121679316198,
+      "row_id": "b4493f0276a1148fda30c2407d6181f1b47998fb6548689230c8b9fbdccd8477"
+    }
+  ],
+  "predictor_sha256": "ff95b4f61f8702b1ce9c117b91d181302860fe44493a2da8feb9c2ee9c038fc2",
+  "r2": -17.13401842142082,
+  "rmse": 4.068877211281647,
+  "setting": "routing",
+  "sign_accuracy": 0.058823529411764705,
+  "uncertainty": {
+    "groups": 53,
+    "limitation": "conditional on frozen predictor",
+    "mae_ci95": [
+      3.704826130177476,
+      4.18280541268799
+    ],
+    "method": "task_group_bootstrap_fixed_predictor",
+    "sign_accuracy_ci95": [
+      0.0,
+      0.1276595744680851
+    ]
+  },
+  "undefined_rows": 0,
+  "zero_effect_rows": 2
+}

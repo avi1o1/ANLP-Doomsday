@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.9149020418851521,
+    "frequent_activation_share": 0.08095456197406059,
+    "head_frequency_mass": 0.0678572937795808,
+    "idf_variance": 0.9449146368487983,
+    "mass_gini": 0.49424124043302897,
+    "reference_units": 16
+  },
+  "margin": -2.2517050070105746,
+  "margin_ci95": [
+    -2.5869774911369134,
+    -1.916935353194092
+  ],
+  "margin_variance": 0.028339250515221192,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 171,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.7543859649122807,
+    "001": 0.7543859649122807,
+    "010": 0.7543859649122807,
+    "011": 0.7543859649122807,
+    "100": 0.5906432748538012,
+    "101": 0.5906432748538012,
+    "110": 0.5789473684210527,
+    "111": 0.5555555555555556
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.2807017543859649,
+    -0.11695906432748537
+  ],
+  "raw_delta": -0.19883040935672514,
+  "row_id": "160099b6b5744d1698ab5c1f8e59be042d6298e21f98e0ad48aa0ac22d240c2e",
+  "setting": "routing",
+  "spread": 0.08830215713766958,
+  "subject": "world_religions",
+  "undefined_reason": null
+}

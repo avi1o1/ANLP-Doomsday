@@ -1,0 +1,52 @@
+{
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "budget": 512,
+  "context": 4096,
+  "diagnostics": {
+    "active_fraction": 0.24522522428702026,
+    "frequency_slope": 0.9620632554477767,
+    "frequent_activation_share": 0.06216666495017321,
+    "head_frequency_mass": 0.047081677161458134,
+    "idf_variance": 0.9159706337298948,
+    "mass_gini": 0.6271891461530599
+  },
+  "examples": 100,
+  "margin": -2.1156462850620477,
+  "margin_ci95": [
+    -2.4214111587069493,
+    -1.648507905003265
+  ],
+  "margin_variance": 0.04065913207664546,
+  "model": {
+    "device_map": {},
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+  },
+  "n_examples": 100,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.24,
+    "001": 0.21,
+    "010": 0.25,
+    "011": 0.2,
+    "100": 0.0,
+    "101": 0.0,
+    "110": 0.0,
+    "111": 0.0
+  },
+  "raw_ci95": [
+    -0.33,
+    -0.16
+  ],
+  "raw_delta": -0.24,
+  "row_id": "317dfe8a283c02f9204e0aca40565aeb8f8b9e81cf8058451228080a7cb19b31",
+  "setting": "attention",
+  "sink": false,
+  "spread": 0.11344051304538427,
+  "task": "niah_multikey_3",
+  "undefined_reason": null
+}

@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.7966898079354605,
+    "frequent_activation_share": 0.07111628078812744,
+    "head_frequency_mass": 0.06309827769236401,
+    "idf_variance": 0.8791043945198208,
+    "mass_gini": 0.42330305552932146,
+    "reference_units": 16
+  },
+  "margin": -2.3221749659219215,
+  "margin_ci95": [
+    -2.6000000000000005,
+    -1.9951675756668346
+  ],
+  "margin_variance": 0.027099129558447777,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 193,
+  "p_value": 0.0014992503748125937,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.6476683937823834,
+    "001": 0.6476683937823834,
+    "010": 0.6476683937823834,
+    "011": 0.6476683937823834,
+    "100": 0.5544041450777202,
+    "101": 0.5544041450777202,
+    "110": 0.5181347150259067,
+    "111": 0.5129533678756477
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.20207253886010368,
+    -0.06735751295336789
+  ],
+  "raw_delta": -0.13471502590673567,
+  "row_id": "54b77732fb9244cddc5788f5683a0cc1f87fb356827f7e6e3bc51312d3025602",
+  "setting": "routing",
+  "spread": 0.058012435705185016,
+  "subject": "high_school_government_and_politics",
+  "undefined_reason": null
+}

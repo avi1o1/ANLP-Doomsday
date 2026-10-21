@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0009765625,
+    "frequency_slope": 1.0065045514331432,
+    "frequent_activation_share": 0.09876229197446668,
+    "head_frequency_mass": 0.08216435846183133,
+    "idf_variance": 1.2194622396876131,
+    "mass_gini": 0.5133744585143136,
+    "reference_units": 16
+  },
+  "margin": -1.9770714116513761,
+  "margin_ci95": [
+    -2.2237817967264806,
+    -1.68168422115116
+  ],
+  "margin_variance": 0.01921706525960502,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 100,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.61,
+    "001": 0.61,
+    "010": 0.61,
+    "011": 0.61,
+    "100": 0.36,
+    "101": 0.36,
+    "110": 0.38,
+    "111": 0.37
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.35000000000000003,
+    -0.13
+  ],
+  "raw_delta": -0.24,
+  "row_id": "83ff42608570eb5679e9189f4cb26ba47534ae14a02ebe67da348cc85b890224",
+  "setting": "routing",
+  "spread": 0.12139166981304772,
+  "subject": "medical_genetics",
+  "undefined_reason": null
+}

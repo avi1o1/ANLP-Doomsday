@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 1995,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.9737390083621404,
+    "frequent_activation_share": 0.08014482728922342,
+    "head_frequency_mass": 0.06923901492684856,
+    "idf_variance": 1.0977202712861702,
+    "mass_gini": 0.5075772009526249,
+    "reference_units": 16
+  },
+  "margin": -2.873684832428398,
+  "margin_ci95": [
+    -2.917299829957891,
+    2.449489742783178
+  ],
+  "margin_variance": 3.1346638347207345,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 100,
+  "p_value": 0.7231384307846077,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.31,
+    "001": 0.31,
+    "010": 0.31,
+    "011": 0.31,
+    "100": 0.3,
+    "101": 0.3,
+    "110": 0.3,
+    "111": 0.29
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.12999999999999995,
+    0.08999999999999997
+  ],
+  "raw_delta": -0.020000000000000018,
+  "row_id": "69840566ab08646a70e0326bce62c0b03d9f3c3c60e5d50b3f487b37ea6a5081",
+  "setting": "routing",
+  "spread": 0.006959705453537534,
+  "subject": "global_facts",
+  "undefined_reason": null
+}

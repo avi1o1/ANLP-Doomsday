@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 1.0127981624108615,
+    "frequent_activation_share": 0.11788247796313037,
+    "head_frequency_mass": 0.09514663609609197,
+    "idf_variance": 1.2872389679380078,
+    "mass_gini": 0.5178087111233654,
+    "reference_units": 16
+  },
+  "margin": -1.839514069107346,
+  "margin_ci95": [
+    -2.597731238782749,
+    1.512027764566085
+  ],
+  "margin_variance": 0.8743279540744233,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 151,
+  "p_value": 0.17691154422788605,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.2913907284768212,
+    "001": 0.2913907284768212,
+    "010": 0.2913907284768212,
+    "011": 0.2913907284768212,
+    "100": 0.2185430463576159,
+    "101": 0.2185430463576159,
+    "110": 0.24503311258278146,
+    "111": 0.23178807947019867
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.1390728476821192,
+    0.019867549668874163
+  ],
+  "raw_delta": -0.059602649006622516,
+  "row_id": "27c63560e49e3be4e0c0828c6300364e36f9c14e0087c6afa1dcacc26c3e7c65",
+  "setting": "routing",
+  "spread": 0.03240130097811411,
+  "subject": "high_school_physics",
+  "undefined_reason": null
+}

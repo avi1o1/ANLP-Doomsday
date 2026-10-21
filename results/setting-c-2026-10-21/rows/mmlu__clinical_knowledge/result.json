@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.890718664482596,
+    "frequent_activation_share": 0.08816657670349087,
+    "head_frequency_mass": 0.07319969617782256,
+    "idf_variance": 0.9447467877222004,
+    "mass_gini": 0.47422705851238856,
+    "reference_units": 16
+  },
+  "margin": -2.0,
+  "margin_ci95": [
+    -2.2926332024454843,
+    -1.6038421985113593
+  ],
+  "margin_variance": 0.03171119965344394,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 265,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.4830188679245283,
+    "001": 0.4830188679245283,
+    "010": 0.4830188679245283,
+    "011": 0.4830188679245283,
+    "100": 0.3584905660377358,
+    "101": 0.3584905660377358,
+    "110": 0.3584905660377358,
+    "111": 0.3584905660377358
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.19245283018867926,
+    -0.05660377358490565
+  ],
+  "raw_delta": -0.12452830188679248,
+  "row_id": "4987fa816c48429fbff2034008a9c738a7995457ede7c7df34c073ddabc1ac7d",
+  "setting": "routing",
+  "spread": 0.06226415094339624,
+  "subject": "clinical_knowledge",
+  "undefined_reason": null
+}

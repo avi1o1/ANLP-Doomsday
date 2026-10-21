@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.7153706600570756,
+    "frequent_activation_share": 0.08311947103007532,
+    "head_frequency_mass": 0.06983848791417709,
+    "idf_variance": 0.5858005625303103,
+    "mass_gini": 0.4125581677675013,
+    "reference_units": 16
+  },
+  "margin": -2.1174519817893462,
+  "margin_ci95": [
+    -2.331995336013992,
+    -1.8470313113061472
+  ],
+  "margin_variance": 0.01445770135633843,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 173,
+  "p_value": 0.0009995002498750624,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.4508670520231214,
+    "001": 0.4508670520231214,
+    "010": 0.4508670520231214,
+    "011": 0.4508670520231214,
+    "100": 0.31213872832369943,
+    "101": 0.31213872832369943,
+    "110": 0.2832369942196532,
+    "111": 0.28901734104046245
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.24855491329479767,
+    -0.07514450867052025
+  ],
+  "raw_delta": -0.16184971098265893,
+  "row_id": "5e9f20c3ece7eb39039bca92937a456375b246cd6916cdda2208dc839c94d02d",
+  "setting": "routing",
+  "spread": 0.07643607145503642,
+  "subject": "college_medicine",
+  "undefined_reason": null
+}

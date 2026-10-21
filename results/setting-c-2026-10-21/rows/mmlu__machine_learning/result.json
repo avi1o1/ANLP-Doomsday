@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 1997,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 1.0645808284965343,
+    "frequent_activation_share": 0.11755526229582086,
+    "head_frequency_mass": 0.09489342485549132,
+    "idf_variance": 1.32769041849407,
+    "mass_gini": 0.5323325904918454,
+    "reference_units": 16
+  },
+  "margin": 0.7882634225314327,
+  "margin_ci95": [
+    -2.9571147525861057,
+    2.708741387356071
+  ],
+  "margin_variance": 3.2415110127635614,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 112,
+  "p_value": 0.9375312343828086,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.32142857142857145,
+    "001": 0.32142857142857145,
+    "010": 0.32142857142857145,
+    "011": 0.32142857142857145,
+    "100": 0.3482142857142857,
+    "101": 0.3482142857142857,
+    "110": 0.3392857142857143,
+    "111": 0.33035714285714285
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.09843750000000002,
+    0.11629464285714167
+  ],
+  "raw_delta": 0.008928571428571397,
+  "row_id": "5c6015b7f0745b0e5e0634331a96098681c5f86d7da662cd6e811920a7f9ff7a",
+  "setting": "routing",
+  "spread": 0.011326887907468981,
+  "subject": "machine_learning",
+  "undefined_reason": null
+}

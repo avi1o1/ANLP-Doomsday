@@ -1,0 +1,49 @@
+{
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 0,
+  "budget": 1024,
+  "context": 4096,
+  "diagnostics": {
+    "active_fraction": 0.44143690636730476,
+    "frequency_slope": 0.6636383437686614,
+    "frequent_activation_share": 0.05835140665558418,
+    "head_frequency_mass": 0.02740878384636501,
+    "idf_variance": 0.5591327181546368,
+    "mass_gini": 0.5381374451273553
+  },
+  "examples": 100,
+  "margin": null,
+  "margin_ci95": null,
+  "margin_variance": null,
+  "model": {
+    "device_map": {},
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+  },
+  "n_examples": 100,
+  "p_value": 1.0,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.0,
+    "001": 0.0,
+    "010": 0.0,
+    "011": 0.0,
+    "100": 0.0,
+    "101": 0.0,
+    "110": 0.0,
+    "111": 0.0
+  },
+  "raw_ci95": [
+    0.0,
+    0.0
+  ],
+  "raw_delta": 0.0,
+  "row_id": "d7a145494d72a57f863cb3311c70bee15a3c4dc1eb1d8c94269d50780a8c915f",
+  "setting": "attention",
+  "sink": false,
+  "spread": 0.0,
+  "task": "vt",
+  "undefined_reason": "zero_configuration_spread"
+}

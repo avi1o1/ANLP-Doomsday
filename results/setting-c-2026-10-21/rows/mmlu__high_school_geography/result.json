@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.7566635578161149,
+    "frequent_activation_share": 0.065731377500296,
+    "head_frequency_mass": 0.05677702685679734,
+    "idf_variance": 0.6636843746469259,
+    "mass_gini": 0.4225869976346627,
+    "reference_units": 16
+  },
+  "margin": -2.1779498695046926,
+  "margin_ci95": [
+    -2.418573403646253,
+    -1.9145876401510913
+  ],
+  "margin_variance": 0.017086761173473852,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 198,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.5757575757575758,
+    "001": 0.5757575757575758,
+    "010": 0.5757575757575758,
+    "011": 0.5757575757575758,
+    "100": 0.42424242424242425,
+    "101": 0.42424242424242425,
+    "110": 0.4090909090909091,
+    "111": 0.398989898989899
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.2525252525252525,
+    -0.10606060606060602
+  ],
+  "raw_delta": -0.1767676767676768,
+  "row_id": "d6efc0ab3638a8a7aff0d8ae3653e456071869e5b0e1f6290ccca7a07b613d96",
+  "setting": "routing",
+  "spread": 0.08116241757569799,
+  "subject": "high_school_geography",
+  "undefined_reason": null
+}
