@@ -158,3 +158,26 @@ own.
 - Shapley shares of IDF, saturation and length in Settings B and C, set beside the
   retrieval shares.
 - Configuration 111 against Quest (000), H2O and full attention.
+
+## Addendum, 23 October 2026: Setting B on Llama-3.2-1B-Instruct
+
+Written after the Qwen results of Sections 1 and 2 had been read, and before any Llama run
+existed. The Llama runs are a replication on the model the mid report planned, now
+accessible on the cluster. They do not replace the Qwen results, which stay the registered
+primary Setting B results.
+
+- **Model.** `meta-llama/Llama-3.2-1B-Instruct`, revision
+  `9213176726f574b556790deb65791e0c5aa438b6`, float16.
+- **Protocol.** Identical to Section 6: all 13 RULER tasks at 4K, RULER revision
+  `c3f5e3b4f87f97e048793bb510a3a6b19a46bf3a`, seed 0, 100 examples per task, generated with
+  the Llama tokenizer; budgets 512 and 1,024, page size 16; the same modes, the same
+  64-position calibration and the same prompt format. The variable-tracking prompt is left
+  as it was for Qwen, so the two models are compared on the same inputs.
+- **Tests.** Sections 1 and 2 apply unchanged: the frozen predictor (sha256 `ff95b4f6...`)
+  with its pass marks, and the label-free rule with exact attention mass (primary) and
+  output agreement (secondary). Section 7's descriptive analyses are repeated.
+- **Known flaw, stated in advance.** If every Llama row has the same sign of G, the
+  label-free rule's sign mark cannot be met, as happened for Qwen. The rule's decision
+  quality (rule against always-on and oracle) is reported either way.
+- **Reporting.** Both models are reported. If the Llama runs do not finish by 29 October,
+  the completed rows are reported as partial, with the count.
