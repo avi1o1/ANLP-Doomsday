@@ -5,7 +5,9 @@ top-8 routing), on WikiText-2 and zero-shot MMLU. Run on the Ada cluster, jobs 2
 30650 (gnode057, 2 GPUs each; the second, submitted by Mohit as `route-rev`, appears from its name to work from the other end of the subject list, which was not checked. The completed subjects cover both ends).
 Execution record: `context/cluster-run-2026-10-15/README.md` in the context repository.
 
-**Partial.** WikiText and **52 of 57 MMLU subjects** were complete when these files were pulled.
+**Partial snapshot.** WikiText and **52 of 57 MMLU subjects** were complete when these files were pulled.
+All 58 rows completed on 21 October; the registered analysis over all of them is
+`results/transfer-2026-10-20/setting_c_study.json`, and the report uses that file.
 `transfer_summary.json` was written by the pipeline at that point and will change as the last
 subjects finish.
 

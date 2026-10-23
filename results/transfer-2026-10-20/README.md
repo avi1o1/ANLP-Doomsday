@@ -27,7 +27,11 @@ analysis script was committed before it was run on real data.
 - **Setting C.**
   - Model: OLMoE-1B-7B.
   - Data: WikiText-2 and the 57 MMLU subjects, one process per subject.
-  - Cluster job 28260.
+  - Cluster jobs 28260 and 30650 (the second from the other end of the subject list); all
+    58 rows complete on 21 October. The study was run on the cluster over the full
+    per-example outputs.
+- **Setting B on Llama-3.2-1B-Instruct.** Registered replication (addendum of 23 October in
+  the registration file), cluster job 36453, running.
 - **SPLADE-v3.**
   - The stored rankings under all eight configurations were scored against the BM25,
     dense and fused references of the original cluster run (job 30449).
