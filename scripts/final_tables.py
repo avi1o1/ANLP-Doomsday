@@ -228,6 +228,7 @@ def table_bases(out, rows):
 
 
 def table_attention(out):
+    """Mean RULER accuracy per budget and, for each configuration, the share of exact attention mass on its pages."""
     path = T / "setting_b_study.json"
     if not path.exists():
         print("skip tab_attention: no", path)
@@ -235,13 +236,46 @@ def table_attention(out):
     study = json.loads(path.read_text())
     modes = ["full", "quest", "h2o"] + KEYS
     head = ["Full", "Quest", "H2O"] + [rf"\texttt{{{k}}}" for k in KEYS]
-    lines = [r"\begin{tabular}{@{}l" + "r" * len(modes) + r"@{}}", r"\toprule", "Budget & " + " & ".join(head) + r" \\",
-             r"\midrule"]
-    for b in sorted((k for k in study["mean_accuracy"] if k.startswith("budget_")), key=lambda k: int(k.split("_")[1])):
+    lines = [r"\begin{tabular}{@{}ll" + "r" * len(modes) + r"@{}}", r"\toprule",
+             "& Budget & " + " & ".join(head) + r" \\", r"\midrule"]
+    budgets = sorted((k for k in study["mean_accuracy"] if k.startswith("budget_")), key=lambda k: int(k.split("_")[1]))
+    for i, b in enumerate(budgets):
         m = study["mean_accuracy"][b]
-        lines.append(f"{b.split('_')[1]} & " + " & ".join(f3(m[k]) for k in modes) + r" \\")
+        lines.append(f"{'Accuracy' if i == 0 else ''} & {b.split('_')[1]} & " + " & ".join(f3(m[k]) for k in modes) + r" \\")
+    mass = [json.loads(f.read_text()) for f in sorted((T / "setting-b" / "attention_mass").glob("*.json"))]
+    if mass:
+        lines.append(r"\midrule")
+        for i, b in enumerate(budgets):
+            rs = [r for r in mass if r["budget"] == int(b.split("_")[1])]
+            cells = ["1", f3(np.mean([r["pseudo_quality"]["000"] for r in rs])), "--"]
+            cells += [f3(np.mean([r["pseudo_quality"][k] for r in rs])) for k in KEYS]
+            lines.append(f"{'Attention mass' if i == 0 else ''} & {b.split('_')[1]} & " + " & ".join(cells) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     write(out, "tab_attention", lines)
+
+
+def table_routing(out):
+    """Mean MMLU accuracy over the 57 subjects and WikiText perplexity, merging configurations that route identically."""
+    path = T / "setting_c_study.json"
+    if not path.exists():
+        print("skip tab_routing: no", path)
+        return
+    study = json.loads(path.read_text())
+    m = study["mean_accuracy_mmlu"]
+    w = study.get("wikitext")
+    ppl = ({k: np.exp(-w["baselines"][k]) for k in ("native", "frequency_bias")} | w["perplexity"]) if w else {}
+    groups = [(r"native, \texttt{000}--\texttt{011}", ["native", "000", "001", "010", "011"]),
+              ("frequency bias", ["frequency_bias"]),
+              (r"\texttt{100}, \texttt{101}", ["100", "101"]), (r"\texttt{110}", ["110"]), (r"\texttt{111}", ["111"])]
+    lines = [r"\begin{tabular}{@{}lrr@{}}", r"\toprule", r"Routing & MMLU acc. & WikiText ppl. \\", r"\midrule"]
+    for label, keys in groups:
+        # The native path runs the model's own forward, so its WikiText loss differs from 000 at the sixth digit.
+        if len({round(m[k], 12) for k in keys}) != 1 or (ppl and max(ppl[k] for k in keys) - min(ppl[k] for k in keys) > 1e-4):
+            raise ValueError(f"{keys} do not route identically")
+        k = keys[0]
+        lines.append(f"{label} & {f3(m[k])} & " + (f"{ppl[k]:.2f}" if ppl else "--") + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    write(out, "tab_routing", lines)
 
 
 def main():
@@ -255,6 +289,7 @@ def main():
     table_predictor(out)
     table_bases(out, rows)
     table_attention(out)
+    table_routing(out)
 
 
 if __name__ == "__main__":
