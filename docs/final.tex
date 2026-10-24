@@ -186,7 +186,7 @@ difference between two scorers.
 
 \paragraph{Selection inside the transformer.} Quest scores KV pages against page min-max key
 summaries \citep{tang2024quest}. H2O keeps recent tokens and heavy hitters, the tokens that
-have received the most attention \citep{zhang2023h2o}, SnapKV the positions recent queries attend to
+have received the most attention \citep{zhang2023h2o}. SnapKV keeps the positions recent queries attend to
 \citep{li2024snapkv}, StreamingLLM the first tokens and a recent window
 \citep{xiao2024streamingllm}, and Expected Attention the positions future queries are
 predicted to attend to \citep{devoto2025expectedattention}.
@@ -236,7 +236,7 @@ is the value of IDF and length normalisation once saturation is applied, and its
 answers the practical question of whether to use collection statistics.
 
 \paragraph{Predictors.} The frequency-curve predictor, planned in the proposal and fixed in code on 19
-September before any retrieval run, is a ridge
+September before any retrieval result, is a ridge
 regression of $m$ on three diagnostics of the feature-frequency curve (the Zipf slope, the variance of IDF and the
 activation share of the most frequent $1\%$ of features). The label-free rule replaces
 $Q_c$ by a pseudo-quality $\tilde{Q}_c$, the nDCG@10 of configuration $c$'s top 100 when
@@ -313,8 +313,9 @@ was not registered.}
 \label{tab:registered}
 \end{table*}
 
-\paragraph{Registration.} The tests in Table~\ref{tab:registered} come from the project
-proposal (August), a hypotheses file (29 September), a registration file (20 October), and
+\paragraph{Registration.} The tests in Table~\ref{tab:registered} come from the code fixed
+on 19 September, which implements the predictor planned in the project proposal, a
+hypotheses file (29 September), a registration file (20 October), and
 an addendum (23 October), written after the Qwen results were read and before any Llama
 run, that registered the Llama replication. Each was committed before the predictions it
 tests were computed. The limit of $1.81$ on mean absolute error (MAE) is
@@ -331,8 +332,8 @@ exceed it. Always-on applies \texttt{111} in every row, \emph{never} applies sat
 
 \paragraph{Representations.} All representations come from \texttt{multilingual-e5-base}
 (E5, \citealp{wang2024me5}) at a pinned revision. Seven bases map an E5 state to a
-non-negative sparse vector, those that need fitting on the same $200{,}000$ MS~MARCO
-passages \citep{bajaj2016msmarco}. They are the identity, a Gaussian projection to 768 dimensions and PCA to 384, each
+non-negative sparse vector. All but the identity are fitted on the same $200{,}000$
+MS~MARCO passages \citep{bajaj2016msmarco}. They are the identity, a Gaussian projection to 768 dimensions and PCA to 384, each
 split into positive and negative parts; soft $k$-means over $4{,}096$ centroids; product
 and residual quantisation ($8 \times 256$, \citealp{jegou2011pq,chen2010rq}); and a
 Top-$K$ SAE with $8{,}192$ features of which at most 32 are active. They form four basis
@@ -475,7 +476,7 @@ configurations almost as $Q_c$ does (median Spearman $0.98$). The rule was desig
 primary rows. On the 181 whose features are all defined, it raises mean nDCG@10 from $0.159$ (always-on) to $0.163$. The oracle reaches $0.165$, so
 the rule recovers $59\%$ of the difference.
 
-With the BM25 reference of the interim rule, its sign on rows it had not seen is no better
+With the BM25 reference, the rule's sign on rows it had not seen is no better
 than a constant. The interim report
 fixed the rule before the 84 rows at the two other support budgets on the three MS~MARCO
 collections were produced. On those rows $\tilde{G}$ and $G$ have Spearman $0.91$ with the
@@ -609,7 +610,7 @@ size of $G$ (Spearman $-0.32$ on Qwen and $-0.03$ on Llama).
 BM25's correction helps the E5 sparse codes mostly through saturation, whose effect
 follows the spread of the stored values, and hurts SPLADE-v3 mostly through length
 normalisation. The frequency curve does not predict whether collection statistics help.
-Agreement with BM25 explains about half of the held-out variance of $G$, but as an unfitted
+Agreement with BM25 explains about half of the held-out variance of $G$ on the E5 codes, but as an unfitted
 rule its sign is no better than a constant on new rows. With frequency taken as the selector's own selection
 rate, IDF moves KV selection to pages holding on average $0.21$ to $0.44$ of the attention mass and lowers accuracy in
 KV selection on two models and in expert routing.
