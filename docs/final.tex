@@ -142,7 +142,7 @@ decomposition of the gain (Section~\ref{sec:attribution}).
 (Table~\ref{tab:registered}). One, a set of six
 hypotheses on saturation, passes. One has no pass mark in retrieval and predicts almost
 nothing. The other four fail their pass marks. Among them is the label-free rule in KV
-selection, which chooses correctly on every row but cannot meet its sign mark because no row has
+selection, which chooses correctly on every row with a reference but cannot meet its sign mark because no row has
 $G > 0$. We give a likely reason for each failure (Sections~\ref{sec:retrieval},
 \ref{sec:splade} and~\ref{sec:transfer}).
 \item A mechanism for saturation, confirmed by tests fixed in advance, and evidence that
@@ -369,7 +369,7 @@ under \texttt{111}, and SPLADE-v3 under both. MIRACL is outside SPLADE-v3's voca
 Under the inner product the mean nDCG@10 of the capped sparse codes is at most $0.135$ on
 every collection (Table~\ref{tab:quality}). The full correction raises their mean on every collection, the
 margin is positive in 162 of the 179 primary rows where it is defined ($90\%$), and
-Holm-corrected, all-on beats all-off in 134 of 182. After correction the best code, the
+all-on beats all-off after Holm correction in 134 of 182. After correction the best code, the
 token-level SAE on twelve collections, beats text BM25 on six. Full correction is the
 strict best of the eight configurations in only 42 of the 182 rows, and the mean of
 \texttt{011} ($0.163$) is above that of \texttt{111} ($0.158$). The inner product scores
@@ -508,7 +508,7 @@ mean Shapley value of IDF is $-0.775$, against $-0.003$ for saturation and $0.00
 (Table~\ref{tab:shapley}). Variable tracking scores zero under every mode, full attention
 included (see the limitations), so its two rows have no defined margin.
 
-The registered replication on Llama-3.2-1B-Instruct gives the same result. With IDF on, mean
+The registered replication on Llama-3.2-1B-Instruct shows the same pattern. With IDF on, mean
 accuracy is at most $0.002$, against $0.43$ and $0.46$ for Quest. After Holm correction
 all-on is significantly worse than all-off in 18 of the 23 rows with a defined margin and
 better in none, and IDF's mean Shapley value is $-0.509$.
@@ -530,7 +530,7 @@ the same top $k$ as the unsaturated score, up to ties.
 It holds because $(k_1+1)f/(f+k_1\ell) = g(f/\ell)$ and $g$ is strictly increasing on
 $f \ge 0$. With IDF on, $\idf_i\,g(f_i)$ and $\idf_i f_i$ can order pages differently.
 On Qwen, \texttt{010} and \texttt{000} give different scores on 38 of $2{,}600$ examples
-and different outputs on 448, which we attribute to float16 ties and rounding.
+and different outputs on 448. We attribute both to float16 ties and rounding.
 
 On Qwen the registered predictor predicts a gain on all 24 rows and gets the sign wrong on all of
 them, with a mean absolute error of $4.18$ against the limit of $1.81$. Its predictions
@@ -589,9 +589,9 @@ tests a label-free reference worked only when it carried relevance and did not s
 bias under test.
 Agreement with BM25 rewards BM25-like scoring and so favours the wrong configurations on
 SPLADE-v3. The dense reference passes there but may favour the E5 codes, which come from
-its embedding. Exact attention mass picks the right setting on every KV row of both
-models, but so does a constant, and it does not track the size of $G$ (Spearman $-0.32$
-and $-0.03$).
+its embedding. Exact attention mass picks the right setting on every KV row with a
+reference in both models, but so does a constant, and $\tilde{G}$ does not track the size of $G$ (Spearman $-0.32$
+on Qwen and $-0.03$ on Llama).
 
 The KV and routing results concern one definition of frequency, the selector's own
 selection rate during calibration. A frequency that does not come from the selector, such
@@ -605,7 +605,7 @@ out of ten, mostly through saturation, whose effect follows the dispersion of th
 values, and lowers the quality of SPLADE-v3, mostly through length normalisation. The
 registered frequency-curve predictor predicts almost nothing in retrieval and is wrong in
 sign almost everywhere outside it. A rule built on agreement with BM25 gains a little on
-the rows it was designed on and does no better than a constant on new rows. With frequency taken
+the rows it was designed on and gets the sign right no more often than a constant on new rows. With frequency taken
 as the selector's own selection rate, IDF selects KV pages holding on average $0.21$ to
 $0.44$ of the attention mass, KV accuracy falls to at most $0.046$ on Qwen and $0.002$ on
 Llama, and MMLU accuracy on OLMoE falls from $0.480$ to at most $0.390$.
@@ -616,9 +616,9 @@ Llama, and MMLU accuracy on OLMoE falls from $0.480$ to at most $0.390$.
 One encoder underlies every retrieval code, and E5 saw MIRACL in training. SPLADE is one
 model on ten collections. The KV runs use one 4K context and 100 examples per task, not
 500, a cut stated before any outcome was read. Variable tracking lacks RULER's answer
-prefix. Llama's full-attention answer is empty on every first single-needle example and on
-524 others, most in the QA and multi-key tasks, so its mass reference covers 1{,}876 of
-$2{,}600$ examples. The label-free sign mark cannot be met when no row has $G > 0$.
+prefix, so it scores zero under every mode on Qwen and almost zero on Llama. Llama's full-attention answer is empty on all 100 first single-needle examples and on 262
+of the other 1{,}200, all but two in the QA and multi-key tasks, so its mass reference
+covers 938 of $1{,}300$ examples. The label-free sign mark cannot be met when no row has $G > 0$.
 Routing uses one model, with MMLU frequencies from each subject's own prompts. A frequency
 counted over unrelated prompts is the next test.
 
