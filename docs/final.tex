@@ -126,7 +126,7 @@ right, statistics of the frequency curve should predict the sign of the gain bef
 experiment is run.
 
 We tested this prediction in retrieval and in two other top-$k$ selections, and it failed
-in all three. Each test was fixed in a dated commit before its outcomes were computed, and
+in all three. Each test was fixed in a dated commit before its predictions were computed, and
 we call such tests registered (Table~\ref{tab:registered}). We derive fourteen sparse
 representations from one frozen dense encoder, multilingual E5-base, and score each under
 all eight combinations of the three components on thirteen collections. The correction
@@ -148,11 +148,11 @@ collections, $1{,}358$ rows, with an exact Shapley decomposition of the gain
 the frequency-curve predictor fails wherever it has a pass mark, and the label-free rule
 fails on SPLADE-v3 with its registered reference and in KV selection only because a
 constant guess also scores perfectly there.
-\item A mechanism for saturation's gain, confirmed in advance, and evidence that index
+\item A mechanism for saturation's gain, confirmed by tests fixed in advance, and evidence that index
 statistics predict it but not the gain from IDF and length normalisation
 (Sections~\ref{sec:predicts} to~\ref{sec:splade}).
 \item The correction in KV selection, on two models, and in routing, with a label-free
-check by exact attention mass and a proof that without IDF saturation cannot change a
+check by exact attention mass and a proof that, without IDF, saturation cannot change a
 single-score selection (Sections~\ref{sec:problem} and~\ref{sec:transfer}).
 \end{enumerate}
 
@@ -254,7 +254,7 @@ an upper bound on the query--key product computed from the page's key minima and
 passed through a softplus and divided by the head's median selected value during
 calibration. Calibration runs Quest at 64 positions of the example's own prompt. The
 page's document frequency is the number of these positions, among those at or after the
-page, at which Quest selects it, and that number of positions takes the place of $N$. The
+page, at which Quest selects it, and $N$ is the number of calibration positions at or after the page. The
 page's length is the norm of its
 concatenated key minima and maxima. For expert $e$ the value is the router probability,
 the frequency is the share of calibration tokens routed to $e$, and the length is the norm
@@ -319,8 +319,8 @@ Always predicting a gain is already right on $90\%$ of the 179 retrieval rows, s
 interim report (2 October) added, before any transfer run, the condition of beating that
 majority sign. The better constant is whichever of always predicting a gain and always
 predicting a loss is right more often on the rows tested, and the label-free rule must
-exceed it. Always-on uses \texttt{111} on every row, never uses \texttt{010}, and the oracle
-picks the better of the two in each row.
+exceed it. Always-on applies \texttt{111} in every row, never applies saturation alone
+(\texttt{010}) in every row, and the oracle picks the better of the two in each row.
 
 \section{Experimental Setup}
 \label{sec:setup}
@@ -354,7 +354,7 @@ that recomputes both parts of $m$, with Holm's correction for multiple compariso
 each pre-declared group of rows \citep{holm1979}.
 
 \paragraph{KV-page selection.} The attention model is Qwen2.5-1.5B-Instruct
-\citep{qwen2025qwen25} in float16, the fallback fixed before any run, and
+\citep{qwen2025qwen25} in float16, chosen before any run, and
 Llama-3.2-1B-Instruct is run with the same protocol as a replication registered before it
 started. All thirteen tasks of the RULER long-context benchmark \citep{hsieh2024ruler},
 from needle retrieval to QA, are run at a 4K context with 100 examples per task and token
@@ -446,8 +446,7 @@ factor and the ranking would not move. Pooled PQ and RQ are such codes, and thei
 saturation and length effects are exactly zero in every row (Table~\ref{tab:bases} in the
 appendix). The more unequal the values, the more saturation can reorder a ranking for a
 given $k_1$ and set of queries. In our codes that reordering usually helps
-($\phi_{\mathrm{sat}} > 0$ in $79\%$ of primary rows), so the spread also predicts
-$\phi_{\mathrm{sat}}$. We committed six hypotheses on this mechanism before running them on
+($\phi_{\mathrm{sat}} > 0$ in $79\%$ of primary rows). We committed six hypotheses on this mechanism before running them on
 the $k_1$ and $b$ sweep of five collections, rows not used when the hypotheses were formed
 (Table~\ref{tab:confirm} in the appendix). All six pass. H5 (no length effect at $b = 0$)
 is a code check, and H1 overlaps the primary rows. H2, H3, H4 and H6 test the mechanism. In
@@ -473,7 +472,8 @@ features are all defined, which were available when the rule was designed, the l
 rule raises mean nDCG@10 from $0.159$ (always-on) to $0.163$. The oracle reaches $0.165$, so
 the rule recovers $59\%$ of the difference.
 
-On rows the rule had not seen, its sign is no better than a constant. The interim report
+With the registered BM25 reference, the rule's sign on rows it had not seen is no better
+than a constant. The interim report
 fixed the rule before the 84 rows at the two other support budgets on the three MS~MARCO
 collections were produced. On those rows $\tilde{G}$ and $G$ have Spearman $0.91$ with the
 BM25 reference, but the sign is right on $0.87$ of rows, against $0.88$ for always
@@ -537,10 +537,10 @@ The registered replication on Llama-3.2-1B-Instruct shows the same pattern. With
 mean accuracy is at most $0.002$, against $0.43$ and $0.46$ for Quest. After Holm
 correction all-on is significantly worse than all-off in 18 of the 23 rows with a defined
 margin and better in none, and IDF's mean Shapley value is $-0.509$. The three undefined
-rows are both budgets of the first single-needle task, where Llama's full-attention answer
-is empty, and variable tracking at the larger budget.
+rows, where all eight configurations score zero, are both budgets of the first
+single-needle task and variable tracking at the larger budget.
 
-With IDF on, the selection moves to pages the model barely attends to. A page's
+With IDF on, the selection moves to pages that hold less than half of the attention mass. A page's
 frequency, as we defined it, is Quest's own selection rate during calibration, so IDF
 down-weights the pages Quest selected most often, and the outcome is partly fixed by this
 definition. A page selected at all 64 calibration positions gets the smoothed IDF
@@ -562,8 +562,8 @@ $1.81$. On Llama it is wrong on every row with a nonzero margin, with an MAE of 
 predictions on Qwen range only from $2.13$ to $2.21$. It predicts a gain for nearly any
 input, so this failure says little about page frequency.
 
-The registered label-free rule uses exact attention mass as its reference, so $\tilde{G} <
-0$ on every row where the reference exists (26 on Qwen, 24 on Llama). On the rows with $G
+The registered label-free rule uses exact attention mass as its reference. Since IDF's pages
+always hold less mass, $\tilde{G} < 0$ on every row where the reference exists (26 on Qwen, 24 on Llama). On the rows with $G
 \ne 0$ (24 and 22) its sign is always right, and the retrieval majority sign is never
 right. The configurations it picks reach the oracle's mean accuracy ($0.742$ on Qwen,
 $0.484$ on Llama), against $0.024$ and $0.001$ for always-on. It still fails the registered
@@ -608,8 +608,7 @@ reference. Agreement with BM25 is higher for configurations that behave like BM2
 SPLADE-v3 it favours the wrong ones. The dense reference passes there but may favour the
 E5 codes, which come from its embedding. Exact attention mass picks the right setting on
 every KV row with a reference, but so does a constant, and $\tilde{G}$ does not track the
-size of $G$ (Spearman $-0.32$ on Qwen and $-0.03$ on Llama). The KV and routing results
-concern one definition of frequency, the selector's own selection rate during calibration.
+size of $G$ (Spearman $-0.32$ on Qwen and $-0.03$ on Llama).
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -618,14 +617,14 @@ BM25's correction helps the E5 sparse codes mostly through saturation, whose eff
 follows the spread of the stored values, and hurts SPLADE-v3 mostly through length
 normalisation. Neither the frequency curve nor agreement with BM25 tells in advance whether
 collection statistics will help. With frequency taken as the selector's own selection
-rate, IDF moves KV selection to pages the model barely attends to and lowers accuracy in
+rate, IDF moves KV selection to pages holding $0.21$ to $0.44$ of the attention mass and lowers accuracy in
 KV selection on two models and in expert routing.
 
 \section*{Challenges, Limitations and Future Work}
 \label{sec:limitations}
 
-One encoder underlies every retrieval code, and E5 saw MIRACL in training. SPLADE is one
-model on ten collections. The KV runs use one 4K context and 100 examples per task, not the
+One encoder underlies every retrieval code, E5 saw MIRACL in training, and SPLADE is one
+model. The KV runs use one 4K context and 100 examples per task, not the
 planned 500. Variable tracking lacks
 RULER's answer prefix, so it scores zero under every configuration on Qwen and almost zero
 on Llama. Llama's full-attention answer is empty on the 100 first single-needle examples
