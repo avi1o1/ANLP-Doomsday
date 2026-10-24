@@ -76,7 +76,7 @@ def primary(rows):
 def table_families(out, rows):
     count = lambda pred: sum(1 for r in rows if pred(r))
     default = lambda r: r["k1"] == 1.2 and r["b"] == 0.75 and r["seed"] == 0 and not r.get("control")
-    lines = [r"\begin{tabular}{@{}lrr@{}}", r"\toprule", r"Family & Coll. & Rows \\", r"\midrule"]
+    lines = [r"\begin{tabular}{@{}lrr@{}}", r"\toprule", r"Sweep & Coll. & Rows \\", r"\midrule"]
     families = [
         ("primary, 14 representations", lambda r: default(r) and r["budget"] == "q32_d128"),
         ("support budgets 16/64, 64/256", lambda r: default(r) and r["budget"] in ("q16_d64", "q64_d256")),
