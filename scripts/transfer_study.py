@@ -66,11 +66,14 @@ def decision(rows, estimate):
 
 
 def label_free(rows, pseudo, retrieval_positive):
+    # A row whose generations end at the first token has no decode step to probe and no reference.
+    undefined = sum(p is None for p in pseudo)
+    rows, pseudo = zip(*[(r, p) for r, p in zip(rows, pseudo) if p is not None])
     y = [gain(r["quality"]) for r in rows]
     estimate = [gain(p) for p in pseudo]
     accuracy, zero = sign_accuracy(y, estimate)
     base = constants(y)
-    result = {"sign_accuracy": accuracy, "zero_target_rows": zero,
+    result = {"sign_accuracy": accuracy, "zero_target_rows": zero, "undefined_reference_rows": undefined,
               "constant_retrieval_majority": {"prediction": "G > 0", "retrieval_positive_share": retrieval_positive,
                                               "accuracy": base["positive"]},
               "better_constant_sign": base["better_constant"],

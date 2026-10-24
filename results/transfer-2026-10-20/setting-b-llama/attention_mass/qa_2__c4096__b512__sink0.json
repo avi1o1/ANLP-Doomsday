@@ -1,0 +1,772 @@
+{
+  "budget": 512,
+  "context": 4096,
+  "examples": 100,
+  "examples_probed": 16,
+  "full_text_identical": 100,
+  "model": {
+    "device_map": {},
+    "model": "meta-llama/Llama-3.2-1B-Instruct",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "9213176726f574b556790deb65791e0c5aa438b6"
+  },
+  "pseudo_quality": {
+    "000": 0.8955463767051697,
+    "001": 0.9126297794282436,
+    "010": 0.8955463841557503,
+    "011": 0.9126297906041145,
+    "100": 0.22716321982443333,
+    "101": 0.22904634615406394,
+    "110": 0.21080954698845744,
+    "111": 0.2113646361976862
+  },
+  "records": [
+    {
+      "full_text_identical": true,
+      "id": 0,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 1,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 2,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 3,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 4,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 5,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 6,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 7,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 8,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 9,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 10,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 11,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 12,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 13,
+      "probed_calls": 80,
+      "shares": {
+        "000": 0.9274889826774597,
+        "001": 0.9408502578735352,
+        "010": 0.9274889826774597,
+        "011": 0.9408502578735352,
+        "100": 0.2809881865978241,
+        "101": 0.28461045026779175,
+        "110": 0.2586696743965149,
+        "111": 0.26053386926651
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 14,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 15,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 16,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 17,
+      "probed_calls": 80,
+      "shares": {
+        "000": 0.9170519113540649,
+        "001": 0.930600643157959,
+        "010": 0.9170519113540649,
+        "011": 0.930600643157959,
+        "100": 0.2717433571815491,
+        "101": 0.27557873725891113,
+        "110": 0.25830814242362976,
+        "111": 0.2589496970176697
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 18,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 19,
+      "probed_calls": 80,
+      "shares": {
+        "000": 0.9036882519721985,
+        "001": 0.9136945605278015,
+        "010": 0.9036882519721985,
+        "011": 0.9136945605278015,
+        "100": 0.21453118324279785,
+        "101": 0.2164587527513504,
+        "110": 0.20498676598072052,
+        "111": 0.2050020694732666
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 20,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 21,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 22,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 23,
+      "probed_calls": 160,
+      "shares": {
+        "000": 0.9010125398635864,
+        "001": 0.9112653732299805,
+        "010": 0.9010125398635864,
+        "011": 0.9112653732299805,
+        "100": 0.21854422986507416,
+        "101": 0.21898595988750458,
+        "110": 0.21151664853096008,
+        "111": 0.21170373260974884
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 24,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 25,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 26,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 27,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 28,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 29,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 30,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 31,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 32,
+      "probed_calls": 16,
+      "shares": {
+        "000": 0.8652419447898865,
+        "001": 0.8854011297225952,
+        "010": 0.8652419447898865,
+        "011": 0.8854011297225952,
+        "100": 0.11842451989650726,
+        "101": 0.12258882075548172,
+        "110": 0.09805550426244736,
+        "111": 0.09911902248859406
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 33,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 34,
+      "probed_calls": 288,
+      "shares": {
+        "000": 0.8807966113090515,
+        "001": 0.8994744420051575,
+        "010": 0.8807966113090515,
+        "011": 0.8994744420051575,
+        "100": 0.2243214249610901,
+        "101": 0.2247084230184555,
+        "110": 0.21351808309555054,
+        "111": 0.21372008323669434
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 35,
+      "probed_calls": 112,
+      "shares": {
+        "000": 0.8889743089675903,
+        "001": 0.9107309579849243,
+        "010": 0.8889743089675903,
+        "011": 0.9107309579849243,
+        "100": 0.24848809838294983,
+        "101": 0.24981637299060822,
+        "110": 0.23177918791770935,
+        "111": 0.23177392780780792
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 36,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 37,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 38,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 39,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 40,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 41,
+      "probed_calls": 80,
+      "shares": {
+        "000": 0.8619915843009949,
+        "001": 0.8861760497093201,
+        "010": 0.8619915843009949,
+        "011": 0.8861760497093201,
+        "100": 0.22404150664806366,
+        "101": 0.22551146149635315,
+        "110": 0.2093910425901413,
+        "111": 0.20990322530269623
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 42,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 43,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 44,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 45,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 46,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 47,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 48,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 49,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 50,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 51,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 52,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 53,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 54,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 55,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 56,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 57,
+      "probed_calls": 160,
+      "shares": {
+        "000": 0.9192731976509094,
+        "001": 0.9306703805923462,
+        "010": 0.9192731976509094,
+        "011": 0.9306700825691223,
+        "100": 0.2381923645734787,
+        "101": 0.2401224821805954,
+        "110": 0.22375817596912384,
+        "111": 0.22413158416748047
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 58,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 59,
+      "probed_calls": 80,
+      "shares": {
+        "000": 0.9153316617012024,
+        "001": 0.9283925294876099,
+        "010": 0.9153316617012024,
+        "011": 0.9283925294876099,
+        "100": 0.25101783871650696,
+        "101": 0.2544136941432953,
+        "110": 0.2378857433795929,
+        "111": 0.2387026995420456
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 60,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 61,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 62,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 63,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 64,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 65,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 66,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 67,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 68,
+      "probed_calls": 496,
+      "shares": {
+        "000": 0.8665893077850342,
+        "001": 0.897807240486145,
+        "010": 0.8665893077850342,
+        "011": 0.897807240486145,
+        "100": 0.20816753804683685,
+        "101": 0.20880573987960815,
+        "110": 0.18951892852783203,
+        "111": 0.18964113295078278
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 69,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 70,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 71,
+      "probed_calls": 96,
+      "shares": {
+        "000": 0.8718125820159912,
+        "001": 0.8918969631195068,
+        "010": 0.8718125820159912,
+        "011": 0.891897439956665,
+        "100": 0.19020025432109833,
+        "101": 0.19307070970535278,
+        "110": 0.1671687811613083,
+        "111": 0.16823318600654602
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 72,
+      "probed_calls": 64,
+      "shares": {
+        "000": 0.8966327905654907,
+        "001": 0.9099883437156677,
+        "010": 0.8966329097747803,
+        "011": 0.9099883437156677,
+        "100": 0.21808090806007385,
+        "101": 0.21975216269493103,
+        "110": 0.20245099067687988,
+        "111": 0.20313207805156708
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 73,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 74,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 75,
+      "probed_calls": 96,
+      "shares": {
+        "000": 0.8970085978507996,
+        "001": 0.9179922938346863,
+        "010": 0.8970085978507996,
+        "011": 0.9179922938346863,
+        "100": 0.23991692066192627,
+        "101": 0.24129079282283783,
+        "110": 0.22607341408729553,
+        "111": 0.22662101686000824
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 76,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 77,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 78,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 79,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 80,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 81,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 82,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 83,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 84,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 85,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 86,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 87,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 88,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 89,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 90,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 91,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 92,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 93,
+      "probed_calls": 496,
+      "shares": {
+        "000": 0.8998381495475769,
+        "001": 0.9172120690345764,
+        "010": 0.8998381495475769,
+        "011": 0.9172120690345764,
+        "100": 0.2424912452697754,
+        "101": 0.24200524389743805,
+        "110": 0.2065257430076599,
+        "111": 0.20675386488437653
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 94,
+      "probed_calls": 64,
+      "shares": {
+        "000": 0.9160096049308777,
+        "001": 0.9299232363700867,
+        "010": 0.9160096049308777,
+        "011": 0.9299232363700867,
+        "100": 0.24546194076538086,
+        "101": 0.24702173471450806,
+        "110": 0.23334592580795288,
+        "111": 0.23391298949718475
+      }
+    },
+    {
+      "full_text_identical": true,
+      "id": 95,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 96,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 97,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 98,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 99,
+      "probed_calls": 0,
+      "shares": null
+    }
+  ],
+  "sink": false,
+  "task": "qa_2"
+}

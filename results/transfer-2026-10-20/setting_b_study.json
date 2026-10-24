@@ -185,6 +185,7 @@
     ],
     "sign_accuracy": 1.0,
     "spearman": -0.32460191072815275,
+    "undefined_reference_rows": 0,
     "zero_target_rows": 2
   },
   "label_free_output_agreement": {
@@ -367,6 +368,7 @@
     ],
     "sign_accuracy": 1.0,
     "spearman": -0.6809733701658693,
+    "undefined_reference_rows": 0,
     "zero_target_rows": 2
   },
   "mass_reference_checks": {

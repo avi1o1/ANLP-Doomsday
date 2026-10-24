@@ -12,6 +12,8 @@ analysis script was committed before it was run on real data.
 | `setting-b/attention_mass/` | The label-free reference: exact attention mass captured by each configuration, per row | `scripts/attention_mass_reference.py` |
 | `setting-b/needle_page_rates.json` | Calibration selection rates of the needle, sink and last pages on 100 single-needle examples | `scripts/needle_page_rates.py` |
 | `setting_b_study.json` | The registered Setting B analysis (Sections 1, 2 and 7) | `scripts/transfer_study.py` |
+| `setting-b-llama/` | The Llama-3.2-1B-Instruct replication of Setting B: compiled rows, the cluster's predictor scoring, row summaries, attention-mass outputs and the run configuration | as for `setting-b/` |
+| `setting_b_llama_study.json` | The registered Setting B analysis on the Llama rows (registration addendum of 23 October) | `scripts/transfer_study.py` |
 | `setting_c_study.json` | The registered Setting C analysis (Sections 1, 3 and 7) | `scripts/routing_study.py` |
 | `splade_label_free.json` | Registered Section 4: the label-free rule on SPLADE-v3 | `scripts/splade_label_free.py` |
 | `msmarco_rule_test.json` | The mid report's unfitted rule on the 84 MS MARCO budget rows made after it (not registered) | `scripts/msmarco_rule_test.py` |
@@ -31,7 +33,9 @@ analysis script was committed before it was run on real data.
     58 rows complete on 21 October. The study was run on the cluster over the full
     per-example outputs.
 - **Setting B on Llama-3.2-1B-Instruct.** Registered replication (addendum of 23 October in
-  the registration file), cluster job 36453, running.
+  the registration file), revision 9213176, same protocol as Qwen. Cluster job 36465 (11.8 h,
+  26 of 26 rows), probe jobs 36474 and 36475. On niah_single_1 Llama ends its answer at the
+  first token in every mode, so those rows have no margin and no mass reference.
 - **SPLADE-v3.**
   - The stored rankings under all eight configurations were scored against the BM25,
     dense and fused references of the original cluster run (job 30449).

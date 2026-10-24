@@ -1,0 +1,619 @@
+{
+  "budget": 512,
+  "context": 4096,
+  "examples": 100,
+  "examples_probed": 0,
+  "full_text_identical": 100,
+  "model": {
+    "device_map": {},
+    "model": "meta-llama/Llama-3.2-1B-Instruct",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "9213176726f574b556790deb65791e0c5aa438b6"
+  },
+  "pseudo_quality": null,
+  "records": [
+    {
+      "full_text_identical": true,
+      "id": 0,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 1,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 2,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 3,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 4,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 5,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 6,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 7,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 8,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 9,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 10,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 11,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 12,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 13,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 14,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 15,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 16,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 17,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 18,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 19,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 20,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 21,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 22,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 23,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 24,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 25,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 26,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 27,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 28,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 29,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 30,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 31,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 32,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 33,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 34,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 35,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 36,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 37,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 38,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 39,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 40,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 41,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 42,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 43,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 44,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 45,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 46,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 47,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 48,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 49,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 50,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 51,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 52,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 53,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 54,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 55,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 56,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 57,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 58,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 59,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 60,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 61,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 62,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 63,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 64,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 65,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 66,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 67,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 68,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 69,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 70,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 71,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 72,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 73,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 74,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 75,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 76,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 77,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 78,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 79,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 80,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 81,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 82,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 83,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 84,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 85,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 86,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 87,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 88,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 89,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 90,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 91,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 92,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 93,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 94,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 95,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 96,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 97,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 98,
+      "probed_calls": 0,
+      "shares": null
+    },
+    {
+      "full_text_identical": true,
+      "id": 99,
+      "probed_calls": 0,
+      "shares": null
+    }
+  ],
+  "sink": false,
+  "task": "niah_single_1"
+}

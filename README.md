@@ -15,7 +15,7 @@ can be predicted without relevance labels.
   English and Indic collections.
 - **Setting B, KV-page selection (complete).** The same correction applied to Quest-style
   page selection in Qwen2.5-1.5B-Instruct on all 13 RULER tasks at 4K. A replication on
-  Llama-3.2-1B-Instruct, registered on 23 October, is running.
+  Llama-3.2-1B-Instruct, registered on 23 October, is complete.
 - **Setting C, expert routing (complete).** The correction applied to OLMoE-1B-7B routing on
   WikiText-2 and the 57 MMLU subjects.
 - **Registered transfer tests.** `results/registration-2026-10-20.md`, committed before any

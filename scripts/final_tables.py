@@ -153,7 +153,12 @@ def table_shapley(out, rows):
     if b.exists():
         study = json.loads(b.read_text())
         rs = [r for r in study["per_row"] if r["margin"] is not None]
-        add("KV pages", len(rs), [[shapley(r["quality"])[s] for s in SWITCHES] for r in rs])
+        add("KV pages, Qwen", len(rs), [[shapley(r["quality"])[s] for s in SWITCHES] for r in rs])
+    b = T / "setting_b_llama_study.json"
+    if b.exists():
+        study = json.loads(b.read_text())
+        rs = [r for r in study["per_row"] if r["margin"] is not None]
+        add("KV pages, Llama", len(rs), [[shapley(r["quality"])[s] for s in SWITCHES] for r in rs])
     c = T / "setting_c_study.json"
     if c.exists():
         study = json.loads(c.read_text())
@@ -228,28 +233,31 @@ def table_bases(out, rows):
 
 
 def table_attention(out):
-    """Mean RULER accuracy per budget and, for each configuration, the share of exact attention mass on its pages."""
-    path = T / "setting_b_study.json"
-    if not path.exists():
-        print("skip tab_attention: no", path)
+    """Mean RULER accuracy per model and budget, and the share of exact attention mass on each configuration's pages."""
+    studies = [("Qwen", T / "setting_b_study.json", T / "setting-b" / "attention_mass"),
+               ("Llama", T / "setting_b_llama_study.json", T / "setting-b-llama" / "attention_mass")]
+    studies = [(m, json.loads(s.read_text()), d) for m, s, d in studies if s.exists()]
+    if not studies:
+        print("skip tab_attention: no study")
         return
-    study = json.loads(path.read_text())
     modes = ["full", "quest", "h2o"] + KEYS
     head = ["Full", "Quest", "H2O"] + [rf"\texttt{{{k}}}" for k in KEYS]
-    lines = [r"\begin{tabular}{@{}ll" + "r" * len(modes) + r"@{}}", r"\toprule",
-             "& Budget & " + " & ".join(head) + r" \\", r"\midrule"]
-    budgets = sorted((k for k in study["mean_accuracy"] if k.startswith("budget_")), key=lambda k: int(k.split("_")[1]))
-    for i, b in enumerate(budgets):
-        m = study["mean_accuracy"][b]
-        lines.append(f"{'Accuracy' if i == 0 else ''} & {b.split('_')[1]} & " + " & ".join(f3(m[k]) for k in modes) + r" \\")
-    mass = [json.loads(f.read_text()) for f in sorted((T / "setting-b" / "attention_mass").glob("*.json"))]
-    if mass:
+    lines = [r"\begin{tabular}{@{}lll" + "r" * len(modes) + r"@{}}", r"\toprule",
+             "Model & & Budget & " + " & ".join(head) + r" \\"]
+    for model, study, mass_dir in studies:
         lines.append(r"\midrule")
+        budgets = sorted((k for k in study["mean_accuracy"] if k.startswith("budget_")), key=lambda k: int(k.split("_")[1]))
+        for i, b in enumerate(budgets):
+            m = study["mean_accuracy"][b]
+            lines.append(f"{model if i == 0 else ''} & {'Accuracy' if i == 0 else ''} & {b.split('_')[1]} & "
+                         + " & ".join(f3(m[k]) for k in modes) + r" \\")
+        mass = [json.loads(f.read_text()) for f in sorted(mass_dir.glob("*.json"))]
+        mass = [r for r in mass if r["pseudo_quality"] is not None]
         for i, b in enumerate(budgets):
             rs = [r for r in mass if r["budget"] == int(b.split("_")[1])]
             cells = ["1", f3(np.mean([r["pseudo_quality"]["000"] for r in rs])), "--"]
             cells += [f3(np.mean([r["pseudo_quality"][k] for r in rs])) for k in KEYS]
-            lines.append(f"{'Attention mass' if i == 0 else ''} & {b.split('_')[1]} & " + " & ".join(cells) + r" \\")
+            lines.append(f" & {'Mass' if i == 0 else ''} & {b.split('_')[1]} & " + " & ".join(cells) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     write(out, "tab_attention", lines)
 
