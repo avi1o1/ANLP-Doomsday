@@ -53,17 +53,17 @@ thirteen collections. The full correction beats the plain inner product in 162 o
 code--collection pairs, but a predictor built from the frequency curve and fixed before
 the experiment does no better than always predicting a gain. Exact Shapley values assign
 $62\%$ of the gain to saturation, which uses only the document's own values, and tests
-fixed in advance confirm that its effect follows the spread of the stored values. A rule that
-decides without relevance labels whether IDF and length normalisation help, from agreement
-with text BM25, gets the sign right no more often than a constant guess on new rows and on
-SPLADE-v3. In KV selection
+fixed in advance confirm that its effect follows the spread of the stored values. A rule that uses
+agreement with text BM25 to decide, without relevance labels, whether IDF and length
+normalisation help gets the sign right no more often than a constant guess on rows it had
+not seen and on SPLADE-v3. In KV selection
 and routing we take an item's frequency to be how often the selector chose it during
 calibration. With IDF on, the selected KV pages hold $0.21$ to $0.44$ of full attention's
 softmax mass, against $0.90$ to $0.95$ without. Mean RULER accuracy falls from $0.71$ and
-$0.78$ to at most $0.046$ on Qwen2.5-1.5B and, in a replication registered before it ran,
-from $0.43$ and $0.46$ to at most $0.002$ on Llama-3.2-1B. Mean MMLU accuracy on OLMoE
+$0.78$ (two token budgets) to at most $0.046$ on Qwen2.5-1.5B and, in a replication
+registered before it ran, from $0.43$ and $0.46$ to at most $0.002$ on Llama-3.2-1B. Mean MMLU accuracy on OLMoE
 falls from $0.480$ to at most $0.390$. The frequency-curve predictor is wrong in sign on every KV row
-with a nonzero margin and on 52 of 55 MMLU subjects.
+where the outcome differs and on 52 of 55 MMLU subjects.
 \end{abstract}
 
 \section{Introduction}
@@ -130,12 +130,12 @@ in all three. Each test was fixed in a dated commit before its predictions were 
 we call such tests registered (Table~\ref{tab:registered}). We derive fourteen sparse
 representations from one frozen dense encoder, multilingual E5-base, and score each under
 all eight combinations of the three components on thirteen collections. The correction
-helped almost everywhere, but the registered predictor did not predict the size of the
+helped almost everywhere, but the registered frequency-curve predictor did not predict the size of the
 gain. Most of the gain comes from saturation, a component that uses no collection
 statistics, and the spread of the stored values predicts the size of its effect on
 held-out parameter settings. Whether IDF and length normalisation help is harder to
-predict, and the registered label-free rule, based on agreement with text BM25, fails on
-SPLADE-v3. In KV selection and routing we take an item's frequency to be how often the
+predict, and a registered rule that decides this without relevance labels, from agreement with
+text BM25, fails on SPLADE-v3. In KV selection and routing we take an item's frequency to be how often the
 selector chose it during calibration. IDF then favours items the selector rarely chose, and
 accuracy falls in both.
 
@@ -181,13 +181,13 @@ None of these varies the representation systematically or separates all three co
 retrieval quality from the query and the ranking
 \citep{carmel2010difficulty,cronen2002clarity,shtok2012nqc}. Systems can be ranked without
 judgements against pseudo-relevant documents from pooled output
-\citep{soboroff2001ranking}. We apply the same idea, without relevance labels, to a new
-target, the difference between two scorers.
+\citep{soboroff2001ranking}. We apply the same idea to a new target, the
+difference between two scorers.
 
 \paragraph{Selection inside the transformer.} Quest scores KV pages against page min-max key
 summaries \citep{tang2024quest}. H2O keeps recent tokens and heavy hitters, the tokens that
-have received the most attention \citep{zhang2023h2o}, and other methods keep observed or
-predicted attention targets \citep{li2024snapkv,xiao2024streamingllm,devoto2025expectedattention}.
+have received the most attention \citep{zhang2023h2o}, and other methods keep the positions recent queries
+attended to or future queries are predicted to attend to \citep{li2024snapkv,xiao2024streamingllm,devoto2025expectedattention}.
 Mixture-of-experts layers route each token to its top-$k$ experts
 \citep{shazeer2017moe,lepikhin2021gshard,fedus2022switch}, balanced by an auxiliary loss
 \citep{zoph2022stmoe} or a load-driven bias \citep{wang2024lossfree}, which we run as a
@@ -233,8 +233,8 @@ and the three values sum to $Q_{111} - Q_{000}$. The collection gain $G = Q_{111
 is the value of IDF and length normalisation once saturation is applied, and its sign
 answers the practical question of whether to use collection statistics.
 
-\paragraph{Predictors.} The pre-registered predictor is a ridge regression of $m$ on three
-diagnostics of the feature-frequency curve (the Zipf slope, the variance of IDF and the
+\paragraph{Predictors.} The frequency-curve predictor, registered in the proposal, is a ridge
+regression of $m$ on three diagnostics of the feature-frequency curve (the Zipf slope, the variance of IDF and the
 activation share of the most frequent $1\%$ of features). The label-free rule replaces
 $Q_c$ by a pseudo-quality $\tilde{Q}_c$, the nDCG@10 of configuration $c$'s top 100 when
 the top 10 of a reference ranker on the same query are taken as relevant. The registered
@@ -245,7 +245,8 @@ A second, fitted predictor regresses $\phi_{\mathrm{idf}}$, $\phi_{\mathrm{sat}}
 $\phi_{\mathrm{len}}$ and $G$ on three nested tiers of features. The first holds the
 pre-registered diagnostics. The second adds index statistics, which describe the nonzero
 values stored in the index, chiefly their coefficient of variation $\mathrm{cv}_x$. The
-third adds the pseudo-qualities and features of each configuration's top-100 ranking.
+third, the pseudo-label tier, adds the pseudo-qualities and features of each
+configuration's top-100 ranking.
 
 \paragraph{Transfer.} Eq.~\eqref{eq:scorer} applies to any selection with a non-negative
 score and a frequency count. Each KV page $i$ in a head is one item with one stored value
@@ -273,7 +274,7 @@ the same top $k$ as the unsaturated score, up to ties.
 It holds because $(k_1+1)f/(f+k_1\ell) = g(f/\ell)$ with $g(f) = (k_1+1)f/(f+k_1)$, and $g$
 is strictly increasing on $f \ge 0$. With IDF on, $\idf_i\,g(f_i)$ and $\idf_i f_i$ can
 order items differently. In routing all experts of a token share one length, so dividing by
-it does not change their order either, and the four configurations with IDF off route
+it does not change their order either. So the four configurations with IDF off route
 identically up to ties, as do \texttt{100} and \texttt{101}.
 
 \begin{table*}[t]
@@ -311,10 +312,10 @@ was not registered.}
 
 \paragraph{Registration.} The tests in Table~\ref{tab:registered} come from the project
 proposal (August), a hypotheses file (29 September), a registration file (20 October), and
-an addendum (23 October) that registered the Llama replication, written after the Qwen
-results were read and before any Llama run. Each was committed before the predictions it
+an addendum (23 October), written after the Qwen results were read and before any Llama
+run, that registered the Llama replication. Each was committed before the predictions it
 tests were computed. The limit of $1.81$ on mean absolute error (MAE) is
-$1.5$ times the frozen predictor's RMSE on $m$ in retrieval with corpora held out ($1.21$).
+$1.5$ times the frequency-curve predictor's RMSE on $m$ in retrieval with corpora held out ($1.21$).
 Always predicting a gain is already right on $90\%$ of the 179 retrieval rows, so our
 interim report (2 October) added, before any transfer run, the condition of beating that
 majority sign. The better constant is whichever of always predicting a gain and always
@@ -393,15 +394,15 @@ Under the inner product the mean nDCG@10 of the sparse codes, capped at 32 and 1
 features, is at most $0.135$ on every collection (Table~\ref{tab:quality}). The full
 correction raises their mean on every collection. Per row, all-on beats all-off in 162 of
 the 179 primary rows where $m$ is defined ($90\%$), and significantly after Holm correction
-in 134 of all 182. Under all-on the best code, the token-level SAE on twelve of the
-thirteen collections, beats text BM25 on six collections. Yet all-on is the strict best of
+in 134 of all 182. Under all-on the best code (the token-level SAE on twelve of the
+thirteen collections) beats text BM25 on six. Yet all-on is the strict best of
 the eight configurations in only 42 of the 182 rows, and the mean of \texttt{011}
 (saturation and length without IDF, $0.163$) is above that of \texttt{111} ($0.158$). The
 inner product scores below $0.01$ in 81 rows, so nearly any correction beats it.
 
-\subsection{The registered predictor predicts almost nothing}
+\subsection{The frequency-curve predictor predicts almost nothing}
 
-The primary ridge model explains almost none of the held-out variance of $m$, with $R^2$ of
+The frequency-curve predictor explains almost none of the held-out variance of $m$, with $R^2$ of
 $0.04$ when a basis family is held out and $0.02$ when a corpus is held out, and its sign
 accuracy equals that of always predicting a gain. Part of the failure lies in the target.
 Of the margins, $85\%$ fall between $1.5$ and $3.5$, because in many rows $Q_{000}$ is near
@@ -439,7 +440,7 @@ all-on nDCG@10 there ($0.157$ without against $0.147$ with, $p = 0.15$).
 \subsection{What the index predicts}
 \label{sec:predicts}
 
-The spread of the stored values predicts saturation's Shapley value. With length
+The spread of the stored values ($\mathrm{cv}_x$) predicts saturation's Shapley value. With length
 normalisation off, saturation maps a stored value $f$ to $g(f)$, and $g(f)/f$ falls as $f$
 grows. If every stored value in the index were equal, $g$ would rescale every score by one
 factor and the ranking would not move. Pooled PQ and RQ are such codes, and their
@@ -464,12 +465,11 @@ appendix). We take relevance to be the missing input (Section~\ref{sec:proxy}).
 \label{sec:proxy}
 
 If what the index lacks is relevance, a proxy for relevance should restore the
-prediction. Only the tier with pseudo-qualities reaches positive held-out $R^2$ on every
+prediction. Only the pseudo-label tier reaches positive held-out $R^2$ on every
 target and held-out split, and for $G$ it reaches $0.44$ to $0.59$, against at most $0.13$
 without them (Table~\ref{tab:predictor}). Within a row the pseudo-quality orders the eight
-configurations almost as $Q_c$ does (median Spearman $0.98$). On the 181 primary rows whose
-features are all defined, which were available when the rule was designed, the label-free
-rule raises mean nDCG@10 from $0.159$ (always-on) to $0.163$. The oracle reaches $0.165$, so
+configurations almost as $Q_c$ does (median Spearman $0.98$). The rule was designed on the
+primary rows. On the 181 whose features are all defined, it raises mean nDCG@10 from $0.159$ (always-on) to $0.163$. The oracle reaches $0.165$, so
 the rule recovers $59\%$ of the difference.
 
 With the registered BM25 reference, the rule's sign on rows it had not seen is no better
@@ -486,14 +486,14 @@ collections share one corpus, so these rows are not independent.
 \label{sec:splade}
 
 SPLADE-v3 under the inner product averages $0.523$ nDCG@10, and the correction lowers it
-on 8 of 10 collections, to $0.509$ (Table~\ref{tab:quality}). All-on is significantly worse
+on 8 of 10 collections and lowers the mean to $0.509$ (Table~\ref{tab:quality}). All-on is significantly worse
 on four collections and significantly better on ArguAna and LIMIT (bootstrap $p < 0.05$,
 uncorrected). The direction matches the reversal of \citet{clavie2026latent}; the size,
 $0.014$ against their $0.113$, does not. Inside BM25, length normalisation costs $0.019$
 ($0.528$ for \texttt{110} against $0.509$ for \texttt{111}). Its Shapley value, $-0.073$
 (Table~\ref{tab:shapley}), is larger because it also averages over \texttt{001} and
 \texttt{101}, which divide by length without saturation and score $0.13$ and $0.12$ below
-\texttt{000} and \texttt{100}. Saturation's Shapley value of $0.048$ comes from adding it to
+\texttt{000} and \texttt{100} respectively. Saturation's Shapley value of $0.048$ comes from adding it to
 those two configurations. Added to \texttt{000} or \texttt{100}, it changes mean nDCG@10 by
 less than $0.01$.
 
@@ -547,14 +547,14 @@ definition. A page selected at all 64 calibration positions gets the smoothed ID
 $\ln(1 + 0.5/64.5) \approx 0.008$ and one never selected gets $\ln 130 \approx 4.9$. On the
 first single-needle task with Qwen at the 1{,}024 budget, the page holding the needle ranks
 between second and tenth of 210 to 247 pages by selection rate, so IDF gives it one of the
-lowest weights. Exact attention mass shows the same on every task. Averaged over tasks, the
+lowest weights. Exact attention mass shows this on every task. Averaged over tasks, the
 pages a configuration with IDF on would select hold $0.29$ to $0.44$ of the softmax mass on
 Qwen and $0.21$ to $0.32$ on Llama, against $0.90$ to $0.95$ without IDF, and on every task
 each configuration with IDF on holds less mass than any without.
 
-As Proposition~\ref{prop:single} predicts, saturation without IDF changes almost nothing.
-On Qwen, \texttt{010} and \texttt{000} differ in task score on 38 of $2{,}600$
-example--budget pairs and in text on 448, which we attribute to float16 ties.
+As Proposition~\ref{prop:single} predicts, saturation without IDF changes the task score
+almost nowhere. On Qwen, \texttt{010} and \texttt{000} differ in task score on 38 of
+$2{,}600$ example--budget pairs and in text on 448. We attribute both to float16 ties.
 
 The registered frequency-curve predictor fails on both models. On Qwen it predicts a gain
 on all 24 rows and is wrong on every one, with an MAE of $4.18$ against the limit of
@@ -586,15 +586,15 @@ bias and the eight configurations. Configurations in one row route identically.}
 \end{table}
 
 Configuration \texttt{000} is the native forward pass. As Section~\ref{sec:problem}
-predicts, \texttt{001} to \texttt{011} give the same score as \texttt{000} on every example,
-and \texttt{101} the same as \texttt{100} (Table~\ref{tab:routing}). With IDF on, mean MMLU
+predicts, \texttt{001} to \texttt{011} give the same result as \texttt{000} on every
+example, and \texttt{101} the same as \texttt{100} (Table~\ref{tab:routing}). With IDF on, mean MMLU
 accuracy falls from $0.480$ to between $0.382$ and $0.390$, and WikiText perplexity rises
 from $7.49$ to $7.86$ and $7.88$. All-on is worse than all-off on 52 subjects and better on
 3, and significantly worse after Holm correction in 22 of the 58 rows (57 subjects and
 WikiText). As in KV selection, an expert's frequency is the router's own selection rate
 during calibration, so IDF sends tokens towards experts the router rarely chooses. The
 frequency bias, which adds a load-balancing term to the router probability instead of
-multiplying it, loses less (MMLU $0.428$, perplexity $7.73$). The registered predictor gives
+multiplying it, loses less (MMLU $0.428$, perplexity $7.73$). The frequency-curve predictor gives
 $2.05$ to $2.18$ for every subject, and its sign is right on 3 of the 55 subjects with a
 nonzero margin ($0.05$), with an MAE of $3.98$ against the limit of $1.81$. It is also wrong
 in sign on WikiText. No label-free rule was registered for routing, because its planned
@@ -603,10 +603,9 @@ reference, the output of a mixture over all 64 experts, was not implemented.
 \section{Discussion}
 \label{sec:discussion}
 
-Index statistics predict little of $G$ in our data, and a label-free rule is limited by its
-reference. Agreement with BM25 is higher for configurations that behave like BM25, so on
-SPLADE-v3 it favours the wrong ones. The dense reference passes there but may favour the
-E5 codes, which come from its embedding. Exact attention mass picks the right setting on
+Index statistics predict little of $G$ in our data, and the label-free rule depends on
+its reference. Agreement with BM25 is higher for configurations that behave like BM25, so on
+SPLADE-v3 it favours the wrong ones. Exact attention mass picks the right setting on
 every KV row with a reference, but so does a constant, and $\tilde{G}$ does not track the
 size of $G$ (Spearman $-0.32$ on Qwen and $-0.03$ on Llama).
 
@@ -626,8 +625,7 @@ KV selection on two models and in expert routing.
 One encoder underlies every retrieval code, E5 saw MIRACL in training, and SPLADE is one
 model. The KV runs use one 4K context and 100 examples per task, not the
 planned 500. Variable tracking lacks
-RULER's answer prefix, so it scores zero under every configuration on Qwen and almost zero
-on Llama. Llama's full-attention answer is empty on the 100 first single-needle examples
+RULER's answer prefix and scores about zero in every configuration. Llama's full-attention answer is empty on the 100 first single-needle examples
 and 262 others, mostly QA and multi-key, so its mass reference covers 938 of $1{,}300$. The label-free sign mark cannot be met when no
 row has $G > 0$. Routing uses one model. A frequency counted over unrelated prompts is the next test.
 
