@@ -286,6 +286,39 @@ def table_routing(out):
     write(out, "tab_routing", lines)
 
 
+def figure_panels(out, rows):
+    """Coordinates for the two-panel figure: cv_x against the saturation Shapley value on the
+    primary retrieval rows, and attention mass against RULER accuracy per KV row and configuration."""
+    diagnostics = {(d["representation"], d["seed"], d["budget"], d["collection"]): d["value_cv"]
+                   for d in json.loads((A / "exploratory" / "mechanism_diagnostics.json").read_text())}
+    points = defaultdict(list)
+    for r in primary(rows):
+        cv = diagnostics.get((r["representation_id"], r["seed"], r["budget"], r["collection"]))
+        if cv is not None:
+            points[r["granularity"]].append((cv, shapley(r["quality"])["saturation"]))
+    kv = defaultdict(list)
+    for model, study, mass_dir in (("qwen", T / "setting_b_study.json", T / "setting-b" / "attention_mass"),
+                                   ("llama", T / "setting_b_llama_study.json", T / "setting-b-llama" / "attention_mass")):
+        accuracy = {(r["task"], r["budget"]): r["quality"] for r in json.loads(study.read_text())["per_row"]}
+        for f in sorted(mass_dir.glob("*.json")):
+            m = json.loads(f.read_text())
+            if m["pseudo_quality"] is None:
+                continue
+            q = accuracy[(m["task"], m["budget"])]
+            for k in KEYS:
+                kv[(model, "on" if k[0] == "1" else "off")].append((m["pseudo_quality"][k], q[k]))
+
+    def plot(name, pairs):
+        # Each macro is a whole \addplot with a style of the same name, set in final.tex.
+        body = " ".join(f"({x:.4f},{y:.4f})" for x, y in pairs)
+        return rf"\newcommand{{\{name}}}{{\addplot[{name}] coordinates {{{body}}};}}"
+
+    lines = [plot("figsatpooled", points["pooled"]), plot("figsattoken", points["token"])]
+    for (model, idf), pairs in sorted(kv.items()):
+        lines.append(plot(f"figkv{model}{idf}", pairs))
+    write(out, "fig_data", lines)
+
+
 def main():
     out = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("docs/tables")
     out.mkdir(parents=True, exist_ok=True)
@@ -298,6 +331,7 @@ def main():
     table_bases(out, rows)
     table_attention(out)
     table_routing(out)
+    figure_panels(out, rows)
 
 
 if __name__ == "__main__":
