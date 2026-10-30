@@ -78,7 +78,7 @@ def table_families(out, rows):
     default = lambda r: r["k1"] == 1.2 and r["b"] == 0.75 and r["seed"] == 0 and not r.get("control")
     lines = [r"\begin{tabular}{@{}lrr@{}}", r"\toprule", r"Sweep & Coll. & Rows \\", r"\midrule"]
     families = [
-        ("primary, 14 representations", lambda r: default(r) and r["budget"] == "q32_d128"),
+        ("primary, 14 codes", lambda r: default(r) and r["budget"] == "q32_d128"),
         ("support budgets 16/64, 64/256", lambda r: default(r) and r["budget"] in ("q16_d64", "q64_d256")),
         ("native support", lambda r: default(r) and r["budget"] == "native"),
         (r"$k_1 \in \{.6, 1.2, 2.4\}$, $b \in \{0, .5, .75\}$",
@@ -194,7 +194,7 @@ def table_predictor(out):
                for ref, suffix in (("bm25", ""), ("dense", "_dense"))}
     labels = {"saturation": r"$\phi_{\mathrm{sat}}$", "length": r"$\phi_{\mathrm{len}}$",
               "idf": r"$\phi_{\mathrm{idf}}$", "collection_gain": "$G$"}
-    tiers = [("pre-registered / ridge", "pre-registered", "bm25"), ("index / ridge", "index", "bm25"),
+    tiers = [("pre-registered / ridge", "frequency curve", "bm25"), ("index / ridge", "index", "bm25"),
              ("pseudo-labels / ridge", "pseudo-labels", "bm25"), ("pseudo-labels / ridge", "pseudo-labels, E5", "dense")]
     lines = [r"\begin{tabular}{@{}llrrr@{}}", r"\toprule", r"Target & Features & Family & Corpus & Params \\", r"\midrule"]
     for target, label in labels.items():
