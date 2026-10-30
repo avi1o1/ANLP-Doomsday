@@ -109,7 +109,7 @@ frequency, so BM25's correction applies to all three (Figure~\ref{fig:overview})
 \draw[arr] (df) -- (z);
 \end{tikzpicture}
 \caption{The three settings. Each scores items against an input and keeps the top $k$.
-The score is a sum over features in retrieval and one value per page or expert. The BM25
+The score sums features in retrieval and is one value per page or expert. The BM25
 correction is applied between scoring and top-$k$ selection. Its frequency counts are also
 the input to the frequency-curve predictor of its gain.}
 \label{fig:overview}
@@ -128,8 +128,8 @@ the sparse code built on it. Fourteen codes come from one dense encoder, multili
 E5-base, and each is scored on thirteen collections with each part switched on or off,
 eight configurations in all. Exact Shapley values split each gain among the parts. A
 frequency-curve predictor estimates the gain, and a label-free rule predicts from
-agreement with a reference ranker whether IDF and length normalisation help. We fixed the main tests and
-their pass marks before reading their results, and call them registered
+agreement with a reference ranker whether IDF and length normalisation help. We fixed the main tests, and
+any pass marks, before reading their results, and call them registered
 (Table~\ref{tab:registered} in the appendix); the other analyses are exploratory.
 \begin{enumerate}
 \item The correction raises the E5 codes' mean nDCG@10 over the 182 code--collection pairs
@@ -354,8 +354,7 @@ long-context benchmark \citep{hsieh2024ruler}, from needle retrieval to QA, are 
 context with 100 examples per task and token budgets of 512 and 1{,}024 over 16-token
 pages. Prefill is dense and decoding attends only to the selected pages. Full attention,
 Quest and H2O \citep{zhang2023h2o} are run beside the eight configurations. Configuration
-\texttt{000} runs Quest's own scoring, and the softplus and per-head scaling of the others
-keep its order. The label-free reference is exact attention mass, the
+\texttt{000} is Quest's scoring, and the softplus and per-head scaling keep Quest's order. The label-free reference is exact attention mass, the
 share of full attention's softmax mass that falls on the pages a configuration would
 select, measured along the full-attention generation.
 
@@ -395,7 +394,7 @@ LIMIT, where E5 scores $0.015$ and only token-level $k$-means exceeds it ($0.033
 
 In 81 rows the inner product scores below $0.01$, so nearly any correction beats it. All-on is also not the best configuration. It is the strict best of
 the eight in only 42 rows, and \texttt{011} (saturation and length without IDF) has a
-higher mean, $0.163$ against $0.158$.
+higher mean, $0.163$ against $0.158$, though not at 16/64 ($0.101$ against $0.104$).
 
 \subsection{Saturation gives most of the gain}
 \label{sec:attribution}
@@ -439,7 +438,7 @@ uniform frequencies on three collections (Appendix~\ref{app:bases}).
   figkvllamaon/.style={only marks, mark=triangle, mark size=1.2pt, red!45}}
 \begin{tikzpicture}
 \begin{axis}[xlabel={$\mathrm{cv}_x$}, ylabel={$\phi_{\mathrm{sat}}$},
-  ylabel style={yshift=-4pt}, xmin=-0.1, legend pos=north west]
+  ylabel style={yshift=-4pt}, xmin=-0.1, ymax=0.55, legend pos=north west]
 \figsatpooled
 \figsattoken
 \legend{pooled, token}
@@ -447,7 +446,7 @@ uniform frequencies on three collections (Appendix~\ref{app:bases}).
 \end{tikzpicture}\hspace{1mm}%
 \begin{tikzpicture}
 \begin{axis}[xlabel={attention mass}, ylabel={RULER accuracy}, ylabel style={yshift=-4pt},
-  xmin=0, xmax=1.02, ymin=-0.03, ymax=1.03, legend pos=north west]
+  xmin=0, xmax=1.02, ymin=-0.03, ymax=1.25, ytick={0,0.5,1}, legend pos=north west]
 \figkvqwenoff
 \figkvllamaoff
 \figkvqwenon
@@ -455,10 +454,10 @@ uniform frequencies on three collections (Appendix~\ref{app:bases}).
 \legend{{Qwen, no IDF},{Llama, no IDF},{Qwen, IDF},{Llama, IDF}}
 \end{axis}
 \end{tikzpicture}
-\caption{Left, each of the 182 primary retrieval rows: the spread of the stored values
-against saturation's Shapley value. Right, each KV row and configuration with a mass
-reference: the share of full attention's mass on the selected pages against RULER
-accuracy, with and without IDF.}
+\caption{Left, the spread of the stored values against saturation's Shapley value, one
+point per primary retrieval row. Right, the share of full attention's mass on the selected
+pages against RULER accuracy, one point per KV row and configuration with a mass
+reference.}
 \label{fig:panels}
 \end{figure}
 
@@ -500,8 +499,8 @@ values stored in the index, chiefly $\mathrm{cv}_x$. The third adds the pseudo-q
 Section~\ref{sec:predictors} and features of each configuration's top-100 ranking. Index
 statistics predict saturation's Shapley value (held-out $R^2$ of $0.29$ to $0.56$) but
 predict $G$ no better than the frequency curve does ($0.01$ to $0.12$ against $0.01$ to
-$0.13$). For the two strongest codes, token-level SAE and token-level PCA, $G > 0$ on 6
-of 13 collections, so on the other 7 saturation alone scores higher than all-on.
+$0.13$). $G$ varies even within a code. For token-level SAE and PCA, the two strongest codes,
+$G > 0$ on 6 of 13 collections.
 
 \subsection{Agreement with text BM25 in place of labels}
 \label{sec:proxy}
@@ -514,7 +513,7 @@ models, all-on averages $0.1590$, the rule $0.1628$ and the oracle $0.1654$, so 
 recovers $59\%$ of the gap to the oracle.
 
 Our interim report stated the rule, unregistered, before we produced 84 new rows,
-the fourteen codes at the two other support budgets on the three MS~MARCO collections.
+the fourteen codes at the 16/64 and 64/256 budgets on the three MS~MARCO collections.
 All-on and the oracle are close on these rows ($0.202$ and $0.203$). With the text BM25 reference,
 $\tilde{G}$ tracks $G$ (Spearman $0.91$), but its sign is right on $0.87$ of rows, against
 $0.88$ for always predicting a gain. The dense or fused reference gets the sign right on
@@ -533,12 +532,12 @@ direction matches the reversal of \citet{clavie2026latent}; the size, $0.013$ ag
 $0.113$, does not. Without length normalisation, IDF and saturation (\texttt{110}) score
 $0.528$, above the inner product (Appendix~\ref{app:bases}).
 
-The SPLADE-v3 scores were known in advance, but the label-free estimates were not. The sign of $G$ splits 5 to 5, so a constant sign
+The SPLADE-v3 scores were known before this test was fixed, but the label-free estimates were not. The sign of $G$ splits 5 to 5, so a constant sign
 scores only $0.50$. With the registered text BM25 reference, $\tilde{G}$ has the right sign
 on 5 of 10 collections and Spearman $-0.04$ with $G$. On the three MS~MARCO
 collections, adding IDF and length normalisation raises agreement with text BM25 by $0.06$
 to $0.08$ while lowering nDCG@10. Configurations that behave like BM25 agree more with text
-BM25, the bias named in the registration. The secondary dense reference meets both
+BM25, a bias noted in advance. The secondary dense reference meets both
 pass marks. Its sign is right on 7 of 10 collections, and its rule scores $0.519$, against
 $0.509$ for all-on and $0.515$ for \texttt{010}. Over 10 collections the $95\%$
 interval for its gain over all-on includes zero. The fused reference fails.
@@ -556,8 +555,8 @@ interval for its gain over all-on includes zero. The fused reference fails.
 \caption{Mean RULER accuracy (13 tasks, 4K context, 100 examples each) and mean share of
 full attention's softmax mass on the pages each configuration would select, at token
 budgets of 512 and 1{,}024. Full is full attention, and Quest equals \texttt{000} on every
-example. Llama's mass excludes the first single-needle task, where full attention gives an
-empty answer.}
+example. Llama's mass covers the 938 of $1{,}300$ examples where full attention gives a non-empty
+answer.}
 \label{tab:attention}
 \end{table*}
 
@@ -576,12 +575,11 @@ stays within $0.02$ of Quest. Three rows score zero in every configuration. In t
 23, all-on is significantly worse than all-off in 18 after Holm correction and better in
 none, and IDF's mean Shapley value is $-0.509$.
 
-Configurations with IDF select pages that hold on average less than half of full
-attention's softmax mass. A page selected at all 64 calibration positions gets the smoothed
+IDF gives low weights to the pages Quest selects often. A page selected at all 64 calibration positions gets the smoothed
 IDF $\ln(1 + 0.5/64.5) \approx 0.008$, and one never selected gets $\ln 130 \approx 4.9$.
 On the first single-needle task with Qwen at the 1{,}024 budget, the page holding the
 needle ranks between second and tenth of 210 to 247 pages by selection rate, so IDF gives
-it one of the lowest weights. Averaged over tasks, the pages a configuration with IDF would
+it a low weight. Averaged over tasks, the pages a configuration with IDF would
 select hold $0.29$ to $0.44$ of the softmax mass on Qwen and $0.21$ to $0.32$ on Llama,
 against $0.90$ to $0.95$ without IDF. On every task with a mass reference, each
 configuration with IDF holds less mass than any configuration without
@@ -620,7 +618,7 @@ the same result as \texttt{000} on every example, and \texttt{101} the same as
 falls from $0.480$ to between $0.382$ and $0.390$, and WikiText perplexity rises from
 $7.49$ to $7.86$ or $7.88$. All-on is worse than all-off on 52 subjects and better on 3,
 and significantly worse after Holm correction in 22 of the 58 rows (57 subjects and
-WikiText). IDF sends tokens towards experts the router rarely chose during calibration. The frequency bias, which adds a load-balancing term to the router probability, loses less (MMLU $0.428$, perplexity $7.73$). The frequency-curve predictor
+WikiText). IDF sends tokens towards experts the router rarely chose during calibration. The frequency bias loses less (MMLU $0.428$, perplexity $7.73$). The frequency-curve predictor
 predicts $m$ of $2.05$ to $2.18$ for every subject, right in sign on 3 of the 55 subjects with a
 nonzero margin ($0.05$) and wrong on WikiText, and its MAE is $3.98$ against the limit of
 $1.81$. No label-free rule was registered for routing, because its
@@ -633,11 +631,10 @@ planned reference, a mixture over all 64 experts, was not implemented.
 gain without collection statistics, and $\mathrm{cv}_x$ ranks its effect at held-out
 values of $k_1$. Where each item carries a single score and IDF is off,
 saturation cannot change the selection up to ties (Proposition~\ref{prop:single}), and in
-KV selection and routing it changed task scores almost nowhere. For codes like ours,
-BM25 without IDF (\texttt{011}, $0.163$) scores above all-on ($0.158$) and needs no
-document frequencies.
+KV selection and routing it changed task scores almost nowhere.
 
-\paragraph{IDF and length normalisation.} Whether IDF and length normalisation help a code
+\paragraph{IDF and length normalisation.} BM25 without IDF beats all-on at the primary
+budget, not at 16/64. Whether IDF and length normalisation help a code
 on a collection is harder to say. The frequency curve does not predict it, and neither do
 index statistics. Agreement with text BM25 helps a fitted model, but the label-free rule
 built on it is no better than a constant in sign on new E5 rows and fails its registered
@@ -693,8 +690,8 @@ fails (sign $.05$, MAE $3.98$) \\
 \bottomrule
 \end{tabular}
 \captionof{table}{Tests fixed in a dated commit before their results were read. For
-SPLADE-v3 the scores were already known. The Llama tests were added after the Qwen results
-were read and before any Llama run, and noted in advance that the KV sign mark cannot be
+SPLADE-v3 the scores were already known. We added the Llama tests after reading the Qwen results
+and before any Llama run, noting in advance that the KV sign mark cannot be
 met if no row has $G > 0$; we had not foreseen this for Qwen. Sign is the fraction of rows with a nonzero
 target whose sign is predicted correctly. The label-free rule of our interim report,
 evaluated on MS~MARCO rows produced afterwards, is reported in Section~\ref{sec:proxy} but
