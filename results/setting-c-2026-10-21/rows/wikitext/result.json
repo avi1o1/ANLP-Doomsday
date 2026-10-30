@@ -1,0 +1,84 @@
+{
+  "benchmark": "wikitext",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.5174106024984861,
+    "frequent_activation_share": 0.04155468208295146,
+    "head_frequency_mass": 0.04188726842403412,
+    "idf_variance": 0.3565209117302013,
+    "mass_gini": 0.2870615522290121,
+    "reference_units": 16
+  },
+  "margin": -2.0688322870655136,
+  "margin_ci95": [
+    -2.0791157411411363,
+    -2.0592071160134804
+  ],
+  "margin_variance": 2.6118877174972093e-05,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 141,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "perplexity": {
+    "000": 7.489051481847091,
+    "001": 7.489051481847091,
+    "010": 7.489051481847091,
+    "011": 7.489051481847091,
+    "100": 7.857119273279461,
+    "101": 7.857119273279461,
+    "110": 7.884300819390633,
+    "111": 7.884801039174568
+  },
+  "quality": {
+    "000": -2.0134421515722294,
+    "001": -2.0134421515722294,
+    "010": -2.0134421515722294,
+    "011": -2.0134421515722294,
+    "100": -2.061420034590039,
+    "101": -2.061420034590039,
+    "110": -2.064873544243771,
+    "111": -2.0649369872716097
+  },
+  "quality_measure": "negative_mean_token_nll",
+  "raw_ci95": [
+    -0.05982415679046878,
+    -0.04511190048277812
+  ],
+  "raw_delta": -0.05149483569938029,
+  "row_id": "b4493f0276a1148fda30c2407d6181f1b47998fb6548689230c8b9fbdccd8477",
+  "setting": "routing",
+  "spread": 0.0248907734190585,
+  "subject": null,
+  "undefined_reason": null
+}

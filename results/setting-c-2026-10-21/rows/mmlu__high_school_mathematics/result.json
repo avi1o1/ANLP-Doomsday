@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 1.0430773474806383,
+    "frequent_activation_share": 0.1303282935828815,
+    "head_frequency_mass": 0.0963934877455003,
+    "idf_variance": 1.0659296247095589,
+    "mass_gini": 0.576971472059632,
+    "reference_units": 16
+  },
+  "margin": -1.159641513187614,
+  "margin_ci95": [
+    -2.261218920881366,
+    2.7772553736303345
+  ],
+  "margin_variance": 1.7782078175085432,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 270,
+  "p_value": 0.4927536231884058,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.3,
+    "001": 0.3,
+    "010": 0.3,
+    "011": 0.3,
+    "100": 0.2518518518518518,
+    "101": 0.2518518518518518,
+    "110": 0.2518518518518518,
+    "111": 0.2740740740740741
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.09629629629629627,
+    0.04453703703703654
+  ],
+  "raw_delta": -0.025925925925925908,
+  "row_id": "9b01a84517d16f569ebc77041866a2b0fd27ba124dfeaf6ee0b243683165bf47",
+  "setting": "routing",
+  "spread": 0.022356845310462295,
+  "subject": "high_school_mathematics",
+  "undefined_reason": null
+}

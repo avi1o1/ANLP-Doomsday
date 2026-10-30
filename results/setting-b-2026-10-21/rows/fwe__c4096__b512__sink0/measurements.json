@@ -1,0 +1,119 @@
+{
+ "row": "fwe__c4096__b512__sink0",
+ "examples": 100,
+ "calibration_seconds_mean": 1.7505,
+ "score_mean": {
+  "000": 0.7433,
+  "001": 0.8333,
+  "010": 0.7467,
+  "011": 0.8333,
+  "100": 0.2633,
+  "101": 0.1267,
+  "110": 0.2333,
+  "111": 0.2233,
+  "full": 0.85,
+  "h2o": 0.81,
+  "quest": 0.7433
+ },
+ "configs": {
+  "000": {
+   "decode_seconds": 1.3407,
+   "prefill_seconds": 0.3784,
+   "selection_seconds": 0.5465,
+   "selected_kv_tokens": 3924157.44,
+   "generated_tokens": 24.15,
+   "resident_cache_bytes": 105472532.48,
+   "peak_cuda_allocated_bytes": 4413328737.28
+  },
+  "001": {
+   "decode_seconds": 1.4211,
+   "prefill_seconds": 0.3781,
+   "selection_seconds": 0.6976,
+   "selected_kv_tokens": 3554298.72,
+   "generated_tokens": 21.97,
+   "resident_cache_bytes": 105410027.52,
+   "peak_cuda_allocated_bytes": 4413877278.72
+  },
+  "010": {
+   "decode_seconds": 1.53,
+   "prefill_seconds": 0.3779,
+   "selection_seconds": 0.731,
+   "selected_kv_tokens": 3925844.16,
+   "generated_tokens": 24.16,
+   "resident_cache_bytes": 105472819.2,
+   "peak_cuda_allocated_bytes": 4413877278.72
+  },
+  "011": {
+   "decode_seconds": 1.4425,
+   "prefill_seconds": 0.378,
+   "selection_seconds": 0.7184,
+   "selected_kv_tokens": 3554298.72,
+   "generated_tokens": 21.97,
+   "resident_cache_bytes": 105410027.52,
+   "peak_cuda_allocated_bytes": 4413877278.72
+  },
+  "100": {
+   "decode_seconds": 3.1744,
+   "prefill_seconds": 0.3779,
+   "selection_seconds": 1.5626,
+   "selected_kv_tokens": 7926505.44,
+   "generated_tokens": 47.76,
+   "resident_cache_bytes": 106149478.4,
+   "peak_cuda_allocated_bytes": 4413877278.72
+  },
+  "101": {
+   "decode_seconds": 3.0682,
+   "prefill_seconds": 0.3777,
+   "selection_seconds": 1.5668,
+   "selected_kv_tokens": 7377508.32,
+   "generated_tokens": 44.52,
+   "resident_cache_bytes": 106056581.12,
+   "peak_cuda_allocated_bytes": 4413877278.72
+  },
+  "110": {
+   "decode_seconds": 3.1246,
+   "prefill_seconds": 0.3775,
+   "selection_seconds": 1.5598,
+   "selected_kv_tokens": 7696120.32,
+   "generated_tokens": 46.4,
+   "resident_cache_bytes": 106110484.48,
+   "peak_cuda_allocated_bytes": 4413877278.72
+  },
+  "111": {
+   "decode_seconds": 3.3103,
+   "prefill_seconds": 0.3773,
+   "selection_seconds": 1.7104,
+   "selected_kv_tokens": 7863885.12,
+   "generated_tokens": 47.39,
+   "resident_cache_bytes": 106138869.76,
+   "peak_cuda_allocated_bytes": 4413877278.72
+  },
+  "full": {
+   "decode_seconds": 0.714,
+   "prefill_seconds": 0.3761,
+   "selection_seconds": 0.0061,
+   "selected_kv_tokens": 26247207.84,
+   "generated_tokens": 22.24,
+   "resident_cache_bytes": 105417768.96,
+   "peak_cuda_allocated_bytes": 4398820229.12
+  },
+  "h2o": {
+   "decode_seconds": 0.9177,
+   "prefill_seconds": 0.9155,
+   "selection_seconds": 0.1559,
+   "selected_kv_tokens": 3743416.32,
+   "generated_tokens": 22.76,
+   "resident_cache_bytes": 105432678.4,
+   "peak_cuda_allocated_bytes": 4356151045.12
+  },
+  "quest": {
+   "decode_seconds": 1.3399,
+   "prefill_seconds": 0.3774,
+   "selection_seconds": 0.546,
+   "selected_kv_tokens": 3924157.44,
+   "generated_tokens": 24.15,
+   "resident_cache_bytes": 105472532.48,
+   "peak_cuda_allocated_bytes": 4413328737.28
+  }
+ }
+}

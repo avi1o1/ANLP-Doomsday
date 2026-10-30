@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.8422197280207646,
+    "frequent_activation_share": 0.10038491571137931,
+    "head_frequency_mass": 0.08054804380927078,
+    "idf_variance": 1.054263392056015,
+    "mass_gini": 0.43436600324822794,
+    "reference_units": 16
+  },
+  "margin": -2.1739273126342105,
+  "margin_ci95": [
+    -2.405171386892469,
+    -1.98673471522064
+  ],
+  "margin_variance": 0.010750040888305883,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 272,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.47058823529411764,
+    "001": 0.47058823529411764,
+    "010": 0.47058823529411764,
+    "011": 0.47058823529411764,
+    "100": 0.3272058823529412,
+    "101": 0.3272058823529412,
+    "110": 0.3161764705882353,
+    "111": 0.30514705882352944
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.22426470588235298,
+    -0.10661764705882354
+  ],
+  "raw_delta": -0.1654411764705882,
+  "row_id": "26f533e18e91b225f3c248d635faba5725ab44230bd91c6cac5f0aef42cf283b",
+  "setting": "routing",
+  "spread": 0.07610244165437084,
+  "subject": "professional_medicine",
+  "undefined_reason": null
+}

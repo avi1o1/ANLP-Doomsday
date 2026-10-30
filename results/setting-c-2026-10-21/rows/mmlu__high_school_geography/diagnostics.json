@@ -1,0 +1,11 @@
+{
+  "active_fraction": 0.125,
+  "aggregation": "equal_reference_unit_mean",
+  "dead_feature_fraction": 0.0,
+  "frequency_slope": 0.7566635578161149,
+  "frequent_activation_share": 0.065731377500296,
+  "head_frequency_mass": 0.05677702685679734,
+  "idf_variance": 0.6636843746469259,
+  "mass_gini": 0.4225869976346627,
+  "reference_units": 16
+}

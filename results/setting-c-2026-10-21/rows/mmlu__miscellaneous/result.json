@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.6189188307625189,
+    "frequent_activation_share": 0.059789235309953476,
+    "head_frequency_mass": 0.05337223935273035,
+    "idf_variance": 0.416399692594554,
+    "mass_gini": 0.36509625436238585,
+    "reference_units": 16
+  },
+  "margin": -2.0289988251252633,
+  "margin_ci95": [
+    -2.507176530386625,
+    -1.1985653519975001
+  ],
+  "margin_variance": 0.1544531329358213,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 783,
+  "p_value": 0.015992003998001,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.6615581098339719,
+    "001": 0.6615581098339719,
+    "010": 0.6615581098339719,
+    "011": 0.6615581098339719,
+    "100": 0.6283524904214559,
+    "101": 0.6283524904214559,
+    "110": 0.6232439335887612,
+    "111": 0.6257982120051085
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.0638569604086845,
+    -0.008939974457215838
+  ],
+  "raw_delta": -0.03575989782886335,
+  "row_id": "9b319560fdb66bcb411063a6a462e97ce3e79351842fc099a9c722a7a0fa8657",
+  "setting": "routing",
+  "spread": 0.017624405389517987,
+  "subject": "miscellaneous",
+  "undefined_reason": null
+}

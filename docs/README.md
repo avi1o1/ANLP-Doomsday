@@ -37,11 +37,7 @@ the set of rendered bibliography entries. Every team member uploads separately.
 ## Implementation notes
 
 The original document notes above are retained. The commands below describe
-the current Make targets and the separate implementation workflow.
-
-- [IMPLEMENTATION.md](../context/IMPLEMENTATION.md): environment setup, `sbatch` training, stage commands and artifacts.
-- [PROTOCOL.md](../context/PROTOCOL.md): current research scope and experimental definitions, without a timeline or fixed row count.
-- [THEORY.md](../context/THEORY.md): scoring identity, equivalence conditions and counterexamples.
+the current Make targets; the experiment workflow is in the top-level README.
 
 The `.tex` files are proposal/report sources. Their original schedules do not govern
 the implementation. The Makefiles build these documents and package submissions;

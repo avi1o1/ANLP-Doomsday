@@ -60,7 +60,10 @@ Mean main effects on nDCG@10: saturation +0.065, length +0.032, IDF +0.013.
 
 The pre-registered predictor remains weak. On the primary rows (n = 118 after exclusions) its sign
 accuracy equals the majority-sign baseline, 0.924, and its held-out R² is −0.11 across
-basis families and 0.14 across corpora. See `report/predictor.csv`. The exploratory
+basis families and 0.14 across corpora. See `report/predictor.csv`. These figures are for
+the ten collections here, with the 19 low-response rows excluded. The mid report quotes
+the thirteen-collection primary grid of `results/setting-a-2026-09-26` (R² 0.04 across
+families, 0.02 across corpora, sign accuracy equal to the majority baseline of 0.899). The exploratory
 analysis in `exploratory/README.md` attributes the gain to each switch and builds a
 label-free predictor that does better.
 

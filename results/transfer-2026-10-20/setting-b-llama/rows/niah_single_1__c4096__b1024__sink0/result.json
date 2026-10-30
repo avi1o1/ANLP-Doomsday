@@ -1,0 +1,49 @@
+{
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 0,
+  "budget": 1024,
+  "context": 4096,
+  "diagnostics": {
+    "active_fraction": 0.4534139379363061,
+    "frequency_slope": 0.4810012960881327,
+    "frequent_activation_share": 0.06630288589098417,
+    "head_frequency_mass": 0.025913989537027265,
+    "idf_variance": 0.3020378058981436,
+    "mass_gini": 0.4339627656121165
+  },
+  "examples": 100,
+  "margin": null,
+  "margin_ci95": null,
+  "margin_variance": null,
+  "model": {
+    "device_map": {},
+    "model": "meta-llama/Llama-3.2-1B-Instruct",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "9213176726f574b556790deb65791e0c5aa438b6"
+  },
+  "n_examples": 100,
+  "p_value": 1.0,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.0,
+    "001": 0.0,
+    "010": 0.0,
+    "011": 0.0,
+    "100": 0.0,
+    "101": 0.0,
+    "110": 0.0,
+    "111": 0.0
+  },
+  "raw_ci95": [
+    0.0,
+    0.0
+  ],
+  "raw_delta": 0.0,
+  "row_id": "5d2dc84faff373fc21469bffaeb21dc1482d7c6fbe7c319f8850eb736830787c",
+  "setting": "attention",
+  "sink": false,
+  "spread": 0.0,
+  "task": "niah_single_1",
+  "undefined_reason": "zero_configuration_spread"
+}

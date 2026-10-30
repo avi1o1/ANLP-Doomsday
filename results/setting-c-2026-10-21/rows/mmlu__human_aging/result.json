@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 1999,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.6991784764836173,
+    "frequent_activation_share": 0.0666365538685916,
+    "head_frequency_mass": 0.06050123620055198,
+    "idf_variance": 0.5641246183202704,
+    "mass_gini": 0.399070247620697,
+    "reference_units": 16
+  },
+  "margin": -2.923176205442533,
+  "margin_ci95": [
+    -3.0550504633038926,
+    1.7183201482488812
+  ],
+  "margin_variance": 2.0135910850302055,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 223,
+  "p_value": 0.391304347826087,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.5336322869955157,
+    "001": 0.5336322869955157,
+    "010": 0.5336322869955157,
+    "011": 0.5336322869955157,
+    "100": 0.5291479820627802,
+    "101": 0.5291479820627802,
+    "110": 0.515695067264574,
+    "111": 0.5022421524663677
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.09865470852017938,
+    0.0358744394618834
+  ],
+  "raw_delta": -0.03139013452914796,
+  "row_id": "4df0750cb7836849d05001eed176bf6fe7647805288bb2d63b4828fc1133d47b",
+  "setting": "routing",
+  "spread": 0.01073836550485874,
+  "subject": "human_aging",
+  "undefined_reason": null
+}

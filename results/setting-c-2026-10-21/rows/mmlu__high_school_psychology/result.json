@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.6199262284933068,
+    "frequent_activation_share": 0.06311741384387971,
+    "head_frequency_mass": 0.055931693017979206,
+    "idf_variance": 0.44747565331474404,
+    "mass_gini": 0.36412620061465917,
+    "reference_units": 16
+  },
+  "margin": -2.0898091685006532,
+  "margin_ci95": [
+    -2.3107496168685775,
+    -1.8595289365999499
+  ],
+  "margin_variance": 0.011841861382372063,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 545,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.6587155963302752,
+    "001": 0.6587155963302752,
+    "010": 0.6587155963302752,
+    "011": 0.6587155963302752,
+    "100": 0.5614678899082569,
+    "101": 0.5614678899082569,
+    "110": 0.5577981651376147,
+    "111": 0.5541284403669725
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.14128440366972483,
+    -0.06605504587155964
+  ],
+  "raw_delta": -0.1045871559633027,
+  "row_id": "cd014e1b17ad4f36e1c7b6a75e9f49507d8e9fdd99fd103138ab1fcb3b24e279",
+  "setting": "routing",
+  "spread": 0.05004627098958486,
+  "subject": "high_school_psychology",
+  "undefined_reason": null
+}

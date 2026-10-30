@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 1998,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.6053083417491045,
+    "frequent_activation_share": 0.07974129611074493,
+    "head_frequency_mass": 0.06535953123664645,
+    "idf_variance": 0.47774764750580834,
+    "mass_gini": 0.34155584127548827,
+    "reference_units": 16
+  },
+  "margin": -2.0412829827503898,
+  "margin_ci95": [
+    -2.4326545622381492,
+    2.0
+  ],
+  "margin_variance": 0.8967805147530437,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 165,
+  "p_value": 0.15692153923038482,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.5818181818181818,
+    "001": 0.5818181818181818,
+    "010": 0.5818181818181818,
+    "011": 0.5818181818181818,
+    "100": 0.5393939393939394,
+    "101": 0.5393939393939394,
+    "110": 0.5272727272727272,
+    "111": 0.5333333333333333
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.10909090909090913,
+    0.012121212121212088
+  ],
+  "raw_delta": -0.048484848484848464,
+  "row_id": "d621c9f103e0d3f9d8190ba4572c7d90769bb0d2c08d755317f6968d4d88fa14",
+  "setting": "routing",
+  "spread": 0.02375214455544072,
+  "subject": "high_school_european_history",
+  "undefined_reason": null
+}

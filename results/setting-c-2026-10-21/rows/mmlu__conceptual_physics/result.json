@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.9960089628078571,
+    "frequent_activation_share": 0.09461480120593257,
+    "head_frequency_mass": 0.08073291259110088,
+    "idf_variance": 1.1385079970509282,
+    "mass_gini": 0.5167210426662538,
+    "reference_units": 16
+  },
+  "margin": -1.9638606165510741,
+  "margin_ci95": [
+    -2.173239186891263,
+    -1.6996380138051141
+  ],
+  "margin_variance": 0.014269286668379708,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 235,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.48936170212765956,
+    "001": 0.48936170212765956,
+    "010": 0.48936170212765956,
+    "011": 0.48936170212765956,
+    "100": 0.31063829787234043,
+    "101": 0.31063829787234043,
+    "110": 0.31063829787234043,
+    "111": 0.3148936170212766
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.2553191489361702,
+    -0.09361702127659571
+  ],
+  "raw_delta": -0.17446808510638295,
+  "row_id": "ef4a8c21bfd276d7205fdc0901a218f73398dac61119981347db0a837ff4cbe3",
+  "setting": "routing",
+  "spread": 0.08883934207753667,
+  "subject": "conceptual_physics",
+  "undefined_reason": null
+}

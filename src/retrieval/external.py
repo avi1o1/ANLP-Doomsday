@@ -1,5 +1,6 @@
 """Explicit reproduction status and evaluation of exported external feature shards."""
 
+import os
 import sqlite3
 from pathlib import Path
 
@@ -29,6 +30,45 @@ def reproduction_status(config):
               "positive_result_is_correctness_gate": False}
     atomic_json(root(config) / "external" / "latent_terms_status.json", status)
     return status
+
+
+def score_on_gpu(config, dataset, spec, resolve, stats, queries, lookup, judged, qrels, switches, directory):
+    """Write the pending batch files for one scorer on the GPU, in groups of whole batches.
+
+    Rankings match the CPU path (ordered FP32 postings accumulation); only the number of
+    queries sharing one pass over the shards changes.
+    """
+    from src.retrieval.gpu_scoring import BatchedScorer
+
+    size = config.get("evaluation_batch_size", 32)
+    pending = [(n, batch) for n, batch in enumerate(chunks(judged, size))
+               if not (directory / switches.key / f"{n:06d}.json").exists()]
+    if not pending:
+        return
+    exclude = config["datasets"][dataset].get("exclude_identical_ids")
+    document_ids = [i for shard in spec["documents"] for i in read_json(resolve(shard["ids"]))]
+    per_group = max(1, int(os.environ.get("CSX_GPU_QUERY_BATCH", "8192")) // size)
+    for start in range(0, len(pending), per_group):
+        group = pending[start:start + per_group]
+        names = [qid for _, batch in group for qid in batch]
+        scorer = BatchedScorer(queries[[lookup[q] for q in names]], document_ids,
+                               excluded=names if exclude else None,
+                               block=int(os.environ.get("CSX_GPU_DOCUMENT_BLOCK", "4096")))
+        offset = 0
+        for shard in spec["documents"]:
+            index = InvertedIndex(sparse.load_npz(resolve(shard["matrix"])),
+                                  read_json(resolve(shard["ids"])), stats, switches)
+            scorer.add(index, offset)
+            offset += len(index.doc_ids)
+        rankings, _ = scorer.finish()
+        position = 0
+        for n, batch in group:
+            atomic_json(directory / switches.key / f"{n:06d}.json",
+                        [{"query_id": qid, "ranking": rankings[position + i],
+                          "metrics": standard_metrics(qid, rankings[position + i], qrels[qid])}
+                         for i, qid in enumerate(batch)])
+            position += len(batch)
+        del scorer
 
 
 def evaluate_external(config, dataset, manifest_path, stop):
@@ -85,6 +125,8 @@ def evaluate_external(config, dataset, manifest_path, stop):
         judged = sorted(qrels)
         outcomes, outputs = np.zeros((len(judged), 8)), []
         for column, switches in enumerate(configurations()):
+            if os.environ.get("CSX_EVALUATION_BACKEND") == "cuda":
+                score_on_gpu(config, dataset, spec, resolve, stats, queries, lookup, judged, qrels, switches, directory)
             for batch_number, batch in enumerate(chunks(judged, config.get("evaluation_batch_size", 32))):
                 stop.check()
                 path = directory / switches.key / f"{batch_number:06d}.json"

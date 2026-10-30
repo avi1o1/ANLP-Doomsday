@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 1999,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 1.0658196295415188,
+    "frequent_activation_share": 0.12292469585019904,
+    "head_frequency_mass": 0.09683120818078525,
+    "idf_variance": 1.3550200883061982,
+    "mass_gini": 0.5468334707943614,
+    "reference_units": 16
+  },
+  "margin": 2.3154387369357488,
+  "margin_ci95": [
+    -1.6226146521057858,
+    2.8736848324283994
+  ],
+  "margin_variance": 2.0937443349625835,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 102,
+  "p_value": 0.5132433783108445,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.24509803921568626,
+    "001": 0.24509803921568626,
+    "010": 0.24509803921568626,
+    "011": 0.24509803921568626,
+    "100": 0.23529411764705882,
+    "101": 0.23529411764705882,
+    "110": 0.27450980392156865,
+    "111": 0.28431372549019607
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.06862745098039214,
+    0.14705882352941174
+  ],
+  "raw_delta": 0.0392156862745098,
+  "row_id": "731a85cee14122b42d4b4bcb414823369fe82b426985164ba1ebad6def436cb8",
+  "setting": "routing",
+  "spread": 0.016936611471918207,
+  "subject": "college_physics",
+  "undefined_reason": null
+}

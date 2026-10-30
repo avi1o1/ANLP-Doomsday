@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 1994,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.8043234798986946,
+    "frequent_activation_share": 0.061844783648960705,
+    "head_frequency_mass": 0.05685,
+    "idf_variance": 0.7779809877518995,
+    "mass_gini": 0.4341980875340772,
+    "reference_units": 16
+  },
+  "margin": -1.5790840679034477,
+  "margin_ci95": [
+    -2.7969048430204335,
+    2.916056157596548
+  ],
+  "margin_variance": 3.0863073071179565,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 100,
+  "p_value": 0.6186906546726637,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.44,
+    "001": 0.44,
+    "010": 0.44,
+    "011": 0.44,
+    "100": 0.4,
+    "101": 0.4,
+    "110": 0.4,
+    "111": 0.41
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.14000000000000007,
+    0.08024999999999866
+  ],
+  "raw_delta": -0.030000000000000027,
+  "row_id": "b130844a1ccd40c24bca1e9ed2638de4baa472d7fd4beb0e3a61082578f80904",
+  "setting": "routing",
+  "spread": 0.01899835519196332,
+  "subject": "business_ethics",
+  "undefined_reason": null
+}

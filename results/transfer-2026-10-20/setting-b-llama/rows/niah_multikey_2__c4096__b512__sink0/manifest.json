@@ -1,0 +1,124 @@
+{
+  "config": {
+    "budget": 512,
+    "context": 4096,
+    "data_sha256": "a050f5cf2c666b11a6385f98cab8240f8ce52402bc66b9c09390979f31f9a83c",
+    "model": {
+      "device_map": {},
+      "model": "meta-llama/Llama-3.2-1B-Instruct",
+      "precision": "float16",
+      "quantization": null,
+      "revision": "9213176726f574b556790deb65791e0c5aa438b6"
+    },
+    "scorer_sha256": "6740467c17b8dc06b6b30f4f97e54ce8de81db0dd879f1538d0b6b5727f4bd5f",
+    "sink": false,
+    "spec": {
+      "budgets": [
+        512,
+        1024
+      ],
+      "calibration_samples": 64,
+      "contexts": [
+        4096
+      ],
+      "examples_per_task": 100,
+      "fallback_model": "Qwen/Qwen2.5-1.5B-Instruct",
+      "fallback_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+      "model": "meta-llama/Llama-3.2-1B-Instruct",
+      "page_size": 16,
+      "precision": "float16",
+      "requested_model": "meta-llama/Llama-3.2-1B-Instruct",
+      "revision": "9213176726f574b556790deb65791e0c5aa438b6",
+      "ruler_checkout": "/ssd_scratch/anirudh.sankar/benchmarks/RULER-patched",
+      "ruler_data": "/ssd_scratch/anirudh.sankar/benchmarks/ruler-llama-n100",
+      "seed": 0,
+      "sink_ablation": false,
+      "tasks": [
+        "niah_single_1",
+        "niah_single_2",
+        "niah_single_3",
+        "niah_multikey_1",
+        "niah_multikey_2",
+        "niah_multikey_3",
+        "niah_multivalue",
+        "niah_multiquery",
+        "vt",
+        "cwe",
+        "fwe",
+        "qa_1",
+        "qa_2"
+      ]
+    },
+    "task": "niah_multikey_2",
+    "tasks_verified": [
+      "niah_single_1",
+      "niah_single_2",
+      "niah_single_3",
+      "niah_multikey_1",
+      "niah_multikey_2",
+      "niah_multikey_3",
+      "niah_multivalue",
+      "niah_multiquery",
+      "vt",
+      "cwe",
+      "fwe",
+      "qa_1",
+      "qa_2"
+    ]
+  },
+  "config_hash": "591ba36413894820676a3379f61b51ef049e150658a401457f862c43141bd9b4",
+  "elapsed_seconds": 1659.300889968872,
+  "error": null,
+  "fingerprint": "f6fec69004aac880b75d74814b5b19a8316b56341fca0c0e390bf775699d2c1e",
+  "metadata": {},
+  "outputs": [
+    {
+      "bytes": 1290,
+      "path": "result.json",
+      "sha256": "ac8dbb7e1542397a70506999e96c6355065d2bee43b05198aea5559d4baede07"
+    },
+    {
+      "bytes": 6528,
+      "path": "outcomes.npy",
+      "sha256": "d7b8b3ca738e49f2e6b7f7b7369721c7e55a7efb597a6998b587cf82b821a35c"
+    },
+    {
+      "bytes": 13893,
+      "path": "example_artifacts.json",
+      "sha256": "a891ad0ba4a6a6cbcbceb93b55b13c19221aafc3d1e5fd839e83a2ab1da83825"
+    }
+  ],
+  "parents": [
+    {
+      "fingerprint": "2224c0abf44de3298286af128150a4df0a392a5a2e20eb9d808ee4e8bebaed5b",
+      "outputs_hash": "188bab19f57aa3bd24c3fc15659adcaeb615b232668839cc4d76ba422083a3de",
+      "path": "/ssd_scratch/anirudh.sankar/output/research-v5-llama/predictor"
+    },
+    {
+      "fingerprint": "36098ceaff264e484d3188d53b0d7f6d41bc22276749656a6790680c7ecc9285",
+      "outputs_hash": "9b9a2e56e744a37a394f0bc554849d72bd9c0f09c5c7d3346280ebc9895124f7",
+      "path": "/ssd_scratch/anirudh.sankar/benchmarks/ruler-llama-n100/4096/niah_multikey_2"
+    }
+  ],
+  "provenance": {
+    "code_revision": "aa1b456894dee95d9819f47899c1c703c73bb685",
+    "source_hash": "b75b6edc99516689301b7f6249d245e1398f2032329d65b11a756b7cec8abbbd",
+    "versions": {
+      "accelerate": "1.6.0",
+      "bm25s": "0.3.11",
+      "datasets": "3.5.0",
+      "faiss-gpu": "1.15.1",
+      "huggingface-hub": "0.36.2",
+      "ir-measures": "0.3.7",
+      "ir_datasets": "0.5.11",
+      "numba": "0.67.0",
+      "numpy": "1.26.4",
+      "scikit-learn": "1.5.2",
+      "scipy": "1.13.1",
+      "torch": "2.8.0",
+      "transformers": "4.51.3"
+    }
+  },
+  "schema_version": 1,
+  "status": "complete"
+}

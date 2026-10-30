@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 1998,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.8112029136737599,
+    "frequent_activation_share": 0.08533600004375846,
+    "head_frequency_mass": 0.07287437750351847,
+    "idf_variance": 0.7552515132377426,
+    "mass_gini": 0.45188182393858567,
+    "reference_units": 16
+  },
+  "margin": -2.758921978860022,
+  "margin_ci95": [
+    -3.045627718854745,
+    1.8406442583607847
+  ],
+  "margin_variance": 1.9326910295388922,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 166,
+  "p_value": 0.3423288355822089,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.43373493975903615,
+    "001": 0.43373493975903615,
+    "010": 0.43373493975903615,
+    "011": 0.43373493975903615,
+    "100": 0.41566265060240964,
+    "101": 0.41566265060240964,
+    "110": 0.4036144578313253,
+    "111": 0.39156626506024095
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.13253012048192775,
+    0.04819277108433734
+  ],
+  "raw_delta": -0.042168674698795205,
+  "row_id": "337b4a78402655eec36e7737b5d93098b9fd76a1bcf626819d30222352f4a5db",
+  "setting": "routing",
+  "spread": 0.015284475248632865,
+  "subject": "virology",
+  "undefined_reason": null
+}

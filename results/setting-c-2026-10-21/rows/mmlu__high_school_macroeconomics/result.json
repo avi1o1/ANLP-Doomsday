@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.8908748781201697,
+    "frequent_activation_share": 0.07904095369034586,
+    "head_frequency_mass": 0.07214965147019667,
+    "idf_variance": 0.9257431357417888,
+    "mass_gini": 0.47229595985082806,
+    "reference_units": 16
+  },
+  "margin": -2.1213841168876275,
+  "margin_ci95": [
+    -2.46167241918708,
+    -1.8152390180908984
+  ],
+  "margin_variance": 0.026944744168824006,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 390,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.41794871794871796,
+    "001": 0.41794871794871796,
+    "010": 0.41794871794871796,
+    "011": 0.41794871794871796,
+    "100": 0.3076923076923077,
+    "101": 0.3076923076923077,
+    "110": 0.30512820512820515,
+    "111": 0.29743589743589743
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.1769230769230769,
+    -0.06153846153846154
+  ],
+  "raw_delta": -0.12051282051282053,
+  "row_id": "e72cf1a4c80446f8ae493158ba2982e81a80a6a344622897d4aca2ca31533b58",
+  "setting": "routing",
+  "spread": 0.05680858056466926,
+  "subject": "high_school_macroeconomics",
+  "undefined_reason": null
+}

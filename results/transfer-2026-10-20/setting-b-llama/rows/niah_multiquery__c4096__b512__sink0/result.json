@@ -1,0 +1,52 @@
+{
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "budget": 512,
+  "context": 4096,
+  "diagnostics": {
+    "active_fraction": 0.25741949509137624,
+    "frequency_slope": 0.7573650094777378,
+    "frequent_activation_share": 0.048667953533488094,
+    "head_frequency_mass": 0.043410906926964185,
+    "idf_variance": 0.5789280226839952,
+    "mass_gini": 0.4820123226782902
+  },
+  "examples": 100,
+  "margin": -1.9893054188185388,
+  "margin_ci95": [
+    -2.0413150993698093,
+    -1.9372758320689767
+  ],
+  "margin_variance": 0.0007070557503950305,
+  "model": {
+    "device_map": {},
+    "model": "meta-llama/Llama-3.2-1B-Instruct",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "9213176726f574b556790deb65791e0c5aa438b6"
+  },
+  "n_examples": 100,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.935,
+    "001": 0.945,
+    "010": 0.935,
+    "011": 0.945,
+    "100": 0.0,
+    "101": 0.0,
+    "110": 0.0,
+    "111": 0.0
+  },
+  "raw_ci95": [
+    -0.965,
+    -0.9025
+  ],
+  "raw_delta": -0.935,
+  "row_id": "644eef590b1f0b4234262f808b2a342cb19ad08bc83525e50040c41f7cdb57dc",
+  "setting": "attention",
+  "sink": false,
+  "spread": 0.4700132976842251,
+  "task": "niah_multiquery",
+  "undefined_reason": null
+}

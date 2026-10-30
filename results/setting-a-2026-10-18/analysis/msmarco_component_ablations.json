@@ -1,0 +1,1640 @@
+[
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.0690930906909309,
+    "raw_ci95": [
+      -0.004918874255169006,
+      0.00020019843796095037
+    ],
+    "raw_delta": -0.0023800367373953205,
+    "row_id": "fb2668b6f190b4a610c9898e2aea8c2d55ca8168ae1becdbcd47181a62806450"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.010196181211064144,
+      0.01456835227699081
+    ],
+    "raw_delta": 0.012372100130365722,
+    "row_id": "fb2668b6f190b4a610c9898e2aea8c2d55ca8168ae1becdbcd47181a62806450"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.055117763641849934,
+      0.06192273800564789
+    ],
+    "raw_delta": 0.05847739162155681,
+    "row_id": "fb2668b6f190b4a610c9898e2aea8c2d55ca8168ae1becdbcd47181a62806450"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.005846196979235404,
+      0.00923706943716409
+    ],
+    "raw_delta": 0.0075345972254244505,
+    "row_id": "54dda1fe0bc8feed185018a7a5e091f735ef96bc41d8b8a04a3477c6dab8e004"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.024005854424276593,
+      0.028927614325700873
+    ],
+    "raw_delta": 0.02644593147979095,
+    "row_id": "54dda1fe0bc8feed185018a7a5e091f735ef96bc41d8b8a04a3477c6dab8e004"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.03457715870665655,
+      0.03938670980428685
+    ],
+    "raw_delta": 0.03695629679132606,
+    "row_id": "54dda1fe0bc8feed185018a7a5e091f735ef96bc41d8b8a04a3477c6dab8e004"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.0431241755915321,
+      0.04961233496220435
+    ],
+    "raw_delta": 0.04635498018469953,
+    "row_id": "e70859a6cdf349faa2b2e5c7747f8c6d9efa23ab39b87eea4cb5afdba8cdce94"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.041167463389200507,
+      0.04712035098579085
+    ],
+    "raw_delta": 0.044125028138380304,
+    "row_id": "e70859a6cdf349faa2b2e5c7747f8c6d9efa23ab39b87eea4cb5afdba8cdce94"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.04048616898418254,
+      0.04575308024844635
+    ],
+    "raw_delta": 0.043082683924722184,
+    "row_id": "e70859a6cdf349faa2b2e5c7747f8c6d9efa23ab39b87eea4cb5afdba8cdce94"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.02076370445588376,
+      0.025182119186297487
+    ],
+    "raw_delta": 0.022977030697694856,
+    "row_id": "69a3d3b65ca79bd10f5bbdcef2217dfeab215ae9235ae2a60cecfed57bbd0afa"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.04790251440877486,
+      0.05452907164238938
+    ],
+    "raw_delta": 0.0512016074881079,
+    "row_id": "69a3d3b65ca79bd10f5bbdcef2217dfeab215ae9235ae2a60cecfed57bbd0afa"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.043161852922429016,
+      0.04802967112022666
+    ],
+    "raw_delta": 0.045575029623624815,
+    "row_id": "69a3d3b65ca79bd10f5bbdcef2217dfeab215ae9235ae2a60cecfed57bbd0afa"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.0795920407959204,
+    "raw_ci95": [
+      -0.0013904720937064662,
+      7.63420658507681e-05
+    ],
+    "raw_delta": -0.0006565634560751592,
+    "row_id": "5282b8e445e7822996a95609c752fb114d1ea34f81fa34033293d1d4b48ab0fb"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.7235276472352765,
+    "p_value": 0.08039196080391961,
+    "raw_ci95": [
+      -7.870295811302504e-05,
+      0.0011217897833749602
+    ],
+    "raw_delta": 0.000533377658429467,
+    "row_id": "5282b8e445e7822996a95609c752fb114d1ea34f81fa34033293d1d4b48ab0fb"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "5282b8e445e7822996a95609c752fb114d1ea34f81fa34033293d1d4b48ab0fb"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.0028995272681217555,
+      0.004716958946634483
+    ],
+    "raw_delta": 0.003797539327696886,
+    "row_id": "712c28fdfc7f54f2ecd0d78404c624821c206be07a19c52621bdb406686da630"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.09836820756046656,
+      0.10949322412547773
+    ],
+    "raw_delta": 0.10383151928761378,
+    "row_id": "712c28fdfc7f54f2ecd0d78404c624821c206be07a19c52621bdb406686da630"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.012909218493071344,
+      0.01750033112380213
+    ],
+    "raw_delta": 0.01518874532518679,
+    "row_id": "712c28fdfc7f54f2ecd0d78404c624821c206be07a19c52621bdb406686da630"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.04237138272420783,
+      0.04682034169369962
+    ],
+    "raw_delta": 0.044606685982404484,
+    "row_id": "49a0705a29ac42b9bfc882c37df1425f244eee129012453ca1e463395da79901"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.1574161264537929,
+      0.17024336230865406
+    ],
+    "raw_delta": 0.16384557860416202,
+    "row_id": "49a0705a29ac42b9bfc882c37df1425f244eee129012453ca1e463395da79901"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.026174092336461532,
+      0.029661798264036362
+    ],
+    "raw_delta": 0.02789751177139159,
+    "row_id": "49a0705a29ac42b9bfc882c37df1425f244eee129012453ca1e463395da79901"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.05621598892936467,
+      0.061117562450467865
+    ],
+    "raw_delta": 0.05868808867792444,
+    "row_id": "0c78b5c4be476fc6948df287ad0e52fb17757c2d81b09749e631f148ad9526ce"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.17779661160116098,
+      0.19037571870916026
+    ],
+    "raw_delta": 0.1840462371152758,
+    "row_id": "0c78b5c4be476fc6948df287ad0e52fb17757c2d81b09749e631f148ad9526ce"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.0756658890321052,
+      0.0809549169474716
+    ],
+    "raw_delta": 0.07833254177130289,
+    "row_id": "0c78b5c4be476fc6948df287ad0e52fb17757c2d81b09749e631f148ad9526ce"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.015598440155984402,
+    "p_value": 0.0005999400059994001,
+    "raw_ci95": [
+      0.00039801495223949226,
+      0.0013446334005187664
+    ],
+    "raw_delta": 0.000844783651347461,
+    "row_id": "81650f22fcb8dbd4d64693000a3551fdacc73c08e30a6c00ba32aeafd74f36f3"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "81650f22fcb8dbd4d64693000a3551fdacc73c08e30a6c00ba32aeafd74f36f3"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "81650f22fcb8dbd4d64693000a3551fdacc73c08e30a6c00ba32aeafd74f36f3"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.059994000599940006,
+    "p_value": 0.0024997500249975004,
+    "raw_ci95": [
+      -0.0014414228429192688,
+      -0.00031271461275815505
+    ],
+    "raw_delta": -0.0008739149124709078,
+    "row_id": "01bdc971b12db2cba409a66f0caa89169dbf1eecced5f81c424c6d948fef121d"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.06346941194147507,
+      0.07230579003951647
+    ],
+    "raw_delta": 0.06782953759539753,
+    "row_id": "01bdc971b12db2cba409a66f0caa89169dbf1eecced5f81c424c6d948fef121d"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.0105426966451147,
+      0.01459105625340926
+    ],
+    "raw_delta": 0.012521601756123123,
+    "row_id": "01bdc971b12db2cba409a66f0caa89169dbf1eecced5f81c424c6d948fef121d"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.013722469507233102,
+      0.01824514864356991
+    ],
+    "raw_delta": 0.015947929799572404,
+    "row_id": "a7152a5748d08c17315ccfab667ade577c624fbabf928abbcc0bcf5626e57b6d"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "a7152a5748d08c17315ccfab667ade577c624fbabf928abbcc0bcf5626e57b6d"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "a7152a5748d08c17315ccfab667ade577c624fbabf928abbcc0bcf5626e57b6d"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.102989701029897,
+    "raw_ci95": [
+      -0.002593058652839819,
+      0.00021761022339311328
+    ],
+    "raw_delta": -0.0011817260280107822,
+    "row_id": "9dbba3498353ea93da6957ac8754b71f9a3eb6997b631c3bd14caeaa5c48f2f6"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.1839903663660149,
+      0.19759854344057745
+    ],
+    "raw_delta": 0.1907353059839892,
+    "row_id": "9dbba3498353ea93da6957ac8754b71f9a3eb6997b631c3bd14caeaa5c48f2f6"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.05365934206057111,
+      0.06097004817765478
+    ],
+    "raw_delta": 0.057322524991991725,
+    "row_id": "9dbba3498353ea93da6957ac8754b71f9a3eb6997b631c3bd14caeaa5c48f2f6"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.0027360567737280345,
+      0.004919154230993046
+    ],
+    "raw_delta": 0.0038180491745645195,
+    "row_id": "d55544b8eaf287f5fac2b4590d9231568767409a3f209b946e5026e7a458a290"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.015970319920731252,
+      0.01946290886534865
+    ],
+    "raw_delta": 0.01768685739676297,
+    "row_id": "d55544b8eaf287f5fac2b4590d9231568767409a3f209b946e5026e7a458a290"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.023681514712554842,
+      0.02806734899657395
+    ],
+    "raw_delta": 0.025878501730527845,
+    "row_id": "d55544b8eaf287f5fac2b4590d9231568767409a3f209b946e5026e7a458a290"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      -0.01144035577831856,
+      -0.00774952607995253
+    ],
+    "raw_delta": -0.009601031233917007,
+    "row_id": "efd86bd78a3d6b409e36eee00e2a5c0621d3ee8084698add794f6bea7d5c80bf"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.1990569062012234,
+      0.2134961551340122
+    ],
+    "raw_delta": 0.20621782302496833,
+    "row_id": "efd86bd78a3d6b409e36eee00e2a5c0621d3ee8084698add794f6bea7d5c80bf"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.09144469792298386,
+      0.09884453181169098
+    ],
+    "raw_delta": 0.09512788707314251,
+    "row_id": "efd86bd78a3d6b409e36eee00e2a5c0621d3ee8084698add794f6bea7d5c80bf"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.9607039296070393,
+    "raw_ci95": [
+      -0.0230691704011788,
+      0.024432846041418734
+    ],
+    "raw_delta": 0.000560162134655956,
+    "row_id": "537aab2f2a395047045a98f01f4b57b10f3887785933f8f8b7ee0b69d825d01b"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.010998900109989003,
+    "p_value": 0.0010998900109989002,
+    "raw_ci95": [
+      0.011562858238923153,
+      0.041461870226460196
+    ],
+    "raw_delta": 0.02586573399447109,
+    "row_id": "537aab2f2a395047045a98f01f4b57b10f3887785933f8f8b7ee0b69d825d01b"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.07692367935945629,
+      0.14379562524945466
+    ],
+    "raw_delta": 0.10899267606676394,
+    "row_id": "537aab2f2a395047045a98f01f4b57b10f3887785933f8f8b7ee0b69d825d01b"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.2933706629337066,
+    "p_value": 0.016298370162983702,
+    "raw_ci95": [
+      0.005541936286182859,
+      0.04026925569018278
+    ],
+    "raw_delta": 0.021933324409098294,
+    "row_id": "fdd2ec05691306a7542f7044174afbea4d2f935b0f0079d765017e364b9affe1"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 0.00019998000199980003,
+    "raw_ci95": [
+      0.02707227266307517,
+      0.06881527199360152
+    ],
+    "raw_delta": 0.046896973168572206,
+    "row_id": "fdd2ec05691306a7542f7044174afbea4d2f935b0f0079d765017e364b9affe1"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 0.00029997000299970003,
+    "raw_ci95": [
+      0.04580747943702865,
+      0.1068215948824339
+    ],
+    "raw_delta": 0.0745890324628572,
+    "row_id": "fdd2ec05691306a7542f7044174afbea4d2f935b0f0079d765017e364b9affe1"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.043295108156764524,
+      0.10558349800563348
+    ],
+    "raw_delta": 0.07420893564015944,
+    "row_id": "818bda7a955eef4932f73d189fa8e3f46172893a4d30fb9164f4baef2b5ad8ff"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.07644354451208567,
+      0.13373389500912714
+    ],
+    "raw_delta": 0.10426175908090085,
+    "row_id": "818bda7a955eef4932f73d189fa8e3f46172893a4d30fb9164f4baef2b5ad8ff"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.057304900622741496,
+      0.10890825273835145
+    ],
+    "raw_delta": 0.0824166397021331,
+    "row_id": "818bda7a955eef4932f73d189fa8e3f46172893a4d30fb9164f4baef2b5ad8ff"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.027497250274972504,
+    "p_value": 0.0010998900109989002,
+    "raw_ci95": [
+      0.014218229361696814,
+      0.059621474214704234
+    ],
+    "raw_delta": 0.036674112917838675,
+    "row_id": "d86b7e2106d371e17ebf29bb0985555e91d5d07cf1b8e246a76306ab8968e277"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.08833412773030834,
+      0.15183143349976544
+    ],
+    "raw_delta": 0.11982830971328423,
+    "row_id": "d86b7e2106d371e17ebf29bb0985555e91d5d07cf1b8e246a76306ab8968e277"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.059063180503412874,
+      0.10618738283024368
+    ],
+    "raw_delta": 0.08170751008120368,
+    "row_id": "d86b7e2106d371e17ebf29bb0985555e91d5d07cf1b8e246a76306ab8968e277"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.8807119288071192,
+    "raw_ci95": [
+      -0.006167563641753221,
+      0.00639539742708307
+    ],
+    "raw_delta": -0.0004799985828607585,
+    "row_id": "df6a113cb14bd3ab7e7bb5e588830a5d41b2e6036ed7925e2b81871be2a84633"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.9125087491250875,
+    "raw_ci95": [
+      -0.003658663728472022,
+      0.004491034123549014
+    ],
+    "raw_delta": 0.00024340608967821087,
+    "row_id": "df6a113cb14bd3ab7e7bb5e588830a5d41b2e6036ed7925e2b81871be2a84633"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "df6a113cb14bd3ab7e7bb5e588830a5d41b2e6036ed7925e2b81871be2a84633"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.687031296870313,
+    "raw_ci95": [
+      -0.005807929664157928,
+      0.00951522627506734
+    ],
+    "raw_delta": 0.0015689894869258397,
+    "row_id": "1f01d2c4f75ff1f3d2d77983c42777cfa52feba04df54660ea9a91111b1af87d"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.1654716412074958,
+      0.3016756557541093
+    ],
+    "raw_delta": 0.23067826906747235,
+    "row_id": "1f01d2c4f75ff1f3d2d77983c42777cfa52feba04df54660ea9a91111b1af87d"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.37716228377162286,
+    "raw_ci95": [
+      -0.008097477698904185,
+      0.02090820714739438
+    ],
+    "raw_delta": 0.006509165804859968,
+    "row_id": "1f01d2c4f75ff1f3d2d77983c42777cfa52feba04df54660ea9a91111b1af87d"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.07559190473198756,
+      0.11801687839617502
+    ],
+    "raw_delta": 0.09603880164438552,
+    "row_id": "fa400661f3f4e41a3c814f5be9a050c217af99732433660642c9a671a9fdae2f"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.2655074406309223,
+      0.3923740616088115
+    ],
+    "raw_delta": 0.3284015719728275,
+    "row_id": "fa400661f3f4e41a3c814f5be9a050c217af99732433660642c9a671a9fdae2f"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.02957072692259028,
+      0.06040908375301676
+    ],
+    "raw_delta": 0.043889051862772116,
+    "row_id": "fa400661f3f4e41a3c814f5be9a050c217af99732433660642c9a671a9fdae2f"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.11178145686963022,
+      0.1561006207514516
+    ],
+    "raw_delta": 0.13457757853664026,
+    "row_id": "f29e36d20fb7358900f444b8fa0f999639db88f72a22aeaf22f5554880efd28e"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.28478247225676123,
+      0.40153235525553627
+    ],
+    "raw_delta": 0.3441144256338189,
+    "row_id": "f29e36d20fb7358900f444b8fa0f999639db88f72a22aeaf22f5554880efd28e"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.1021584713820705,
+      0.14970795120160724
+    ],
+    "raw_delta": 0.12632022294659287,
+    "row_id": "f29e36d20fb7358900f444b8fa0f999639db88f72a22aeaf22f5554880efd28e"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.46625337466253375,
+    "raw_ci95": [
+      -0.003389679977658079,
+      0.011800217702557488
+    ],
+    "raw_delta": 0.0032582313519409394,
+    "row_id": "052ede2ee0379d2855006cf976e92a44afeef67533fe352d6e4884df7cce8728"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "052ede2ee0379d2855006cf976e92a44afeef67533fe352d6e4884df7cce8728"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "052ede2ee0379d2855006cf976e92a44afeef67533fe352d6e4884df7cce8728"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.263973602639736,
+    "p_value": 0.0131986801319868,
+    "raw_ci95": [
+      -0.012055987823054759,
+      -0.0017403756755955705
+    ],
+    "raw_delta": -0.00662050979375528,
+    "row_id": "f5a11e1885f4b491f450fc73894049475b1ffc50e41fc83fadc0ea189fb1cb11"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.12429209053184002,
+      0.251482093261078
+    ],
+    "raw_delta": 0.18534659176319776,
+    "row_id": "f5a11e1885f4b491f450fc73894049475b1ffc50e41fc83fadc0ea189fb1cb11"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.8271172882711728,
+    "p_value": 0.0751924807519248,
+    "raw_ci95": [
+      -0.0012173651291179683,
+      0.03087617006338497
+    ],
+    "raw_delta": 0.014744808757349792,
+    "row_id": "f5a11e1885f4b491f450fc73894049475b1ffc50e41fc83fadc0ea189fb1cb11"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.29257074292570745,
+    "p_value": 0.015398460153984602,
+    "raw_ci95": [
+      0.004884118929956086,
+      0.04276659470637831
+    ],
+    "raw_delta": 0.023056868365330135,
+    "row_id": "eb9ece3039f014f9bfdaa6dd0aa100407f5def5666ea5ea14d0b31d31d43a4e3"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "eb9ece3039f014f9bfdaa6dd0aa100407f5def5666ea5ea14d0b31d31d43a4e3"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "eb9ece3039f014f9bfdaa6dd0aa100407f5def5666ea5ea14d0b31d31d43a4e3"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.8048195180481952,
+    "raw_ci95": [
+      -0.021564091179570564,
+      0.01454520375956251
+    ],
+    "raw_delta": -0.0022763269318226143,
+    "row_id": "34eb64994d47724f623c0b8e6888366f75ff83f05f54bc928a3bd0f3708ee358"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.231757618730936,
+      0.36664410756385196
+    ],
+    "raw_delta": 0.2986188583534226,
+    "row_id": "34eb64994d47724f623c0b8e6888366f75ff83f05f54bc928a3bd0f3708ee358"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.0693779798510509,
+      0.12723863526729542
+    ],
+    "raw_delta": 0.09802994704079143,
+    "row_id": "34eb64994d47724f623c0b8e6888366f75ff83f05f54bc928a3bd0f3708ee358"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.11878812118788121,
+    "p_value": 0.0053994600539946005,
+    "raw_ci95": [
+      0.005485255634187567,
+      0.031622412863735315
+    ],
+    "raw_delta": 0.018471485832497858,
+    "row_id": "b9fde0774dfd70424a57b9a67770a49226f5f1c3bad7bcbab3ca5cf202c11ded"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.021439213175713245,
+      0.05553478042369517
+    ],
+    "raw_delta": 0.03802968546674712,
+    "row_id": "b9fde0774dfd70424a57b9a67770a49226f5f1c3bad7bcbab3ca5cf202c11ded"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.036080898343976577,
+      0.07933866882561791
+    ],
+    "raw_delta": 0.056523522024266026,
+    "row_id": "b9fde0774dfd70424a57b9a67770a49226f5f1c3bad7bcbab3ca5cf202c11ded"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.07539246075392461,
+    "raw_ci95": [
+      -0.048194841083467985,
+      0.0004675591438979716
+    ],
+    "raw_delta": -0.02202352582903544,
+    "row_id": "56aeb68f407286afa9e66ac1ee01d2eb1a3ffd27f33c2623e875c954e4ce5f79"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.2689269710179199,
+      0.41981220785599627
+    ],
+    "raw_delta": 0.34286817904979133,
+    "row_id": "56aeb68f407286afa9e66ac1ee01d2eb1a3ffd27f33c2623e875c954e4ce5f79"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.13063338067335614,
+      0.1998451576439569
+    ],
+    "raw_delta": 0.1651608442850011,
+    "row_id": "56aeb68f407286afa9e66ac1ee01d2eb1a3ffd27f33c2623e875c954e4ce5f79"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.1917808219178082,
+    "raw_ci95": [
+      -0.03217616965380456,
+      0.006636452723677582
+    ],
+    "raw_delta": -0.012896966742832902,
+    "row_id": "0108e24cd62fa7353d6ed5baa25aacf50f02cfe8d575a2f95851896b859bb4f8"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.008799120087991202,
+    "p_value": 0.0007999200079992001,
+    "raw_ci95": [
+      0.016080858146000767,
+      0.06042350515137098
+    ],
+    "raw_delta": 0.03780162710950162,
+    "row_id": "0108e24cd62fa7353d6ed5baa25aacf50f02cfe8d575a2f95851896b859bb4f8"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.08929549948209685,
+      0.16396804652670466
+    ],
+    "raw_delta": 0.12460860051804581,
+    "row_id": "0108e24cd62fa7353d6ed5baa25aacf50f02cfe8d575a2f95851896b859bb4f8"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.6361363863613638,
+    "raw_ci95": [
+      -0.01282874896184845,
+      0.021272673265528688
+    ],
+    "raw_delta": 0.004080139934627122,
+    "row_id": "656e2ddf3b24c2175ce2a11b24d56ed7bae8fde734eb6e112c8f25dd24cf0cb2"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 0.00019998000199980003,
+    "raw_ci95": [
+      0.031743182142137075,
+      0.07893101948549511
+    ],
+    "raw_delta": 0.05405081178423431,
+    "row_id": "656e2ddf3b24c2175ce2a11b24d56ed7bae8fde734eb6e112c8f25dd24cf0cb2"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.05102890078964795,
+      0.10550567804007116
+    ],
+    "raw_delta": 0.07641662440372343,
+    "row_id": "656e2ddf3b24c2175ce2a11b24d56ed7bae8fde734eb6e112c8f25dd24cf0cb2"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.059977551831120614,
+      0.115659232285631
+    ],
+    "raw_delta": 0.08659979221465751,
+    "row_id": "e815e0ce7ae5f4d308cbc83f0b2372161bf324ab1d7c9c5a6a6baf90a01416a8"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.06951824314106458,
+      0.12830743679701648
+    ],
+    "raw_delta": 0.0976887360823223,
+    "row_id": "e815e0ce7ae5f4d308cbc83f0b2372161bf324ab1d7c9c5a6a6baf90a01416a8"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.0664084994417841,
+      0.1126837276992326
+    ],
+    "raw_delta": 0.08852541742801776,
+    "row_id": "e815e0ce7ae5f4d308cbc83f0b2372161bf324ab1d7c9c5a6a6baf90a01416a8"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.03666685473165855,
+      0.07654573221935809
+    ],
+    "raw_delta": 0.05605184418646135,
+    "row_id": "13c2e161c225605e7384ea437fe1e258ebbeaf41e8ca7fccc5475e0e4d887156"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.08342947919111038,
+      0.15849955090278253
+    ],
+    "raw_delta": 0.11950216346133258,
+    "row_id": "13c2e161c225605e7384ea437fe1e258ebbeaf41e8ca7fccc5475e0e4d887156"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.07208880155869095,
+      0.1277657920880491
+    ],
+    "raw_delta": 0.09903349708495093,
+    "row_id": "13c2e161c225605e7384ea437fe1e258ebbeaf41e8ca7fccc5475e0e4d887156"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.9774022597740226,
+    "p_value": 0.05749425057494251,
+    "raw_ci95": [
+      -0.017266715741222287,
+      -0.0010076828375561433
+    ],
+    "raw_delta": -0.007607257474347975,
+    "row_id": "de6778db7242b5f85e3903d75e4ef5b257b62430c84540886eb7095f3159e39c"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.41995800419958,
+    "raw_ci95": [
+      -0.005413251894660001,
+      0.0017827169079541528
+    ],
+    "raw_delta": -0.0014686030392968598,
+    "row_id": "de6778db7242b5f85e3903d75e4ef5b257b62430c84540886eb7095f3159e39c"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "de6778db7242b5f85e3903d75e4ef5b257b62430c84540886eb7095f3159e39c"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.1374862513748625,
+    "raw_ci95": [
+      -0.0019910724503523257,
+      0.01589616581747202
+    ],
+    "raw_delta": 0.00670996305092314,
+    "row_id": "4fab85b376ceb740778d675e77099ffce640e3d792968287699033b7ecc79fa7"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.14295141151990629,
+      0.25043751988365764
+    ],
+    "raw_delta": 0.19519373715292915,
+    "row_id": "4fab85b376ceb740778d675e77099ffce640e3d792968287699033b7ecc79fa7"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.15958404159584041,
+    "p_value": 0.013298670132986702,
+    "raw_ci95": [
+      0.00517735977679103,
+      0.03601366474547582
+    ],
+    "raw_delta": 0.019621176373807225,
+    "row_id": "4fab85b376ceb740778d675e77099ffce640e3d792968287699033b7ecc79fa7"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.07160506652212602,
+      0.10646469462457034
+    ],
+    "raw_delta": 0.08880732007870784,
+    "row_id": "fe666ea974409a3a28d0a11f4ea7abf1a00c760558523ad0345524ee07c597f0"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.28271259587435404,
+      0.3985951470732313
+    ],
+    "raw_delta": 0.3396098715918153,
+    "row_id": "fe666ea974409a3a28d0a11f4ea7abf1a00c760558523ad0345524ee07c597f0"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.034176433353789296,
+      0.06456455258795324
+    ],
+    "raw_delta": 0.049005415165231325,
+    "row_id": "fe666ea974409a3a28d0a11f4ea7abf1a00c760558523ad0345524ee07c597f0"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.08947413232835175,
+      0.13548380062851859
+    ],
+    "raw_delta": 0.11231987477733058,
+    "row_id": "1e57ffbf451ae14464f52fdd129abba683b2835f1dca515c391096fa01cfd4fa"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.3047257641864774,
+      0.40970481005155285
+    ],
+    "raw_delta": 0.3572008237924995,
+    "row_id": "1e57ffbf451ae14464f52fdd129abba683b2835f1dca515c391096fa01cfd4fa"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.11177561763885724,
+      0.15543301501715526
+    ],
+    "raw_delta": 0.13315033201314927,
+    "row_id": "1e57ffbf451ae14464f52fdd129abba683b2835f1dca515c391096fa01cfd4fa"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.4423557644235576,
+    "raw_ci95": [
+      -0.006065364418346568,
+      0.0024538601279403345
+    ],
+    "raw_delta": -0.0016161667800202255,
+    "row_id": "07146a7e304ef7bef1dca60680e558681634ce4fc9c766979d5d6e02260a010e"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "07146a7e304ef7bef1dca60680e558681634ce4fc9c766979d5d6e02260a010e"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "07146a7e304ef7bef1dca60680e558681634ce4fc9c766979d5d6e02260a010e"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.14258574142585742,
+    "raw_ci95": [
+      -0.007761348149230552,
+      0.000950385085086948
+    ],
+    "raw_delta": -0.003254175913431953,
+    "row_id": "20b36dcf637dd09bb3d572e20a26968f81141f59d5abd193cb7383d0bae9c3f4"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.0916985850889057,
+      0.18892681868884234
+    ],
+    "raw_delta": 0.13760635256326567,
+    "row_id": "20b36dcf637dd09bb3d572e20a26968f81141f59d5abd193cb7383d0bae9c3f4"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.0714928507149285,
+    "p_value": 0.005499450054994501,
+    "raw_ci95": [
+      0.008953137928906677,
+      0.05073698776828164
+    ],
+    "raw_delta": 0.029008473126686987,
+    "row_id": "20b36dcf637dd09bb3d572e20a26968f81141f59d5abd193cb7383d0bae9c3f4"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.16588341165883413,
+    "p_value": 0.007899210078992101,
+    "raw_ci95": [
+      0.008986857165857527,
+      0.0472683793929457
+    ],
+    "raw_delta": 0.026524888188250717,
+    "row_id": "ff893f9f7597114751763cb5ee5819c41b2a6a6adf8c24d469840ac1a79ab34b"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "ff893f9f7597114751763cb5ee5819c41b2a6a6adf8c24d469840ac1a79ab34b"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 1.0,
+    "raw_ci95": [
+      0.0,
+      0.0
+    ],
+    "raw_delta": 0.0,
+    "row_id": "ff893f9f7597114751763cb5ee5819c41b2a6a6adf8c24d469840ac1a79ab34b"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.7777222277772223,
+    "raw_ci95": [
+      -0.00988419131560176,
+      0.012371893364312884
+    ],
+    "raw_delta": 0.001571970271951384,
+    "row_id": "912e9aa1e9dca8058fb2cc6f10795c688562652a39f21febc8b412a27589dec3"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.22906589864140417,
+      0.3599893518545833
+    ],
+    "raw_delta": 0.2945940260921378,
+    "row_id": "912e9aa1e9dca8058fb2cc6f10795c688562652a39f21febc8b412a27589dec3"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.050334524633849596,
+      0.10197455113601672
+    ],
+    "raw_delta": 0.07522290546578,
+    "row_id": "912e9aa1e9dca8058fb2cc6f10795c688562652a39f21febc8b412a27589dec3"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 1.0,
+    "p_value": 0.131986801319868,
+    "raw_ci95": [
+      -0.002002730789194269,
+      0.017154465670549603
+    ],
+    "raw_delta": 0.0072945956160245795,
+    "row_id": "7f89d70559744832d0fbd02ec8c9217caed81d00cadbc15a83eeb871de370566"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.01705662654125223,
+      0.042161663874430676
+    ],
+    "raw_delta": 0.02899189078456546,
+    "row_id": "7f89d70559744832d0fbd02ec8c9217caed81d00cadbc15a83eeb871de370566"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.036671404759094396,
+      0.07059420373786605
+    ],
+    "raw_delta": 0.05364350637190968,
+    "row_id": "7f89d70559744832d0fbd02ec8c9217caed81d00cadbc15a83eeb871de370566"
+  },
+  {
+    "comparison_family": "factorial_main_effect_idf",
+    "component": "idf",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.06209379062093791,
+    "p_value": 0.0026997300269973002,
+    "raw_ci95": [
+      -0.029470961221245765,
+      -0.006377284646806947
+    ],
+    "raw_delta": -0.017873571906975305,
+    "row_id": "cffa8b8c820f71cd5946660be3d5d91517e81c53a9df3474b809918a020e80fd"
+  },
+  {
+    "comparison_family": "factorial_main_effect_saturation",
+    "component": "saturation",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.259409691618152,
+      0.3927243113510401
+    ],
+    "raw_delta": 0.3257701336442348,
+    "row_id": "cffa8b8c820f71cd5946660be3d5d91517e81c53a9df3474b809918a020e80fd"
+  },
+  {
+    "comparison_family": "factorial_main_effect_length",
+    "component": "length",
+    "definition": "mean on-minus-off over the four settings of the other two switches",
+    "holm_p": 0.004199580041995801,
+    "p_value": 9.999000099990002e-05,
+    "raw_ci95": [
+      0.12593085232715648,
+      0.19422984984053812
+    ],
+    "raw_delta": 0.1601061521106637,
+    "row_id": "cffa8b8c820f71cd5946660be3d5d91517e81c53a9df3474b809918a020e80fd"
+  }
+]

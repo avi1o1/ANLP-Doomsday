@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.7121064180870283,
+    "frequent_activation_share": 0.05412554950971865,
+    "head_frequency_mass": 0.053262603342918755,
+    "idf_variance": 0.6428760182244163,
+    "mass_gini": 0.3899715126960642,
+    "reference_units": 16
+  },
+  "margin": -2.1626682328182514,
+  "margin_ci95": [
+    -2.697001609447457,
+    -1.5105640869289823
+  ],
+  "margin_variance": 0.12604726154243917,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 201,
+  "p_value": 0.010494752623688156,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.6865671641791045,
+    "001": 0.6865671641791045,
+    "010": 0.6865671641791045,
+    "011": 0.6865671641791045,
+    "100": 0.6169154228855721,
+    "101": 0.6169154228855721,
+    "110": 0.6119402985074627,
+    "111": 0.6069651741293532
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.14427860696517414,
+    -0.02487562189054726
+  ],
+  "raw_delta": -0.07960199004975121,
+  "row_id": "6bbab293aeaaef070f3fd6a2fdeb1030759145340e4685a6198a8acb9bafc08c",
+  "setting": "routing",
+  "spread": 0.036807305365566395,
+  "subject": "sociology",
+  "undefined_reason": null
+}

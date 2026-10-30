@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.8176198979109869,
+    "frequent_activation_share": 0.09422332021191165,
+    "head_frequency_mass": 0.08076316848506529,
+    "idf_variance": 0.8295464156525334,
+    "mass_gini": 0.44259630149537166,
+    "reference_units": 16
+  },
+  "margin": -1.9268719178923883,
+  "margin_ci95": [
+    -2.3171878858642883,
+    -1.1442478093096178
+  ],
+  "margin_variance": 0.10756793604152183,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 152,
+  "p_value": 0.00399800099950025,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.5328947368421053,
+    "001": 0.5328947368421053,
+    "010": 0.5328947368421053,
+    "011": 0.5328947368421053,
+    "100": 0.39473684210526316,
+    "101": 0.39473684210526316,
+    "110": 0.39473684210526316,
+    "111": 0.40131578947368424
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.22368421052631576,
+    -0.03947368421052633
+  ],
+  "raw_delta": -0.13157894736842107,
+  "row_id": "afacc4a76a58ef6bdb62b7aa606fd6f2f2dff37d42bfdb6d9119437a89e86f6b",
+  "setting": "routing",
+  "spread": 0.06828629663789074,
+  "subject": "astronomy",
+  "undefined_reason": null
+}

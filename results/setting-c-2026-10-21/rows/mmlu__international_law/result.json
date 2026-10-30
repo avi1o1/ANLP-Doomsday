@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.8115994141253646,
+    "frequent_activation_share": 0.07724558485199254,
+    "head_frequency_mass": 0.06707247370827618,
+    "idf_variance": 0.9240110702295053,
+    "mass_gini": 0.4191143645129284,
+    "reference_units": 16
+  },
+  "margin": -2.074179891480539,
+  "margin_ci95": [
+    -2.349215585442666,
+    -1.779610308631025
+  ],
+  "margin_variance": 0.021942449601618973,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 121,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.5619834710743802,
+    "001": 0.5619834710743802,
+    "010": 0.5619834710743802,
+    "011": 0.5619834710743802,
+    "100": 0.4049586776859504,
+    "101": 0.4049586776859504,
+    "110": 0.36363636363636365,
+    "111": 0.38016528925619836
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.28099173553719003,
+    -0.09090909090909088
+  ],
+  "raw_delta": -0.18181818181818182,
+  "row_id": "41d6a3e2e7534984306b2858d3886b2bcb5d3f23e38009add18903ed6c2549d8",
+  "setting": "routing",
+  "spread": 0.08765786543634888,
+  "subject": "international_law",
+  "undefined_reason": null
+}

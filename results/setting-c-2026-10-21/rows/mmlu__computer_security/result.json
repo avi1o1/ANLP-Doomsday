@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.8627861821335514,
+    "frequent_activation_share": 0.08452732640905565,
+    "head_frequency_mass": 0.07859735666418466,
+    "idf_variance": 0.8338818841447685,
+    "mass_gini": 0.4650654882558929,
+    "reference_units": 16
+  },
+  "margin": -2.156661389752245,
+  "margin_ci95": [
+    -2.4551941928928547,
+    -1.8584252724799217
+  ],
+  "margin_variance": 0.021662629458048685,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 100,
+  "p_value": 0.0004997501249375312,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.64,
+    "001": 0.64,
+    "010": 0.64,
+    "011": 0.64,
+    "100": 0.44,
+    "101": 0.44,
+    "110": 0.42,
+    "111": 0.41
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.3499999999999999,
+    -0.12000000000000005
+  ],
+  "raw_delta": -0.23000000000000004,
+  "row_id": "c56169066755eb35ca88a895673c63b3a974bbbf2bf4b9e436e3ef1ef1329886",
+  "setting": "routing",
+  "spread": 0.10664631967395782,
+  "subject": "computer_security",
+  "undefined_reason": null
+}

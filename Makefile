@@ -6,7 +6,8 @@ include make/common.mk
 
 # Everything that goes into a submission zip alongside the write-up. Listed with
 # wildcard so the zip targets keep working as directories appear.
-CODE = $(wildcard src scripts configs analysis tests results pyproject.toml uv.lock README.md)
+CODE = $(wildcard src scripts configs analysis tests results pyproject.toml uv.lock README.md \
+	Makefile make .env.example *.sbatch submit-setting-a.sh)
 
 # Nothing generated, cached or private ever enters a zip. context/ is not listed
 # in CODE, so it cannot be picked up by accident.
@@ -26,7 +27,7 @@ interim: ## Build the interim proposal, 2 pages, submitted 14 Aug 2026
 proposal: ## Build the final proposal, 3-4 pages, due 28 Aug 2026
 	@$(MAKE) -C docs proposal
 
-mid: ## Build the mid report, 7-8 pages, due 30 Sep 2026
+mid: ## Build the mid report, 7-8 pages, due 2 Oct 2026
 	@$(MAKE) -C docs mid
 
 final: ## Build the final report, at most 8 pages, due 31 Oct 2026
@@ -42,11 +43,11 @@ check: ## Check every built document: log, page limit, bibliography
 
 ##@ Submission
 
-mid-zip: docs/pdf/$(TEAM)-Mid.pdf ## Package ANLPDoomsday-Mid.zip: write-up and code
+mid-zip: docs/pdf/$(TEAM)-Mid.pdf ## Package ANLPDoomsday-Mid.zip: the report only
 	@$(STEP) "packaging $(TEAM)-Mid.zip"
 	@mkdir -p $(DIST)
 	@rm -f $(DIST)/$(TEAM)-Mid.zip
-	@zip -qr $(DIST)/$(TEAM)-Mid.zip $< $(CODE) $(ZIP_EXCLUDE)
+	@zip -qj $(DIST)/$(TEAM)-Mid.zip $<
 	@$(DONE) "$(DIST)/$(TEAM)-Mid.zip"
 
 final-zip: docs/pdf/$(TEAM)-Final.pdf ## Package ANLPDoomsday-Final.zip: write-up, code, slides
@@ -55,7 +56,8 @@ final-zip: docs/pdf/$(TEAM)-Final.pdf ## Package ANLPDoomsday-Final.zip: write-u
 	@$(STEP) "packaging $(TEAM)-Final.zip"
 	@mkdir -p $(DIST)
 	@rm -f $(DIST)/$(TEAM)-Final.zip
-	@zip -qr $(DIST)/$(TEAM)-Final.zip $< slides/$(TEAM)-Slides.pdf $(CODE) $(ZIP_EXCLUDE)
+	@zip -qj $(DIST)/$(TEAM)-Final.zip $< slides/$(TEAM)-Slides.pdf
+	@zip -qr $(DIST)/$(TEAM)-Final.zip $(CODE) $(ZIP_EXCLUDE)
 	@$(DONE) "$(DIST)/$(TEAM)-Final.zip"
 
 docs/pdf/$(TEAM)-Mid.pdf:

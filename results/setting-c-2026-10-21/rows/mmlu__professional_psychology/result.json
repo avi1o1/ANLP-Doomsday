@@ -1,0 +1,74 @@
+{
+  "benchmark": "mmlu",
+  "bootstrap_samples": 2000,
+  "bootstrap_valid_margins": 2000,
+  "diagnostics": {
+    "active_fraction": 0.125,
+    "aggregation": "equal_reference_unit_mean",
+    "dead_feature_fraction": 0.0,
+    "frequency_slope": 0.6302503957830042,
+    "frequent_activation_share": 0.05886984982174061,
+    "head_frequency_mass": 0.055263126848298,
+    "idf_variance": 0.47444615490526554,
+    "mass_gini": 0.361802955804377,
+    "reference_units": 16
+  },
+  "margin": -2.331068117719492,
+  "margin_ci95": [
+    -2.57133061561801,
+    -1.8014604658546043
+  ],
+  "margin_variance": 0.04785102417352048,
+  "model": {
+    "device_map": {
+      "lm_head": "1",
+      "model.embed_tokens": "0",
+      "model.layers.0": "0",
+      "model.layers.1": "0",
+      "model.layers.10": "1",
+      "model.layers.11": "1",
+      "model.layers.12": "1",
+      "model.layers.13": "1",
+      "model.layers.14": "1",
+      "model.layers.15": "1",
+      "model.layers.2": "0",
+      "model.layers.3": "0",
+      "model.layers.4": "0",
+      "model.layers.5": "0",
+      "model.layers.6": "0",
+      "model.layers.7": "0",
+      "model.layers.8": "1",
+      "model.layers.9": "1",
+      "model.norm": "1",
+      "model.rotary_emb": "1"
+    },
+    "model": "allenai/OLMoE-1B-7B-0924",
+    "precision": "float16",
+    "quantization": null,
+    "revision": "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
+  },
+  "n_examples": 612,
+  "p_value": 0.001999000499750125,
+  "p_value_floor": 0.0004997501249375312,
+  "quality": {
+    "000": 0.4918300653594771,
+    "001": 0.4918300653594771,
+    "010": 0.4918300653594771,
+    "011": 0.4918300653594771,
+    "100": 0.46078431372549017,
+    "101": 0.46078431372549017,
+    "110": 0.43137254901960786,
+    "111": 0.434640522875817
+  },
+  "quality_measure": "accuracy",
+  "raw_ci95": [
+    -0.09313725490196073,
+    -0.021241830065359513
+  ],
+  "raw_delta": -0.057189542483660094,
+  "row_id": "b65bf32b6bdc4326fc0cbb9dadf37cbec87e2b02fb21a897cbcf9033da3827ae",
+  "setting": "routing",
+  "spread": 0.02453362132532155,
+  "subject": "professional_psychology",
+  "undefined_reason": null
+}
