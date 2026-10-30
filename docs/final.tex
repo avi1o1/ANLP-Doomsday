@@ -394,7 +394,7 @@ LIMIT, where E5 scores $0.015$ and only token-level $k$-means exceeds it ($0.033
 
 In 81 rows the inner product scores below $0.01$, so nearly any correction beats it. All-on is also not the best configuration. It is the strict best of
 the eight in only 42 rows, and \texttt{011} (saturation and length without IDF) has a
-higher mean, $0.163$ against $0.158$, though not at 16/64 ($0.101$ against $0.104$).
+higher mean, $0.163$ against $0.158$, though not at the 16/64 budget ($0.101$ against $0.104$).
 
 \subsection{Saturation gives most of the gain}
 \label{sec:attribution}
@@ -633,8 +633,8 @@ values of $k_1$. Where each item carries a single score and IDF is off,
 saturation cannot change the selection up to ties (Proposition~\ref{prop:single}), and in
 KV selection and routing it changed task scores almost nowhere.
 
-\paragraph{IDF and length normalisation.} BM25 without IDF beats all-on at the primary
-budget, not at 16/64. Whether IDF and length normalisation help a code
+\paragraph{IDF and length normalisation.} BM25 without IDF beats all-on at every support
+budget but 16/64. Whether IDF and length normalisation help a code
 on a collection is harder to say. The frequency curve does not predict it, and neither do
 index statistics. Agreement with text BM25 helps a fitted model, but the label-free rule
 built on it is no better than a constant in sign on new E5 rows and fails its registered
