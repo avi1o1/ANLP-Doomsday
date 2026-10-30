@@ -478,10 +478,10 @@ We fixed six hypotheses on this mechanism in advance and tested them on the $k_1
 sweep of five collections, mostly new rows (Table~\ref{tab:confirm} in the
 appendix). All six pass. H2 predicts that a smaller $k_1$ gives a larger
 $\phi_{\mathrm{sat}}$, H3 that $\mathrm{cv}_x$ and $\phi_{\mathrm{sat}}$ correlate within a
-corpus, and H6 that a larger $b$ gives a larger length effect. H5 (no length effect at $b = 0$) checks the implementation, and H1 (the share of IDF and
-length) and one arm of H6 reuse primary rows. In H4 a ridge model of
+corpus, and H6 that a larger $b$ gives a larger length effect. H5 (no length effect at $b = 0$) checks the implementation, and H1 and one arm of H6
+reuse primary rows. In H4 a ridge model of
 $\phi_{\mathrm{sat}}$ on $\mathrm{cv}_x$ fitted at $k_1 = 1.2$ ranks the rows by
-$\phi_{\mathrm{sat}}$ at $k_1 = 0.6$ and $2.4$ with Spearman $0.87$ and $0.90$.
+$\phi_{\mathrm{sat}}$ at $k_1 = 0.6$ and $2.4$ (Spearman $0.87$, $0.90$).
 
 \subsection{The frequency curve does not predict the gain}
 \label{sec:curve}
@@ -634,8 +634,8 @@ gain without collection statistics, and $\mathrm{cv}_x$ ranks its effect at held
 values of $k_1$. Where each item carries a single score and IDF is off,
 saturation cannot change the selection up to ties (Proposition~\ref{prop:single}), and in
 KV selection and routing it changed task scores almost nowhere. For codes like ours,
-dropping IDF from BM25 costs nothing on average (\texttt{011} scores $0.163$ against
-$0.158$ for all-on) and removes the need for document frequencies.
+BM25 without IDF (\texttt{011}, $0.163$) scores above all-on ($0.158$) and needs no
+document frequencies.
 
 \paragraph{IDF and length normalisation.} Whether IDF and length normalisation help a code
 on a collection is harder to say. The frequency curve does not predict it, and neither do
@@ -657,10 +657,9 @@ $\tilde{G}$ does not track the size of $G$.
 
 One encoder underlies every retrieval code, MIRACL is in E5's training data, and SPLADE is one
 model. The KV runs use one 4K context and 100 examples per task, not the planned 500.
-Variable tracking lacks RULER's answer prefix and scores zero or nearly zero in every
-configuration. Llama's full-attention answer is empty on the 100 first single-needle
-examples and 262 others, mostly QA and multi-key, so its mass reference covers 938 of
-$1{,}300$. Routing uses one model. A frequency counted over unrelated prompts is the next
+Variable tracking ran without RULER's answer prefix. Llama's full-attention answer is
+empty on 362 of $1{,}300$ examples, all 100 of the first single-needle task among them, so
+its mass reference covers 938. Routing uses one model. A frequency counted over unrelated prompts is the next
 test.
 
 \bibliography{refs}
