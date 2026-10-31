@@ -1,4 +1,4 @@
-# Predicting When Collection Statistics Help Top-k Selection
+# Which Parts of BM25 Help Learned Top-k Selection?
 
 Advanced NLP, Monsoon 2026. Team ANLP Doomsday: Aviral Gupta, Mohit Kumar Singh,
 Anirudh Sankar, Arihant Tripathy.
@@ -21,9 +21,9 @@ can be predicted without relevance labels.
 - **Registered transfer tests.** `results/registration-2026-10-20.md`, committed before any
   Setting B or C outcome was read; results in `results/transfer-2026-10-20/`.
 
-Repository: <https://github.com/avi1o1/ANLP-Doomsday>. The mid report is
-`docs/pdf/ANLPDoomsday-Mid.pdf`; the mid submission zip contains only that PDF, and the
-code is submitted through this repository.
+Repository: <https://github.com/avi1o1/ANLP-Doomsday>. The final report is
+`docs/pdf/ANLPDoomsday-Final.pdf`. The final submission zip holds that PDF, the viva slides
+and the code and results listed below.
 
 ## Repository layout
 
@@ -34,7 +34,7 @@ code is submitted through this repository.
 | `configs/`                                         | `research.yaml` (full experiment), `fixture.yaml` (offline test), `gpu-smoke.yaml`, single-GPU profiles |
 | `scripts/`                                         | Analysis, curation and maintenance scripts                                                              |
 | `tests/`                                           | Unit, numerical-parity and recovery tests                                                               |
-| `results/`                                         | Curated Setting A results, each directory with its own README                                           |
+| `results/`                                         | Curated results for all three settings, each directory with its own README                             |
 | `docs/`                                            | LaTeX sources of all reports and built PDFs in `docs/pdf/` (repository only, not in the zip)            |
 | `*.sbatch`, `submit-setting-a.sh`                  | Slurm launchers for the cluster                                                                         |
 
@@ -58,20 +58,27 @@ uv run csx --config configs/fixture.yaml run-retrieval
 uv run csx --config configs/fixture.yaml report
 ```
 
-## Reproducing the mid-report analysis
+## Reproducing the final report
 
-The tables in the mid report come from the files under `results/`:
+Every table and the data of Figure 2 in the final report are generated from the files
+under `results/`, so no number is typed by hand:
 
-| Report table | Source |
+```sh
+uv run python -m scripts.final_tables docs/tables
+```
+
+| Report item | Source |
 | --- | --- |
-| 2, retrieval quality | `results/setting-a-2026-09-26/research-v5/report/` (`retrieval.csv`, `baselines.json`) |
-| 3, attribution | primary row: `results/setting-a-2026-09-26/research-v5/exploratory/shapley_summary.json`; budget rows: `results/setting-a-2026-09-29/exploratory/shapley_rows.csv` |
-| 4, per representation | both `shapley_rows.csv` files, and `mechanism_diagnostics.json` for $\mathrm{cv}_x$ |
-| 5, confirmatory tests | `results/setting-a-2026-09-29/exploratory/confirmatory_tests.json` |
-| 6, predictor study | `results/setting-a-2026-09-29/exploratory/predictor_study.json` (BM25) and `predictor_study_dense.json` (E5) |
-| Section 7.2, pre-registered predictor | `results/setting-a-2026-09-26/research-v5/report/predictor.csv` |
+| Retrieval tables, Figure 2 (left) | `results/setting-a-2026-10-18/` (`analysis/rows.json`, `exploratory/*.json`, `splade/`) |
+| KV selection and routing, Figure 2 (right) | `results/transfer-2026-10-20/` (study files, attention-mass outputs) |
+| Registered tests (appendix table) | `results/registration-2026-10-20.md` and the study files above |
 
-The analysis scripts read those files directly. To reproduce them without overwriting the
+`results/transfer-2026-10-20/README.md` gives the commands that recompute the KV-selection
+and routing studies.
+
+## Reproducing the retrieval analyses
+
+The retrieval analysis scripts read the result files directly. To reproduce them without overwriting the
 shipped copies, write to a scratch directory and compare:
 
 ```sh
@@ -122,13 +129,14 @@ in `.env` (see `.env.example`).
 
 ```sh
 make            # list targets
-make mid        # build the mid report
+make final      # build the final report
 make check      # log, page limit and bibliography checks
-make mid-zip    # dist/ANLPDoomsday-Mid.zip: the report only
+make final-zip  # dist/ANLPDoomsday-Final.zip: report, slides, code and results
 ```
 
-Building needs TeX Live with `natbib`, `times`, `microtype`, `booktabs` and `tikz`; the
-ACL style files are in `docs/`.
+Building needs TeX Live with `natbib`, `times`, `microtype`, `booktabs`, `tikz` and
+`pgfplots`; the ACL style files are in `docs/`. The slides are exported by hand to
+`slides/ANLPDoomsday-Slides.pdf`.
 
 | Deliverable      | Due         | File                        |
 | ---------------- | ----------- | --------------------------- |
