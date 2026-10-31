@@ -50,14 +50,13 @@ mid-zip: docs/pdf/$(TEAM)-Mid.pdf ## Package ANLPDoomsday-Mid.zip: the report on
 	@zip -qj $(DIST)/$(TEAM)-Mid.zip $<
 	@$(DONE) "$(DIST)/$(TEAM)-Mid.zip"
 
-final-zip: docs/pdf/$(TEAM)-Final.pdf ## Package ANLPDoomsday-Final.zip: write-up, code, slides
+final-zip: docs/pdf/$(TEAM)-Final.pdf ## Package ANLPDoomsday-Final.zip: report and slides only
 	@test -f slides/$(TEAM)-Slides.pdf \
 		|| { $(FAIL) "slides/$(TEAM)-Slides.pdf is missing; export the deck there first"; exit 1; }
 	@$(STEP) "packaging $(TEAM)-Final.zip"
 	@mkdir -p $(DIST)
 	@rm -f $(DIST)/$(TEAM)-Final.zip
 	@zip -qj $(DIST)/$(TEAM)-Final.zip $< slides/$(TEAM)-Slides.pdf
-	@zip -qr $(DIST)/$(TEAM)-Final.zip $(CODE) $(ZIP_EXCLUDE)
 	@$(DONE) "$(DIST)/$(TEAM)-Final.zip"
 
 docs/pdf/$(TEAM)-Mid.pdf:

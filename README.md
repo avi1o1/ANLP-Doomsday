@@ -22,8 +22,8 @@ can be predicted without relevance labels.
   Setting B or C outcome was read; results in `results/transfer-2026-10-20/`.
 
 Repository: <https://github.com/avi1o1/ANLP-Doomsday>. The final report is
-`docs/pdf/ANLPDoomsday-Final.pdf`. The final submission zip holds that PDF, the viva slides
-and the code and results listed below.
+`docs/pdf/ANLPDoomsday-Final.pdf`. The final submission zip holds that PDF and the viva slides
+(`slides/ANLPDoomsday-Slides.pdf`); the code is submitted through this repository.
 
 ## Repository layout
 
@@ -131,7 +131,7 @@ in `.env` (see `.env.example`).
 make            # list targets
 make final      # build the final report
 make check      # log, page limit and bibliography checks
-make final-zip  # dist/ANLPDoomsday-Final.zip: report, slides, code and results
+make final-zip  # dist/ANLPDoomsday-Final.zip: report and slides only
 ```
 
 Building needs TeX Live with `natbib`, `times`, `microtype`, `booktabs`, `tikz` and
